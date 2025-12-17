@@ -22,11 +22,20 @@
  *    - /api/v1/users/{userId}/bloqs/agents/* - Agent management
  *    - Many content routes (YouTube, services, etc.)
  *
- * To get a client credentials token:
+ * To enable full SDK features (agent/bloq management):
  *    1. Create a Passport client: php artisan passport:client --client
- *    2. Get token: POST /oauth/token with grant_type=client_credentials
+ *    2. Set environment variables:
+ *       export IRIS_CLIENT_ID='your-client-id'
+ *       export IRIS_CLIENT_SECRET='your-client-secret'
+ *    3. Run tests: php quick-test.php local <api_key> <user_id>
  *
- * Or for development, modify routes to use auth:api middleware.
+ * Or use the SDK programmatically:
+ *    $iris = new IRIS([
+ *        'api_key' => $userToken,
+ *        'client_id' => $clientId,
+ *        'client_secret' => $clientSecret,
+ *        'user_id' => 193,
+ *    ]);
  */
 
 // =============================================================================

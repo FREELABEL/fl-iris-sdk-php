@@ -42,6 +42,17 @@ class Config
     public ?string $webhookSecret = null;
 
     /**
+     * OAuth2 Client ID for client credentials flow
+     * Required for management operations (agents, bloqs, content)
+     */
+    public ?string $clientId = null;
+
+    /**
+     * OAuth2 Client Secret for client credentials flow
+     */
+    public ?string $clientSecret = null;
+
+    /**
      * Enable debug mode for verbose logging
      */
     public bool $debug = false;
@@ -72,6 +83,8 @@ class Config
      *     timeout?: int,
      *     retries?: int,
      *     webhook_secret?: string,
+     *     client_id?: string,
+     *     client_secret?: string,
      *     debug?: bool,
      *     polling_interval?: int,
      *     max_polling_duration?: int
@@ -94,9 +107,19 @@ class Config
         $this->timeout = $options['timeout'] ?? $this->timeout;
         $this->retries = $options['retries'] ?? $this->retries;
         $this->webhookSecret = $options['webhook_secret'] ?? null;
+        $this->clientId = $options['client_id'] ?? null;
+        $this->clientSecret = $options['client_secret'] ?? null;
         $this->debug = $options['debug'] ?? false;
         $this->pollingInterval = $options['polling_interval'] ?? $this->pollingInterval;
         $this->maxPollingDuration = $options['max_polling_duration'] ?? $this->maxPollingDuration;
+    }
+
+    /**
+     * Check if client credentials are configured.
+     */
+    public function hasClientCredentials(): bool
+    {
+        return $this->clientId !== null && $this->clientSecret !== null;
     }
 
     /**

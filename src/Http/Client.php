@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace IRIS\SDK\Http;
 
 use IRIS\SDK\Config;
+use IRIS\SDK\Auth\AuthManager;
 use IRIS\SDK\Exceptions\AuthenticationException;
 use IRIS\SDK\Exceptions\IRISException;
 use IRIS\SDK\Exceptions\RateLimitException;
@@ -19,10 +20,10 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * HTTP Client for FreeLABEL API
+ * HTTP Client for IRIS API
  *
- * Handles all HTTP communication with the FreeLABEL API including:
- * - Authentication via Bearer token
+ * Handles all HTTP communication with the IRIS/FreeLABEL API including:
+ * - Dual authentication (client credentials + user token)
  * - Automatic retries with exponential backoff
  * - Rate limit handling
  * - Error normalization
@@ -30,16 +31,32 @@ use Psr\Http\Message\ResponseInterface;
 class Client
 {
     protected Config $config;
+    protected AuthManager $authManager;
     protected GuzzleClient $client;
     protected ?string $lastRequestId = null;
 
     /**
      * Create a new HTTP client instance.
      */
-    public function __construct(Config $config, ?GuzzleClient $client = null)
+    public function __construct(Config $config, ?GuzzleClient $client = null, ?AuthManager $authManager = null)
     {
         $this->config = $config;
+        $this->authManager = $authManager ?? new AuthManager($config);
+
+        // Configure client credentials if provided
+        if ($config->hasClientCredentials()) {
+            $this->authManager->setClientCredentials($config->clientId, $config->clientSecret);
+        }
+
         $this->client = $client ?? $this->createClient();
+    }
+
+    /**
+     * Get the authentication manager.
+     */
+    public function auth(): AuthManager
+    {
+        return $this->authManager;
     }
 
     /**
@@ -67,7 +84,7 @@ class Client
         return new GuzzleClient([
             'handler' => $stack,
             'timeout' => $this->config->timeout,
-            'headers' => $this->config->getHeaders(),
+            // Headers are set per-request via AuthManager for endpoint-specific auth
             'http_errors' => true,
         ]);
     }
@@ -182,13 +199,26 @@ class Client
     {
         $url = $this->buildUrl($endpoint);
 
+        // Get endpoint-specific headers from AuthManager
+        $authHeaders = $this->authManager->getHeadersForEndpoint($endpoint);
+
+        // Merge auth headers with any custom headers in options
+        $options['headers'] = array_merge($authHeaders, $options['headers'] ?? []);
+
         try {
             $response = $this->client->request($method, $url, $options);
             $this->lastRequestId = $response->getHeaderLine('X-Request-Id');
 
             return $this->parseResponse($response);
         } catch (ClientException $e) {
-            throw $this->handleClientException($e);
+            $exception = $this->handleClientException($e);
+
+            // If we get a 401 and have client credentials, try invalidating the token
+            if ($exception instanceof AuthenticationException && $this->authManager->hasClientCredentials()) {
+                $this->authManager->invalidateTokens();
+            }
+
+            throw $exception;
         } catch (ServerException $e) {
             throw new IRISException(
                 'Server error: ' . $e->getMessage(),

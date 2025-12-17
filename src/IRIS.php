@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace IRIS\SDK;
 
 use IRIS\SDK\Http\Client;
+use IRIS\SDK\Auth\AuthManager;
 use IRIS\SDK\Resources\Agents\AgentsResource;
 use IRIS\SDK\Resources\Workflows\WorkflowsResource;
 use IRIS\SDK\Resources\Bloqs\BloqsResource;
@@ -18,23 +19,38 @@ use IRIS\SDK\Events\WebhookHandler;
  *
  * The main entry point for interacting with the IRIS AI platform.
  *
- * @example
+ * The SDK supports dual authentication:
+ * - User Token: For chat and interaction routes
+ * - Client Credentials: For management routes (agents, bloqs, content)
+ *
+ * @example Basic usage (chat/leads - works with user token):
  * ```php
  * $iris = new IRIS([
- *     'api_key' => 'sk_live_xxxxx',
+ *     'api_key' => 'your-user-token',
  *     'user_id' => 123,
  * ]);
  *
- * // Chat with an agent
- * $response = $iris->agents->chat('agent_123', [
+ * // Chat with an agent (public endpoint)
+ * $response = $iris->agents->chat(456, [
  *     ['role' => 'user', 'content' => 'Hello!']
  * ]);
+ * ```
  *
- * // Execute a workflow
- * $workflow = $iris->workflows->execute([
- *     'agent_id' => 'agent_123',
- *     'query' => 'Research competitors',
+ * @example Full management (with client credentials):
+ * ```php
+ * $iris = new IRIS([
+ *     'api_key' => 'your-user-token',
+ *     'client_id' => 'your-client-id',
+ *     'client_secret' => 'your-client-secret',
+ *     'user_id' => 123,
  * ]);
+ *
+ * // Now you can manage agents
+ * $agent = $iris->agents->create(new AgentConfig(
+ *     name: 'My Agent',
+ *     prompt: 'You are helpful',
+ *     model: 'gpt-4o-mini',
+ * ));
  * ```
  */
 class IRIS
@@ -95,6 +111,8 @@ class IRIS
      *     timeout?: int,
      *     retries?: int,
      *     webhook_secret?: string,
+     *     client_id?: string,
+     *     client_secret?: string,
      *     debug?: bool
      * } $options Configuration options
      *
@@ -112,6 +130,19 @@ class IRIS
         $this->leads = new LeadsResource($this->http, $this->config);
         $this->integrations = new IntegrationsResource($this->http, $this->config);
         $this->rag = new RAGResource($this->http, $this->config);
+    }
+
+    /**
+     * Get the authentication manager.
+     *
+     * Use this to configure client credentials for management routes:
+     * ```php
+     * $iris->auth()->setClientCredentials($clientId, $clientSecret);
+     * ```
+     */
+    public function auth(): AuthManager
+    {
+        return $this->http->auth();
     }
 
     /**
