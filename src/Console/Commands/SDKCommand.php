@@ -111,15 +111,29 @@ class SDKCommand extends Command
             return $target->{$method}();
         }
         
-        // Check if all params are named (key=value format)
-        $hasNamedParams = !empty($params) && array_keys($params) !== range(0, count($params) - 1);
+        // Separate positional and named parameters
+        $positionalParams = [];
+        $namedParams = [];
         
-        if ($hasNamedParams) {
-            // Named parameters - pass as single array argument
-            return $target->{$method}($params);
+        foreach ($params as $key => $value) {
+            if (is_int($key)) {
+                $positionalParams[] = $value;
+            } else {
+                $namedParams[$key] = $value;
+            }
+        }
+        
+        // Build arguments list: positional params first, then named params if any
+        if (!empty($positionalParams) && !empty($namedParams)) {
+            // Mixed: positional arguments + named array at the end
+            $args = array_merge($positionalParams, [$namedParams]);
+            return $target->{$method}(...$args);
+        } elseif (!empty($namedParams)) {
+            // Only named parameters - pass as single array argument
+            return $target->{$method}($namedParams);
         } else {
-            // Positional parameters - spread as individual arguments
-            return $target->{$method}(...array_values($params));
+            // Only positional parameters - spread as individual arguments
+            return $target->{$method}(...$positionalParams);
         }
     }
     
@@ -219,21 +233,107 @@ class SDKCommand extends Command
         $keyFields = $this->selectKeyFields($firstItem);
         
         $output->writeln('');
+        $output->writeln('<fg=cyan>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</>');
+        
         foreach ($data as $index => $item) {
-            $output->writeln(sprintf('<info>%d.</info> %s', $index + 1, $this->formatCompactItem($item, $keyFields)));
+            $header = $this->formatCompactItem($item, $keyFields);
+            $output->writeln($header);
             
-            // Show selected fields
+            // Show selected fields with colors and icons
             foreach ($keyFields as $field) {
                 if (isset($item[$field]) && $item[$field] !== null && $item[$field] !== '') {
-                    $value = $this->formatValue($item[$field], 100);
-                    $output->writeln(sprintf('   <comment>%s:</comment> %s', $field, $value));
+                    $icon = $this->getFieldIcon($field);
+                    $color = $this->getFieldColor($field);
+                    $value = $this->formatColoredValue($item[$field], $field, 100);
+                    $output->writeln(sprintf('  %s <fg=%s>%s:</> %s', $icon, $color, $field, $value));
                 }
             }
-            $output->writeln('');
+            
+            if ($index < count($data) - 1) {
+                $output->writeln('<fg=cyan>  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄</>');
+            }
         }
         
-        $output->writeln(sprintf('<info>Total: %d items</info>', count($data)));
-        $output->writeln('<comment>Tip: Use --json flag for full data</comment>');
+        $output->writeln('<fg=cyan>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</>');
+        $output->writeln(sprintf('<fg=green>✓ Total: %d items</>', count($data)));
+        $output->writeln('<fg=yellow>💡 Tip: Use --json flag for full data</>');
+        $output->writeln('');
+    }
+    
+    private function getFieldIcon(string $field): string
+    {
+        return match($field) {
+            'id' => '🔑',
+            'title', 'name', 'nickname' => '👤',
+            'email' => '📧',
+            'phone' => '📱',
+            'company' => '🏢',
+            'status' => '📊',
+            'type', 'lead_type' => '🏷️',
+            'url', 'external_url' => '🔗',
+            'note_count' => '📝',
+            'tasks_count' => '✅',
+            'created_at' => '🕐',
+            'updated_at' => '🔄',
+            'contact_info' => '📇',
+            default => '•'
+        };
+    }
+    
+    private function getFieldColor(string $field): string
+    {
+        return match($field) {
+            'id' => 'cyan',
+            'title', 'name', 'nickname' => 'bright-blue',
+            'email', 'phone', 'contact_info' => 'magenta',
+            'company' => 'blue',
+            'status' => 'yellow',
+            'type', 'lead_type' => 'cyan',
+            'url', 'external_url' => 'green',
+            'note_count', 'tasks_count' => 'yellow',
+            'created_at', 'updated_at' => 'gray',
+            default => 'white'
+        };
+    }
+    
+    private function formatColoredValue($value, string $field, int $maxLength = 100): string
+    {
+        $formatted = $this->formatValue($value, $maxLength);
+        
+        // Special formatting for specific fields
+        if ($field === 'status') {
+            return $this->colorizeStatus($formatted);
+        }
+        
+        if ($field === 'type' || $field === 'lead_type') {
+            return "<fg=bright-cyan>{$formatted}</>";
+        }
+        
+        if ($field === 'url' || $field === 'external_url') {
+            return "<fg=bright-green;options=underscore>{$formatted}</>";
+        }
+        
+        if (($field === 'note_count' || $field === 'tasks_count') && is_numeric($value)) {
+            $color = $value > 0 ? 'bright-yellow' : 'gray';
+            return "<fg={$color}>{$formatted}</>";
+        }
+        
+        return $formatted;
+    }
+    
+    private function colorizeStatus(string $status): string
+    {
+        return match(strtolower($status)) {
+            'won' => '<fg=bright-green;options=bold>✓ Won</>',
+            'lost' => '<fg=red>✗ Lost</>',
+            'negotiation' => '<fg=yellow>⚡ Negotiation</>',
+            'proposal' => '<fg=cyan>📄 Proposal</>',
+            'qualified' => '<fg=blue>⭐ Qualified</>',
+            'interested' => '<fg=magenta>👀 Interested</>',
+            'contacted' => '<fg=bright-blue>📞 Contacted</>',
+            'new' => '<fg=bright-cyan>✨ New</>',
+            default => "<fg=white>{$status}</>"
+        };
     }
     
     private function selectKeyFields(array $item): array
@@ -259,19 +359,24 @@ class SDKCommand extends Command
     
     private function formatCompactItem(array $item, array $keyFields): string
     {
-        // Create a one-line summary
+        // Create a one-line summary with colors
         $parts = [];
         
         if (isset($item['id'])) {
-            $parts[] = "ID: {$item['id']}";
+            $parts[] = "<fg=bright-cyan>#{$item['id']}</>";
         }
         
         $nameField = $item['name'] ?? $item['title'] ?? $item['nickname'] ?? null;
         if ($nameField) {
-            $parts[] = $this->formatValue($nameField, 40);
+            $name = $this->formatValue($nameField, 50);
+            $parts[] = "<fg=bright-white;options=bold>{$name}</>";
         }
         
-        return implode(' | ', $parts);
+        if (isset($item['status'])) {
+            $parts[] = $this->colorizeStatus($item['status']);
+        }
+        
+        return '  ' . implode(' <fg=gray>│</> ', $parts);
     }
     
     private function renderObject($obj, OutputInterface $output, SymfonyStyle $io): void

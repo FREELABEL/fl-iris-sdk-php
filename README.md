@@ -1,6 +1,24 @@
 # IRIS PHP SDK
 
-Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execute multi-step workflows, and manage documents with RAG-enhanced knowledge bases.
+Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execute multi-step workflows, and manage leads with comprehensive CRM functionality.
+
+## 🚀 Quick Examples
+
+```bash
+# 🎯 Update lead status and add task
+./bin/iris sdk:call leads.update 412 status=Won
+./bin/iris sdk:call leads.tasks.create 412 title="Setup delivery meeting"
+
+# 🔍 Search leads with beautiful colored output
+./bin/iris sdk:call leads.search search=john bloq_id=40 status=Won
+
+# 📦 Add deliverable
+./bin/iris sdk:call leads.deliverables.create 24 type=link title="Trained AI Agent" external_url="https://app.heyiris.io/agent/356" user_id=193
+
+# 📊 Get priority insights
+./bin/iris sdk:call leads.aggregation.statistics
+./bin/iris sdk:call leads.aggregation.list has_incomplete_tasks=1 sort=priority
+```
 
 ## Installation
 
@@ -37,31 +55,25 @@ The CLI uses a dynamic proxy pattern to access any SDK resource and method:
 ```bash
 # Pattern: iris sdk:call <resource>.<method> [params] [options]
 
-# Lead aggregation statistics
+# 🔍 Lead Search & Management
+./vendor/bin/iris sdk:call leads.search search=john bloq_id=40
+./vendor/bin/iris sdk:call leads.update 412 status=Won
+./vendor/bin/iris sdk:call leads.tasks.create 412 title="Setup meeting"
+./vendor/bin/iris sdk:call leads.deliverables.list 24
+./vendor/bin/iris sdk:call leads.deliverables.create 24 type=link title="AI Agent" external_url="https://app.heyiris.io/agent/356" user_id=193
+
+# 📊 Lead Aggregation & Analytics
 ./vendor/bin/iris sdk:call leads.aggregation.statistics --json
-
-# Get 10 most recently updated leads
 ./vendor/bin/iris sdk:call leads.aggregation.getRecentLeads 10
-
-# List high-priority leads with incomplete tasks
 ./vendor/bin/iris sdk:call leads.aggregation.list has_incomplete_tasks=1 sort=priority
+./vendor/bin/iris sdk:call leads.aggregation.list status=Won,Negotiation per_page=20
 
-# Get leads by status (Won/Negotiation/Proposal)
-./vendor/bin/iris sdk:call leads.aggregation.list status=Won sort=updated_at per_page=10
-
-# Get specific lead details
-./vendor/bin/iris sdk:call leads.get 123
-
-# Chat with an agent
+# 🤖 AI Agents
 ./vendor/bin/iris sdk:call agents.chat agent_id=5 message="Hello"
-
-# Execute workflow
 ./vendor/bin/iris sdk:call workflows.execute '{"agent_id":5,"query":"Research"}'
 
-# List bloqs
+# 📚 Knowledge Base
 ./vendor/bin/iris sdk:call bloqs.list
-
-# RAG semantic search
 ./vendor/bin/iris sdk:call rag.query question="vacation policy" topK=5
 ```
 
@@ -74,9 +86,16 @@ iris sdk:call leads.list --json
 # Raw output (no formatting)
 iris sdk:call leads.get 123 --raw
 
-# Smart tables (default) - automatically formats data
-iris sdk:call leads.aggregation.statistics
+# Colorful compact view (default) - Beautiful, readable format with emojis and colors
+iris sdk:call leads.search search=john bloq_id=40
 ```
+
+**Compact View Features:**
+- 🎨 Color-coded fields (status, tasks, notes)
+- 📊 Status badges with icons (✓ Won, ⚡ Negotiation, ✨ New, etc.)
+- 🔗 Underlined URLs for easy clicking
+- 📝 Smart field selection (only shows relevant data)
+- Perfect for large datasets - no more unwieldy tables!
 
 ### Parameter Types
 
@@ -117,17 +136,40 @@ The CLI is a pure proxy - any new SDK resources or methods are automatically ava
 ```php
 <?php
 use IRIS\SDK\IRIS;
-use IRIS\SDK\Resources\Agents\AgentConfig;
 
 // Initialize the SDK
 $iris = new IRIS([
     'api_key' => 'sk_live_xxxxx',
-    'user_id' => 123,  // Your user ID
+    'user_id' => 193,  // Your user ID
+]);
+
+// Search for leads
+$leads = $iris->leads->search([
+    'search' => 'acme',
+    'bloq_id' => 40,
+    'status' => 'Won'
+]);
+
+// Update lead status
+$lead = $iris->leads->update(412, ['status' => 'Won']);
+
+// Add a task
+$task = $iris->leads->tasks(412)->create([
+    'title' => 'Setup delivery meeting',
+    'due_date' => '2025-12-30'
+]);
+
+// Add deliverable
+$deliverable = $iris->leads->deliverables(24)->create([
+    'type' => 'link',
+    'title' => 'Trained AI Agent',
+    'external_url' => 'https://app.heyiris.io/agent/simple/356',
+    'user_id' => 193
 ]);
 
 // Chat with an agent
 $response = $iris->agents->chat('agent_123', [
-    ['role' => 'user', 'content' => 'Draft a marketing email for our Q1 launch']
+    ['role' => 'user', 'content' => 'Draft a marketing email']
 ]);
 
 echo $response->content;
@@ -255,7 +297,204 @@ foreach ($results->documents as $doc) {
 
 ### 👤 Lead Management
 
-CRM functionality for managing contacts and outreach.
+Comprehensive CRM functionality for managing contacts, outreach, and sales pipelines.
+
+#### Search & Filter Leads
+
+```php
+// Advanced search with filters
+$results = $iris->leads->search([
+    'search' => 'john',
+    'bloq_id' => 40,
+    'status' => 'Won',
+    'per_page' => 50,
+    'sort' => 'updated_at',
+    'order' => 'desc',
+    'include_notes' => true,
+    'include_events' => true
+]);
+
+foreach ($results['data'] as $lead) {
+    echo "{$lead['nickname']} - {$lead['status']} - {$lead['note_count']} notes\n";
+}
+```
+
+**CLI Search:**
+```bash
+# Search by name with bloq filter
+iris sdk:call leads.search search=john bloq_id=40
+
+# Get Won deals with notes
+iris sdk:call leads.search status=Won include_notes=true per_page=20
+
+# Beautiful colored output:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  #24 │ Rodney Mayo │ ✓ Won
+  🔑 id: 24
+  👤 nickname: Rodney Mayo
+  📊 status: ✓ Won
+  🏷️ lead_type: unknown
+  📝 note_count: 7
+  ✅ tasks_count: 2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+#### Update Lead Status
+
+```php
+// Update lead status
+$lead = $iris->leads->update(412, [
+    'status' => 'Won',
+    'price_bid' => 5000
+]);
+
+echo "Updated {$lead->name} to {$lead->status}\n";
+```
+
+**CLI Update:**
+```bash
+# Change status to Won
+iris sdk:call leads.update 412 status=Won
+
+# Update multiple fields
+iris sdk:call leads.update 412 status=Negotiation price_bid=5000
+```
+
+#### Manage Tasks
+
+```php
+// Create a task
+$task = $iris->leads->tasks(412)->create([
+    'title' => 'Setup delivery meeting',
+    'description' => 'Schedule video call to walk through deliverables',
+    'due_date' => '2025-12-30',
+    'status' => 'pending'
+]);
+
+// List all tasks
+$tasks = $iris->leads->tasks(412)->all();
+foreach ($tasks as $task) {
+    echo "- {$task->title} ({$task->status})\n";
+}
+
+// Update task status
+$iris->leads->tasks(412)->update($task->id, [
+    'status' => 'completed'
+]);
+```
+
+**CLI Tasks:**
+```bash
+# Create a task
+iris sdk:call leads.tasks.create 412 title="Setup delivery meeting"
+
+# Add task with details
+iris sdk:call leads.tasks.create 412 title="Send proposal" description="Draft and send pricing proposal" due_date="2025-12-30"
+
+# List tasks
+iris sdk:call leads.tasks.all 412
+
+# Mark task complete
+iris sdk:call leads.tasks.update 412 5 status=completed
+```
+
+#### Deliverables Management
+
+```php
+// List deliverables for a lead
+$deliverables = $iris->leads->deliverables(24)->list();
+foreach ($deliverables as $item) {
+    echo "{$item['title']} - {$item['url']}\n";
+}
+
+// Create link deliverable
+$deliverable = $iris->leads->deliverables(24)->create([
+    'type' => 'link',
+    'title' => 'Trained AI Agent',
+    'external_url' => 'https://app.heyiris.io/agent/simple/356?bloq=203',
+    'user_id' => 193
+]);
+
+// Upload file deliverable
+$deliverable = $iris->leads->deliverables(24)->uploadFile(
+    '/path/to/report.pdf',
+    ['title' => 'Q4 Analytics Report']
+);
+
+// Update deliverable
+$iris->leads->deliverables(24)->update($deliverable['id'], [
+    'title' => 'Updated Report Title'
+]);
+
+// Send email notification
+$iris->leads->deliverables(24)->send([
+    'subject' => 'Your deliverables are ready',
+    'message' => 'Please review the attached materials.'
+]);
+```
+
+**CLI Deliverables:**
+```bash
+# List all deliverables
+iris sdk:call leads.deliverables.list 24
+
+# Add agent link
+iris sdk:call leads.deliverables.create 24 type=link title="Trained AI Agent" external_url="https://app.heyiris.io/agent/simple/356?bloq=203" user_id=193
+
+# Beautiful output:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  #333 │ Trained AI Agent - NCMA │ link
+  🔑 id: 333
+  📄 title: Trained AI Agent - NCMA
+  🏷️ type: link
+  🔗 url: https://app.heyiris.io/agent/simple/356?bloq=203
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Delete deliverable
+iris sdk:call leads.deliverables.delete 24 333
+```
+
+#### Lead Aggregation & Priority Analysis
+
+```php
+// Get comprehensive statistics
+$stats = $iris->leads->aggregation()->statistics();
+echo "Total leads: {$stats['total_leads']}\n";
+echo "Incomplete tasks: {$stats['total_incomplete_tasks']}\n";
+
+// Get priority leads with tasks
+$leads = $iris->leads->aggregation()->list([
+    'has_incomplete_tasks' => true,
+    'sort' => 'priority',
+    'order' => 'desc',
+    'per_page' => 10
+]);
+
+// Get recently updated leads
+$recent = $iris->leads->aggregation()->getRecentLeads(10);
+
+// Get specific lead with context
+$lead = $iris->leads->aggregation()->get(24);
+echo "Priority score: {$lead['priority_score']}\n";
+echo "Tasks: {$lead['incomplete_tasks_count']}/{$lead['total_tasks_count']}\n";
+```
+
+**CLI Aggregation:**
+```bash
+# Statistics dashboard
+iris sdk:call leads.aggregation.statistics
+
+# High priority leads with tasks
+iris sdk:call leads.aggregation.list has_incomplete_tasks=1 sort=priority order=desc
+
+# Recently updated leads
+iris sdk:call leads.aggregation.getRecentLeads 10 sort=updated_at
+
+# Filter by status (comma-separated)
+iris sdk:call leads.aggregation.list status=Won,Negotiation per_page=20
+```
+
+#### Basic Lead Operations
 
 ```php
 // Create a lead
@@ -511,7 +750,10 @@ assert($response->content === 'Mocked response');
 | `$iris->agents` | `list`, `get`, `create`, `update`, `delete`, `chat`, `multiStep`, `addMemory`, `togglePublic`, `generateWebhook` |
 | `$iris->workflows` | `execute`, `getStatus`, `continue`, `completeTask`, `generate`, `generateWithAgents`, `templates`, `importTemplate`, `runs`, `getLogs` |
 | `$iris->bloqs` | `list`, `get`, `create`, `update`, `delete`, `lists`, `items`, `uploadFile`, `files` |
-| `$iris->leads` | `list`, `get`, `create`, `update`, `delete`, `addNote`, `activities`, `tasks`, `generateResponse`, `recordOutreach` |
+| `$iris->leads` | `list`, `get`, `create`, `update`, `delete`, `search`, `addNote`, `activities`, `tasks`, `deliverables`, `aggregation`, `generateResponse`, `recordOutreach` |
+| `$iris->leads->tasks()` | `all`, `create`, `update`, `delete`, `reorder` |
+| `$iris->leads->deliverables()` | `list`, `create`, `uploadFile`, `update`, `delete`, `send` |
+| `$iris->leads->aggregation()` | `statistics`, `list`, `get`, `getRecentLeads`, `requirements` |
 | `$iris->integrations` | `available`, `connected`, `getOAuthUrl`, `test`, `execute`, `functions` |
 | `$iris->rag` | `query`, `index`, `indexFile`, `searchSimilar`, `delete` |
 
