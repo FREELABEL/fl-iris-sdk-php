@@ -1,98 +1,359 @@
-# IRIS PHP SDK
+# IRIS AI Platform
 
-**Build production-ready AI agents in minutes, not months.**
-
-The official PHP SDK for the [IRIS AI Platform](https://app.heyiris.io) - the fastest way to create, deploy, and scale intelligent AI agents with persistent memory, multi-step workflows, and 17+ integrations.
-
-[![PHP 8.1+](https://img.shields.io/badge/PHP-8.1+-blue.svg)](https://www.php.net/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+**Create AI assistants that actually know your business.**
 
 ---
 
-## Why IRIS?
+## What is IRIS?
 
-| Challenge | Traditional Approach | With IRIS SDK |
-|-----------|---------------------|---------------|
-| **Building AI agents** | Weeks of prompt engineering | 5 lines of code |
-| **Persistent memory** | Build your own RAG system | Automatic vectorization |
-| **Integrations** | Write custom code for each | 17+ built-in services |
-| **Deployment** | Infrastructure setup | Cloud-hosted at app.heyiris.io |
-| **Scaling** | Complex architecture | One API call |
+IRIS lets you build **AI agents** - intelligent assistants that can answer questions, perform tasks, and connect to your tools. Think of it like creating your own custom ChatGPT that knows your products, your processes, and your data.
+
+**No coding required.** Everything can be done through our visual interface at [app.heyiris.io](https://app.heyiris.io). This SDK and CLI are optional power tools for developers who want programmatic control.
 
 ---
 
-## See It In Action
+## Who is This For?
 
-### 30-Second Demo: Chat With Any Agent
-
-```bash
-./bin/iris chat 11 "Hello, what can you do?"
-```
-
-```
-╭─────────────────────────────────────────────────────────────╮
-│ 🤖 Agent #11                                                 │
-╰─────────────────────────────────────────────────────────────╯
-
-📤 Sending: "Hello, what can you do?"
-
-⠙ ⏳ Running (2.3s)
-
-✅ Complete!
-
-╭─────────────────────────────────────────────────────────────╮
-│ Hello! I'm your AI assistant. I can help you with:          │
-│ • Managing leads and CRM tasks                              │
-│ • Generating content and analyzing data                     │
-│ • Connecting to Google Drive, Gmail, Slack & more           │
-│ • Automating workflows                                      │
-╰─────────────────────────────────────────────────────────────╯
-
-📊 Tokens: 245 | Time: 3.2s | Model: gpt-4o-mini
-```
-
-### Create Your First Agent (5 Lines)
-
-```php
-$iris = new IRIS(['api_key' => 'your-key', 'user_id' => 193]);
-
-$agent = $iris->agents->create(new AgentConfig(
-    name: 'Sales Assistant',
-    prompt: 'You are a helpful sales assistant.',
-));
-
-echo $agent->getSimpleUrl();  // https://app.heyiris.io/agent/simple/123
-```
-
-**Your agent is now live and shareable!** → [Learn more about agents](#-ai-agents)
+- **Business owners** who want AI assistants for customer support, sales, or internal operations
+- **Agencies** building AI solutions for clients
+- **Developers** integrating AI capabilities into applications
+- **Teams** that need intelligent automation without hiring ML engineers
 
 ---
 
-## Quick Start
+## Platform Features Explained
 
-### Installation
+### 🤖 AI Agents — Your Custom AI Assistants
 
+**What it is:** An AI agent is like having a smart employee that's available 24/7. You tell it what you want it to do, give it knowledge about your business, and it handles conversations and tasks for you.
+
+**Real examples:**
+- A **customer support agent** that answers product questions using your documentation
+- A **sales assistant** that qualifies leads and schedules meetings
+- A **recruiting agent** that screens resumes and answers candidate questions
+- An **internal helper** that answers HR policy questions for employees
+
+**How it works:**
+1. Give your agent a name and personality ("friendly and professional")
+2. Write instructions for what it should do ("Help customers with product questions")
+3. Upload files so it knows your business (product guides, FAQs, policies)
+4. Share the link - your agent is live!
+
+**Why this matters:** You don't need to train an AI model or write complex code. Just describe what you want in plain English, upload your files, and your agent is ready to use.
+
+---
+
+### 📚 Knowledge Base — Your Agent's Memory
+
+**What it is:** The knowledge base is where your agent stores everything it needs to know. When someone asks a question, your agent searches this memory to find relevant information and give accurate answers.
+
+**Real examples:**
+- Upload your **product catalog** → Agent can answer "What's the price of X?" or "Do you have Y in stock?"
+- Upload your **employee handbook** → Agent answers "How many vacation days do I have?" or "What's the expense policy?"
+- Upload **training materials** → Agent helps onboard new team members
+- Upload **sales playbooks** → Agent coaches reps on handling objections
+
+**How it works:**
+1. Create a knowledge base (just give it a name)
+2. Upload files - PDFs, Word docs, spreadsheets, text files
+3. IRIS automatically reads and indexes everything
+4. Your agent can now search and reference this information
+
+**Why this matters:** Traditional chatbots give generic answers. Your IRIS agent gives answers based on YOUR actual documents and data. When your information changes, just upload the new files - no retraining required.
+
+---
+
+### 🔗 Integrations — Connect Your Tools
+
+**What it is:** Integrations let your agent connect to the software you already use. Instead of just chatting, your agent can actually DO things - search your Google Drive, read your emails, send Slack messages, or update your CRM.
+
+**Available integrations:**
+| Category | Services |
+|----------|----------|
+| **Google Workspace** | Drive (search files), Gmail (read/send), Calendar (check/create events) |
+| **Communication** | Slack (send messages), Discord (post updates) |
+| **Email Marketing** | Mailjet, Mailchimp (manage campaigns) |
+| **Business Tools** | Stripe (payments), Buffer (social media) |
+| **AI Models** | OpenAI, Anthropic Claude, Google Gemini |
+
+**Real examples:**
+- "Find the Q3 sales report in my Google Drive" → Agent searches and retrieves it
+- "Send a Slack message to #marketing about the campaign launch" → Agent sends it
+- "What meetings do I have tomorrow?" → Agent checks your Google Calendar
+- "Draft a follow-up email to John" → Agent writes it and optionally sends via Gmail
+
+**Why this matters:** Your agent becomes a true assistant that takes action, not just a chatbot that gives advice. One agent can work across all your tools.
+
+---
+
+### 📊 Lead Management — Complete CRM System
+
+**What it is:** A full-featured CRM built right into IRIS. Track contacts, manage deals, assign tasks, send invoices, and automate follow-ups. Your AI agents can access and update this data, creating a seamless workflow between human and AI.
+
+**Lead Tracking:**
+- **Contact information** - Name, email, phone, company, and any custom fields you need
+- **Pipeline stages** - New → Contacted → Negotiation → Won/Lost (customizable)
+- **Lead scoring** - Automatically prioritize based on engagement and fit
+- **Source tracking** - Know where each lead came from
+
+**Tasks & Follow-ups:**
+- **Task management** - Create to-dos with due dates for each lead
+- **Automated reminders** - Never miss a follow-up
+- **Task templates** - Standard checklists for your sales process
+- **Assignment** - Delegate tasks to team members or AI agents
+
+**Notes & Activity History:**
+- **Conversation notes** - Log every interaction
+- **Activity timeline** - See the complete history of each lead
+- **AI-generated summaries** - Your agent can summarize long email threads
+- **Searchable history** - Find any conversation instantly
+
+**Invoicing & Payments:**
+- **Create invoices** - Generate professional invoices for leads
+- **Stripe integration** - Accept payments directly
+- **Invoice tracking** - See paid, pending, and overdue invoices
+- **Itemized billing** - Add line items, quantities, and descriptions
+
+**Deliverables:**
+- **Track what you've delivered** - Files, links, access credentials
+- **Proof of delivery** - Document what was provided and when
+- **Client portal** - Leads can view their deliverables
+- **Version history** - Track updates to deliverables
+
+**Automation Capabilities:**
+- **Auto-assign leads** - Route new leads to the right person or agent
+- **Trigger workflows** - When lead status changes, kick off automations
+- **AI follow-up** - Let your agent draft and send follow-up emails
+- **Lead enrichment** - Automatically research companies and contacts
+
+**Real examples:**
+- Sales team tracks prospects from first contact to closed deal, with AI drafting follow-up emails
+- Recruiting agency manages candidates, with agents scheduling interviews
+- Agency tracks client projects, invoices for work completed, and delivers assets
+- Service business manages customer requests, dispatches work, and collects payment
+
+**Why this matters:** You don't need a separate CRM like Salesforce or HubSpot. Everything is built-in, and your AI agents can work with your leads directly - researching, following up, and even closing deals.
+
+---
+
+### 🎙️ Voice AI Agents — Talk to Your AI
+
+**What it is:** Create AI agents that can talk on the phone. Real voice conversations, not just text chat. Your agent can answer calls, make outbound calls, and have natural conversations.
+
+**How it works:**
+1. Create an agent with voice enabled
+2. Connect a phone number (via VAPI integration)
+3. Your agent answers calls 24/7
+4. Conversations are transcribed and logged
+
+**Real examples:**
+- **Appointment scheduling** - "Hi, I'd like to book an appointment for Thursday" → Agent checks calendar, confirms availability, books it
+- **Customer support** - Customers call, agent answers questions using your knowledge base
+- **Lead qualification** - Agent calls new leads, asks qualifying questions, updates your CRM
+- **After-hours support** - Agent handles calls when your team is unavailable
+
+**Voice capabilities:**
+- Natural-sounding speech synthesis
+- Real-time conversation (not pre-recorded menus)
+- Multiple voice options and personalities
+- Call recording and transcription
+- Handoff to human when needed
+
+**Why this matters:** Phone support is expensive. A voice AI agent can handle routine calls 24/7 at a fraction of the cost, while complex issues get routed to your team.
+
+---
+
+### 🔄 Agentic Workflows — AI That Takes Action
+
+**What it is:** Unlike traditional automation (if this, then that), agentic workflows let your AI decide what to do based on the situation. You describe the goal, and the agent figures out the steps.
+
+**Traditional automation vs IRIS:**
+
+| Traditional (N8N, Zapier) | IRIS Agentic Workflow |
+|---------------------------|----------------------|
+| "IF email contains 'urgent' THEN send to channel A" | "Triage incoming emails by urgency and route appropriately" |
+| Must define every possible path | AI handles edge cases intelligently |
+| Breaks when unexpected situations arise | Adapts to new situations |
+| Requires technical setup for each rule | Just describe what you want in English |
+
+**Real examples:**
+- "Process support tickets - categorize by issue type, draft responses for simple questions, escalate complex issues to the team"
+- "When a new lead comes in, research their company, find relevant case studies in our files, and draft a personalized outreach email"
+- "Review these resumes against the job requirements and rank the top 5 candidates"
+
+**Why this matters:** You describe the outcome you want, not every step to get there. The AI figures out how to accomplish your goal, just like a smart employee would.
+
+---
+
+### 🤖 AI Model Access — Use Any AI
+
+**What it is:** IRIS connects to all major AI providers. Use GPT-4, Claude, Gemini, or even run local models with Ollama. Switch models anytime without changing your agents.
+
+**Available models:**
+| Provider | Models |
+|----------|--------|
+| **OpenAI** | GPT-4o, GPT-4o-mini |
+| **Anthropic** | Claude 3.5 Sonnet, Claude 3 Haiku |
+| **Google** | Gemini Pro, Gemini Flash 1.5 |
+| **Open Source** | DeepSeek, Llama 3.1 (via Ollama) |
+
+**Why multiple models?**
+- **Cost optimization** - Use cheaper models for simple tasks, premium models for complex ones
+- **Capability matching** - Some models are better at certain tasks
+- **Redundancy** - If one provider has issues, switch to another
+- **Privacy** - Run local models for sensitive data
+
+---
+
+### 📈 Analytics & Reporting
+
+**What it is:** See how your agents are performing. Track conversations, measure response quality, and understand what your users are asking about.
+
+**What you can track:**
+- **Conversation metrics** - Total chats, average length, response times
+- **Usage patterns** - Peak hours, popular topics, common questions
+- **Agent performance** - Which agents are most used, satisfaction indicators
+- **Cost tracking** - Token usage, model costs, budget monitoring
+
+**Why this matters:** Data helps you improve. See which agents need better training, identify gaps in your knowledge base, and prove ROI to stakeholders.
+
+---
+
+### 🏢 Team & Collaboration
+
+**What it is:** Work together on agents and knowledge bases. Control who can see, edit, and manage your AI resources.
+
+**Team features:**
+- **User roles** - Admin, editor, viewer permissions
+- **Shared agents** - Whole team uses the same AI assistants
+- **Shared knowledge** - Central knowledge base everyone contributes to
+- **Activity logs** - See who changed what and when
+
+---
+
+### 🎨 White Label & Custom Branding (Enterprise)
+
+**What it is:** Make IRIS look like your own product. Custom domains, your logo, your colors - your clients never see the IRIS brand.
+
+**Customization options:**
+- **Custom domain** - agents.yourcompany.com
+- **Logo and colors** - Match your brand identity
+- **Remove IRIS branding** - Completely white-labeled
+- **Custom email templates** - Notifications come from your domain
+
+**Why this matters:** Agencies and enterprises can offer AI agents as their own product or seamlessly integrate into existing platforms.
+
+---
+
+## Pricing & Plans
+
+IRIS offers flexible pricing from free to enterprise. Start free and scale as you grow.
+
+### Plan Overview
+
+| Feature | Free | Starter | Growth | Professional | Enterprise |
+|---------|------|---------|--------|--------------|------------|
+| **AI Agents** | 50 | 50 | 500 | 1,000 | Unlimited |
+| **Workflows** | 3 | 10 | 25 | 100 | Unlimited |
+| **Contacts (CRM)** | 100 | 100 | 10,000 | 250,000 | Unlimited |
+| **Knowledge Items** | 50 | 100 | 2,000 | 10,000 | Unlimited |
+| **AI Credits/month** | 100 | 1,000 | 5,000 | 20,000 | Unlimited |
+| **Voice AI** | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **White Label** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **API Access** | Limited | ✅ | ✅ | ✅ | ✅ |
+
+### What's Included in Every Plan
+
+- ✅ All AI models (GPT-4o, Claude, Gemini, etc.)
+- ✅ Knowledge base with automatic RAG
+- ✅ 17+ integrations (Google, Slack, etc.)
+- ✅ Lead management CRM
+- ✅ Web UI, CLI, and SDK access
+
+### Usage-Based Pricing
+
+AI credits are consumed when your agents respond. Different models cost different amounts:
+- **Budget models** (GPT-4o-mini, Haiku) - ~1 credit per response
+- **Standard models** (GPT-4o, Sonnet) - ~5 credits per response
+- **Premium models** (Claude Opus) - ~15 credits per response
+
+Most users find the included credits more than enough. If you need more, credits are available as add-ons.
+
+### Free Trial
+
+Every new account gets **7 days of Enterprise access** - all features, unlimited usage. After the trial, you're automatically moved to the Free plan unless you upgrade.
+
+---
+
+## Three Ways to Use IRIS
+
+### 1. Web Interface (No Code)
+Go to [app.heyiris.io](https://app.heyiris.io) and do everything visually:
+- Click to create agents
+- Drag and drop to upload files
+- Point and click to configure integrations
+- Visual pipeline for managing leads
+
+**Best for:** Everyone, especially non-technical users
+
+### 2. Command Line (CLI)
+Run commands in your terminal for quick actions:
 ```bash
-composer require iris-ai/sdk
-```
-
-### Setup (One-Time)
-
-```bash
-./bin/iris config setup
-```
-
-### That's It! Start Building
-
-```bash
-# Chat with an agent
-./bin/iris chat 11 "Analyze my sales data"
-
-# Search your leads
+./bin/iris chat 11 "What can you help me with?"
 ./bin/iris sdk:call leads.search search=acme status=Won
+```
 
-# Create an agent
-./bin/iris sdk:call agents.create name="Support Bot" prompt="Help customers..."
+**Best for:** Developers, automation scripts, quick testing
+
+### 3. PHP SDK (Code)
+Full programmatic control for building applications:
+```php
+$agent = $iris->agents->create(new AgentConfig(
+    name: 'Support Bot',
+    prompt: 'Help customers with product questions',
+));
+```
+
+**Best for:** Developers integrating IRIS into applications
+
+---
+
+## Everything Stays in Sync
+
+Create an agent in the **web interface**, update it from the **CLI**, access it via the **SDK** - everything works together. Your whole team can collaborate:
+
+- Marketing creates an agent in the UI
+- Developer connects it to the company app via SDK
+- Operations updates the knowledge base by uploading new files
+- Everyone chats with the same agent
+
+---
+
+## Getting Started
+
+### Option 1: Just Use the Web Interface
+1. Go to [app.heyiris.io](https://app.heyiris.io)
+2. Create an account
+3. Click "New Agent" and follow the prompts
+4. Upload your files to the knowledge base
+5. Share your agent's link
+
+**No installation, no code, no technical setup.**
+
+### Option 2: Use the SDK/CLI (Developers)
+```bash
+# Install the SDK
+composer require iris-ai/sdk
+
+# Configure your credentials
+./bin/iris config setup
+
+# Start chatting with agents
+./bin/iris chat 11 "Hello!"
+
+# Or use in your PHP code
+$iris = new IRIS(['api_key' => 'your-key', 'user_id' => 193]);
+$response = $iris->agents->chat(11, [['role' => 'user', 'content' => 'Hello!']]);
 ```
 
 ---
