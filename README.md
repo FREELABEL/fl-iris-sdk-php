@@ -12,6 +12,106 @@ composer require iris-ai/sdk
 - PHP 8.1+
 - Guzzle 7.0+
 
+## CLI Tool
+
+The SDK includes a lightweight CLI for quick access to all SDK features from the command line.
+
+### Setup
+
+```bash
+# Set your credentials
+export IRIS_API_KEY=sk_live_xxxxx
+export IRIS_USER_ID=123
+
+# Make the CLI executable (if needed)
+chmod +x vendor/iris-ai/sdk/bin/iris
+
+# Or use it directly
+./vendor/bin/iris list
+```
+
+### Usage
+
+The CLI uses a dynamic proxy pattern to access any SDK resource and method:
+
+```bash
+# Pattern: iris sdk:call <resource>.<method> [params] [options]
+
+# Lead aggregation statistics
+./vendor/bin/iris sdk:call leads.aggregation.statistics --json
+
+# Get 10 most recently updated leads
+./vendor/bin/iris sdk:call leads.aggregation.getRecentLeads 10
+
+# List high-priority leads with incomplete tasks
+./vendor/bin/iris sdk:call leads.aggregation.list has_incomplete_tasks=1 sort=priority
+
+# Get leads by status (Won/Negotiation/Proposal)
+./vendor/bin/iris sdk:call leads.aggregation.list status=Won sort=updated_at per_page=10
+
+# Get specific lead details
+./vendor/bin/iris sdk:call leads.get 123
+
+# Chat with an agent
+./vendor/bin/iris sdk:call agents.chat agent_id=5 message="Hello"
+
+# Execute workflow
+./vendor/bin/iris sdk:call workflows.execute '{"agent_id":5,"query":"Research"}'
+
+# List bloqs
+./vendor/bin/iris sdk:call bloqs.list
+
+# RAG semantic search
+./vendor/bin/iris sdk:call rag.query question="vacation policy" topK=5
+```
+
+### Output Formats
+
+```bash
+# JSON output (for scripting/automation)
+iris sdk:call leads.list --json
+
+# Raw output (no formatting)
+iris sdk:call leads.get 123 --raw
+
+# Smart tables (default) - automatically formats data
+iris sdk:call leads.aggregation.statistics
+```
+
+### Parameter Types
+
+The CLI auto-detects parameter types:
+- `true`/`false` → boolean
+- `123` → integer  
+- `12.5` → float
+- `null` → null
+- `{"key":"val"}` → JSON object
+- `[1,2,3]` → JSON array
+- `anything else` → string
+
+### For Autonomous Agents
+
+Perfect for programmatic access in autonomous development pipelines:
+
+```bash
+#!/bin/bash
+# Platform AI Agent - Find high-priority work
+LEADS=$(iris sdk:call leads.aggregation.list has_incomplete_tasks=1 --json)
+
+# SDK AI Agent - Get requirements
+REQS=$(iris sdk:call leads.aggregation.requirements 123 --json)
+
+# QA Engineer Agent - Monitor stats
+STATS=$(iris sdk:call leads.aggregation.statistics --json)
+
+# Process results
+echo $LEADS | jq '.[] | select(.priority_score > 50)'
+```
+
+### Extensibility
+
+The CLI is a pure proxy - any new SDK resources or methods are automatically available without code changes.
+
 ## Quick Start
 
 ```php
@@ -329,6 +429,60 @@ $iris->asUser(456);
 ```
 
 ## Testing
+
+The SDK includes comprehensive test suites and example scripts.
+
+### Quick Start - Lead Aggregation Test
+
+Test the Lead Aggregation API with automatic environment configuration:
+
+```bash
+# 1. Copy environment template
+cp .env.example .env
+
+# 2. Add your API key to .env
+# IRIS_API_KEY=your_api_key_here
+
+# 3. Run the test
+php test-lead-aggregation-user-193.php
+```
+
+**Output:**
+```
+🔧 Configuration:
+   Environment: local
+   Base URL: https://local.raichu.freelabel.net
+   User ID: 193
+
+📊 Lead Statistics:
+  ✓ Total Leads: 125
+  ✓ Total Tasks: 487
+  ✓ Incomplete Tasks: 234
+  ✓ Active Leads: 89
+
+  🔥 Top Priority Leads:
+     [95] Acme Corp (active)
+     [87] Tech Startup (qualified)
+✅ Test completed successfully!
+```
+
+**Environment Configuration:**
+
+For **local development** (default):
+```env
+IRIS_ENV=local
+IRIS_LOCAL_URL=https://local.raichu.freelabel.net
+```
+
+For **production testing**:
+```env
+IRIS_ENV=production
+IRIS_PRODUCTION_URL=https://apiv2.heyiris.io
+```
+
+📖 **[Full Testing Documentation →](TEST_README.md)**
+
+### Unit Tests
 
 ```php
 use IRIS\SDK\Http\MockClient;

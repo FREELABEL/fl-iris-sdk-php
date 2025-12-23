@@ -85,6 +85,60 @@ class LeadsResource
     }
 
     /**
+     * Search leads for the current user with advanced filters.
+     *
+     * @param array{
+     *     search?: string,
+     *     bloq_id?: int,
+     *     status?: string,
+     *     lead_type?: string,
+     *     page?: int,
+     *     per_page?: int,
+     *     sort?: string,
+     *     order?: string,
+     *     include_notes?: bool,
+     *     include_events?: bool
+     * } $filters Search and filter options
+     * @return array Raw API response with leads and metadata
+     *
+     * @example
+     * ```php
+     * // Search for leads by name
+     * $results = $iris->leads->search(['search' => 'ayala']);
+     *
+     * // Search with bloq filter and pagination
+     * $results = $iris->leads->search([
+     *     'bloq_id' => 40,
+     *     'search' => 'john',
+     *     'status' => 'Won',
+     *     'per_page' => 50,
+     *     'include_notes' => true,
+     *     'include_events' => true
+     * ]);
+     *
+     * foreach ($results['data'] as $lead) {
+     *     echo "{$lead['name']} - {$lead['status']}\n";
+     * }
+     * ```
+     */
+    public function search(array $filters = []): array
+    {
+        $userId = $this->config->requireUserId();
+        
+        // Convert boolean values to strings for query parameters
+        if (isset($filters['include_notes'])) {
+            $filters['include_notes'] = $filters['include_notes'] ? 'true' : 'false';
+        }
+        if (isset($filters['include_events'])) {
+            $filters['include_events'] = $filters['include_events'] ? 'true' : 'false';
+        }
+        
+        $response = $this->http->get("/api/v1/users/{$userId}/leads", $filters);
+        
+        return $response;
+    }
+
+    /**
      * Get a specific lead by ID.
      *
      * @param int $leadId Lead ID
@@ -482,6 +536,58 @@ class LeadsResource
     public function tasks(int $leadId): TasksResource
     {
         return new TasksResource($this->http, $this->config, $leadId);
+    }
+
+    /**
+     * Access deliverables sub-resource for a lead.
+     *
+     * @param int $leadId Lead ID
+     * @return DeliverablesResource
+     *
+     * @example
+     * ```php
+     * // List deliverables
+     * $deliverables = $iris->leads->deliverables(123)->list();
+     *
+     * // Add agent link
+     * $deliverable = $iris->leads->deliverables(123)->create([
+     *     'type' => 'link',
+     *     'title' => 'Trained AI Agent',
+     *     'external_url' => 'https://app.heyiris.io/agents/456',
+     * ]);
+     * ```
+     */
+    public function deliverables(int $leadId): DeliverablesResource
+    {
+        return new DeliverablesResource($this->http, $this->config, $leadId);
+    }
+
+    /**
+     * Access lead aggregation sub-resource.
+     *
+     * Get aggregated lead data for autonomous AI agent pipeline.
+     *
+     * @return LeadAggregationResource
+     *
+     * @example
+     * ```php
+     * // Get statistics
+     * $stats = $iris->leads->aggregation()->statistics();
+     * echo "Incomplete tasks: {$stats['incomplete_tasks']}\n";
+     *
+     * // List high-priority leads
+     * $leads = $iris->leads->aggregation()->list([
+     *     'has_incomplete_tasks' => 1,
+     *     'min_priority' => 50,
+     * ]);
+     *
+     * // Get specific lead with aggregated data
+     * $lead = $iris->leads->aggregation()->get(123);
+     * ```
+     */
+    public function aggregation(): LeadAggregationResource
+    {
+        return new LeadAggregationResource($this->http, $this->config);
     }
 
     /**

@@ -84,6 +84,7 @@ class Client
         return new GuzzleClient([
             'handler' => $stack,
             'timeout' => $this->config->timeout,
+            'verify' => false,  // Disable SSL verification for local development
             // Headers are set per-request via AuthManager for endpoint-specific auth
             'http_errors' => true,
         ]);

@@ -19,7 +19,7 @@ class Config
     /**
      * Base URL for the main API
      */
-    public string $baseUrl = 'https://api.freelabel.net';
+    public string $baseUrl = 'https://apiv2.heyiris.io';
 
     /**
      * Base URL for the IRIS API (V5 workflows)
