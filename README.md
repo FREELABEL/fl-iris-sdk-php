@@ -97,6 +97,106 @@ composer require iris-ai/sdk
 
 ---
 
+## Agentic Workflows vs Node-Based Automation
+
+**IRIS takes a fundamentally different approach to automation.**
+
+Traditional tools like N8N, Zapier, and Make use **node-based workflows** - you drag boxes, connect lines, and configure each step manually. Every decision path must be pre-defined. Every edge case handled explicitly.
+
+IRIS uses **agentic workflows** - you describe *what* you want, and AI figures out *how* to do it.
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    NODE-BASED (Traditional)                              │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│   [Trigger] → [Parse Email] → [If Contains X] → [Route A]               │
+│                                    ↓                                     │
+│                              [If Contains Y] → [Route B]                │
+│                                    ↓                                     │
+│                              [Else] → [Route C] → [Format] → [Send]     │
+│                                                                          │
+│   ❌ Must pre-define every path                                          │
+│   ❌ Breaks when edge cases appear                                       │
+│   ❌ Complex logic = spaghetti connections                               │
+│   ❌ Changing requirements = rebuild the flow                            │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    AGENTIC (IRIS)                                        │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│   [Agent with Capabilities] ← "Process incoming emails, categorize      │
+│         ↓                      by urgency, draft responses for          │
+│   Gmail | Slack | CRM          routine inquiries, escalate complex      │
+│         ↓                      issues to the team via Slack"            │
+│   [AI Decides & Acts]                                                    │
+│                                                                          │
+│   ✅ Handles edge cases intelligently                                    │
+│   ✅ Adapts to new situations                                            │
+│   ✅ Natural language = anyone can modify                                │
+│   ✅ Changing requirements = update the prompt                           │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### How It Works
+
+1. **Give agents capabilities** (integrations they can use)
+2. **Write a prompt** (goals, intentions, guidelines)
+3. **Let AI decide** (routes, actions, responses)
+
+```php
+// Create an agent with capabilities
+$agent = $iris->agents->create(new AgentConfig(
+    name: 'Email Processor',
+    prompt: <<<PROMPT
+        You are an email processing assistant.
+
+        GOALS:
+        - Categorize incoming emails by urgency (high/medium/low)
+        - Draft responses for routine inquiries
+        - Escalate complex issues to Slack #support channel
+        - Log all customer interactions to our CRM
+
+        GUIDELINES:
+        - Be professional but friendly
+        - If unsure, ask for clarification rather than guessing
+        - Always CC the account manager on high-value client emails
+    PROMPT,
+    integrations: ['gmail', 'slack', 'google-drive'],
+));
+
+// That's it! The agent figures out the rest.
+$response = $iris->agents->chat($agent->id, [
+    ['role' => 'user', 'content' => 'Process the last 10 unread emails']
+]);
+```
+
+### Prompts Guide Everything
+
+With IRIS, **prompts are your workflow logic**:
+
+| Traditional Node | IRIS Prompt Equivalent |
+|-----------------|------------------------|
+| If/Then branch | "If the customer mentions pricing, focus on value..." |
+| Loop node | "For each lead in the list, research their company..." |
+| Filter node | "Only process emails from @enterprise.com domains..." |
+| Transform node | "Summarize the document into 3 bullet points..." |
+| API call node | "Search Google Drive for relevant contracts..." |
+
+### Why This Matters
+
+- **Non-technical users** can modify workflows by editing prompts
+- **Edge cases** are handled intelligently, not with more nodes
+- **Complex logic** becomes simple English instructions
+- **Maintenance** is updating a prompt, not rewiring a flowchart
+
+📖 [See Multi-Step Workflows in Action](#-multi-step-workflows)
+
+---
+
 ## Core Features
 
 ### 🤖 AI Agents
