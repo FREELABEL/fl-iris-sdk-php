@@ -190,23 +190,93 @@ class DeliverablesResource
     }
 
     /**
+     * Preview the deliverable email before sending.
+     *
+     * Uses AI to generate a personalized email based on the lead context.
+     *
+     * @param array{
+     *     deliverable_ids: array<int>,
+     *     message_mode?: string,
+     *     custom_context?: string,
+     *     subject?: string,
+     *     include_project_context?: bool,
+     *     attach_invoice?: bool,
+     *     plain_text?: bool
+     * } $options Preview options
+     * @return array Generated email preview with subject and body
+     *
+     * @example
+     * ```php
+     * // Generate AI email preview
+     * $preview = $iris->leads->deliverables(16)->previewEmail([
+     *     'deliverable_ids' => [203, 204],
+     *     'message_mode' => 'ai',
+     *     'subject' => 'Your deliverables are ready',
+     *     'include_project_context' => true,
+     * ]);
+     *
+     * echo "Subject: {$preview['subject']}\n";
+     * echo "Body:\n{$preview['body']}\n";
+     *
+     * // If satisfied, send the email
+     * $result = $iris->leads->deliverables(16)->send([
+     *     'deliverable_ids' => [203, 204],
+     *     'email_content' => $preview['body'],
+     *     'subject' => $preview['subject'],
+     * ]);
+     * ```
+     */
+    public function previewEmail(array $options): array
+    {
+        $response = $this->http->post(
+            "/api/v1/leads/{$this->leadId}/deliverables/preview-email",
+            $options
+        );
+
+        return $response['data'] ?? $response;
+    }
+
+    /**
      * Send deliverable email notification to the lead.
      *
-     * @param array $options Email options
-     *   - deliverable_ids: Array of deliverable IDs to send
-     *   - subject: Optional custom email subject
-     *   - message: Optional custom email message
-     *
+     * @param array{
+     *     deliverable_ids: array<int>,
+     *     recipient_emails?: array<string>,
+     *     subject?: string,
+     *     message?: string,
+     *     email_content?: string,
+     *     message_mode?: string,
+     *     custom_context?: string,
+     *     include_project_context?: bool,
+     *     attach_invoice?: bool,
+     *     attach_files?: bool,
+     *     plain_text?: bool
+     * } $options Email options
      * @return array Email send result
      *
      * @example
      * ```php
-     * // Send specific deliverables
-     * $result = $iris->leads->deliverables(123)->send([
-     *     'deliverable_ids' => [456, 789],
-     *     'subject' => 'Your AI Agent is Ready!',
-     *     'message' => 'Here are your deliverables...',
+     * // Send with AI-generated content
+     * $result = $iris->leads->deliverables(16)->send([
+     *     'deliverable_ids' => [203],
+     *     'message_mode' => 'ai',
+     *     'subject' => 'Your deliverables are ready',
+     *     'recipient_emails' => ['mike@greenleaf.co'],
+     *     'include_project_context' => true,
      * ]);
+     *
+     * // Send with custom content
+     * $result = $iris->leads->deliverables(16)->send([
+     *     'deliverable_ids' => [203, 204],
+     *     'subject' => 'Project Deliverables',
+     *     'email_content' => 'Hi Michael, Your project files are ready...',
+     *     'recipient_emails' => ['mike@greenleaf.co'],
+     *     'attach_files' => true,
+     * ]);
+     *
+     * if ($result['success']) {
+     *     echo "Email sent to " . implode(', ', $result['sent_to']) . "\n";
+     * }
      * ```
      */
     public function send(array $options = []): array
@@ -214,5 +284,48 @@ class DeliverablesResource
         $response = $this->http->post("/api/v1/leads/{$this->leadId}/deliverables/send", $options);
 
         return $response['data'] ?? $response;
+    }
+
+    /**
+     * Convenience method to preview and send deliverables email.
+     *
+     * First generates an AI preview, then sends it.
+     *
+     * @param array<int> $deliverableIds IDs of deliverables to send
+     * @param array{
+     *     recipient_emails?: array<string>,
+     *     subject?: string,
+     *     include_project_context?: bool,
+     *     attach_invoice?: bool,
+     *     attach_files?: bool
+     * } $options Send options
+     * @return array Send result
+     *
+     * @example
+     * ```php
+     * // Generate and send in one step
+     * $result = $iris->leads->deliverables(16)->generateAndSend(
+     *     [203, 204],
+     *     [
+     *         'subject' => 'Your project is complete!',
+     *         'include_project_context' => true,
+     *     ]
+     * );
+     * ```
+     */
+    public function generateAndSend(array $deliverableIds, array $options = []): array
+    {
+        // First generate the preview
+        $preview = $this->previewEmail(array_merge([
+            'deliverable_ids' => $deliverableIds,
+            'message_mode' => 'ai',
+        ], $options));
+
+        // Then send with the generated content
+        return $this->send(array_merge([
+            'deliverable_ids' => $deliverableIds,
+            'email_content' => $preview['body'] ?? $preview['email_content'] ?? '',
+            'subject' => $preview['subject'] ?? $options['subject'] ?? 'Your deliverables are ready',
+        ], $options));
     }
 }

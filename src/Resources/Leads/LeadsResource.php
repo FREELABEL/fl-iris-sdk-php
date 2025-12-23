@@ -213,9 +213,23 @@ class LeadsResource
     public function addNote(int $leadId, string $content, array $metadata = []): array
     {
         return $this->http->post("/api/v1/leads/{$leadId}/notes", array_merge(
-            ['content' => $content],
+            ['message' => $content],
             $metadata
         ));
+    }
+
+    /**
+     * Delete a note from a lead.
+     *
+     * @param int $leadId Lead ID
+     * @param int $noteId Note ID
+     * @return bool
+     */
+    public function deleteNote(int $leadId, int $noteId): bool
+    {
+        $this->http->delete("/api/v1/webhooks/leads/{$leadId}/notes/{$noteId}");
+        
+        return true;
     }
 
     /**
@@ -591,6 +605,106 @@ class LeadsResource
     }
 
     /**
+     * Access outreach sub-resource for a lead.
+     *
+     * Generate AI-powered emails and send outreach to leads.
+     *
+     * @param int $leadId Lead ID
+     * @return OutreachResource
+     *
+     * @example
+     * ```php
+     * // Generate an email draft
+     * $draft = $iris->leads->outreach(123)->generateEmail(
+     *     'Follow up on our meeting last week',
+     *     ['tone' => 'professional']
+     * );
+     *
+     * // Send the email
+     * $result = $iris->leads->outreach(123)->sendEmail([
+     *     'to_email' => 'john@example.com',
+     *     'subject' => $draft['draft']['subject'],
+     *     'body_html' => $draft['draft']['body'],
+     * ]);
+     *
+     * // Or generate and send in one step
+     * $result = $iris->leads->outreach(123)->generateAndSend(
+     *     'john@example.com',
+     *     'Initial cold outreach'
+     * );
+     * ```
+     */
+    public function outreach(int $leadId): OutreachResource
+    {
+        return new OutreachResource($this->http, $this->config, $leadId);
+    }
+
+    /**
+     * Access outreach steps sub-resource for a lead.
+     *
+     * Manage the outreach checklist/strategy for engaging with leads.
+     *
+     * @param int $leadId Lead ID
+     * @return OutreachStepsResource
+     *
+     * @example
+     * ```php
+     * // List all steps
+     * $result = $iris->leads->outreachSteps(123)->list();
+     * echo "Progress: {$result['data']['stats']['progress_percent']}%\n";
+     *
+     * // Create a step
+     * $step = $iris->leads->outreachSteps(123)->create([
+     *     'title' => 'Send introduction email',
+     *     'type' => 'email',
+     * ]);
+     *
+     * // Mark step as completed
+     * $iris->leads->outreachSteps(123)->complete($stepId, 'Email sent successfully');
+     *
+     * // Initialize default strategy
+     * $iris->leads->outreachSteps(123)->initializeDefault();
+     * ```
+     */
+    public function outreachSteps(int $leadId): OutreachStepsResource
+    {
+        return new OutreachStepsResource($this->http, $this->config, $leadId);
+    }
+
+    /**
+     * Access invoices sub-resource for a lead.
+     *
+     * Create, manage, and send invoices associated with leads.
+     *
+     * @param int $leadId Lead ID
+     * @return InvoicesResource
+     *
+     * @example
+     * ```php
+     * // List invoices for a lead
+     * $invoices = $iris->leads->invoices(16)->list();
+     *
+     * // Create an invoice
+     * $invoice = $iris->leads->invoices(16)->create([
+     *     'price' => 25000,  // $250.00
+     *     'description' => 'AI Agent Development',
+     * ]);
+     *
+     * // Send invoice to lead
+     * $result = $iris->leads->invoices(16)->send($invoice['id'], [
+     *     'subject' => 'Invoice for your project',
+     * ]);
+     *
+     * // Mark as paid
+     * $iris->leads->invoices(16)->markPaid($invoice['id']);
+     * ```
+     */
+    public function invoices(int $leadId): InvoicesResource
+    {
+        return new InvoicesResource($this->http, $this->config, $leadId);
+    }
+
+    /**
      * Get activity types.
      *
      * @return array
@@ -600,5 +714,243 @@ class LeadsResource
         $response = $this->http->get("/api/v1/activities/types");
 
         return $response['types'] ?? $response;
+    }
+
+    /**
+     * Enrich a lead with external data.
+     *
+     * Uses AI and external sources to gather additional information
+     * about the lead (company info, social profiles, etc.)
+     *
+     * @param int $leadId Lead ID
+     * @param array{
+     *     auto_update?: bool,
+     *     sources?: array
+     * } $options Enrichment options
+     * @return array Enrichment result
+     *
+     * @example
+     * ```php
+     * // Enrich lead without auto-updating
+     * $result = $iris->leads->enrich(17, ['auto_update' => false]);
+     *
+     * // Enrich and auto-update lead fields
+     * $result = $iris->leads->enrich(17, ['auto_update' => true]);
+     * ```
+     */
+    public function enrich(int $leadId, array $options = []): array
+    {
+        return $this->http->post("/api/v1/leads/{$leadId}/enrich", $options);
+    }
+
+    /**
+     * Get enrichment status for a lead.
+     *
+     * Check if enrichment is in progress, completed, or has new data available.
+     *
+     * @param int $leadId Lead ID
+     * @return array Enrichment status
+     *
+     * @example
+     * ```php
+     * $status = $iris->leads->enrichmentStatus(17);
+     *
+     * if ($status['status'] === 'completed') {
+     *     echo "Enrichment complete! Found {$status['fields_enriched']} fields\n";
+     * }
+     * ```
+     */
+    public function enrichmentStatus(int $leadId): array
+    {
+        return $this->http->get("/api/v1/leads/{$leadId}/enrichment-status");
+    }
+
+    /**
+     * Parse a lead description using AI to extract structured data.
+     *
+     * This endpoint uses AI to parse freeform text and extract lead information
+     * like name, email, phone, company, budget, notes, and suggested tags.
+     *
+     * @param string $description Freeform text description of the lead
+     * @param int $bloqId Bloq ID where the lead will be added
+     * @param array{
+     *     available_tags?: array,
+     *     lifecycle_stages?: array,
+     *     check_duplicates?: bool,
+     *     enhance_notes?: bool,
+     *     use_existing_tags_only?: bool,
+     *     images?: array
+     * } $options Parsing options
+     * @return array Parsed lead data ready for create()
+     *
+     * @example
+     * ```php
+     * // Parse a lead from natural language
+     * $parsed = $iris->leads->parseDescription(
+     *     "David Park, freelance consultant, david.park@gmail.com, (555) 123-9876.
+     *      Needs professional headshots. Budget $500-$1500.",
+     *     40,
+     *     [
+     *         'check_duplicates' => true,
+     *         'enhance_notes' => true,
+     *     ]
+     * );
+     *
+     * // Result contains structured data:
+     * // $parsed['name'] = 'David Park'
+     * // $parsed['email'] = 'david.park@gmail.com'
+     * // $parsed['phone'] = '5551239876'
+     * // $parsed['price_min'] = 500
+     * // $parsed['price_max'] = 1500
+     * // $parsed['notes'] = 'Enhanced notes...'
+     * // $parsed['tags'] = [5, 1, 3]
+     *
+     * // Then create the lead
+     * $lead = $iris->leads->create($parsed);
+     * ```
+     */
+    public function parseDescription(string $description, int $bloqId, array $options = []): array
+    {
+        $userId = $this->config->requireUserId();
+
+        $data = array_merge([
+            'description' => $description,
+            'bloq_id' => (string) $bloqId,
+            'user_id' => $userId,
+            'check_duplicates' => $options['check_duplicates'] ?? true,
+            'enhance_notes' => $options['enhance_notes'] ?? true,
+            'use_existing_tags_only' => $options['use_existing_tags_only'] ?? false,
+            'images' => $options['images'] ?? null,
+        ], $options);
+
+        return $this->http->post("/api/v1/openai/process-lead-description", $data);
+    }
+
+    /**
+     * Parse a lead description and create the lead in one step.
+     *
+     * Convenience method that combines parseDescription() and create().
+     *
+     * @param string $description Freeform text description
+     * @param int $bloqId Bloq ID
+     * @param array $options Parsing and creation options
+     * @return Lead Created lead
+     *
+     * @example
+     * ```php
+     * // Create lead from natural language in one call
+     * $lead = $iris->leads->createFromDescription(
+     *     "John Smith, CEO of TechCorp, john@techcorp.com, interested in AI agents. Budget 5k-10k.",
+     *     40
+     * );
+     *
+     * echo "Created lead: {$lead->name} ({$lead->email})\n";
+     * ```
+     */
+    public function createFromDescription(string $description, int $bloqId, array $options = []): Lead
+    {
+        // Parse the description
+        $parsed = $this->parseDescription($description, $bloqId, $options);
+
+        // Ensure bloqId is set
+        $parsed['bloqId'] = (string) $bloqId;
+        $parsed['user_id'] = $this->config->requireUserId();
+
+        // Create the lead
+        return $this->create($parsed);
+    }
+
+    /**
+     * Get available tags for a bloq.
+     *
+     * Useful for providing available_tags to parseDescription().
+     *
+     * @param int $bloqId Bloq ID
+     * @return array List of available tags with id, name, color
+     */
+    public function getAvailableTags(int $bloqId): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->get("/api/v1/users/{$userId}/bloqs/{$bloqId}/tags");
+    }
+
+    /**
+     * Get lifecycle stages for leads.
+     *
+     * Useful for providing lifecycle_stages to parseDescription().
+     *
+     * @return array List of lifecycle stages with id, name, color
+     */
+    public function getLifecycleStages(): array
+    {
+        return $this->http->get("/api/v1/leads/lifecycle-stages");
+    }
+
+    /**
+     * Check for duplicate leads.
+     *
+     * @param string $email Email to check
+     * @param int $bloqId Bloq ID
+     * @return array Duplicate check result
+     */
+    public function checkDuplicate(string $email, int $bloqId): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->post("/api/v1/leads/check-duplicate", [
+            'email' => $email,
+            'bloq_id' => $bloqId,
+            'user_id' => $userId,
+        ]);
+    }
+
+    /**
+     * Bulk create leads from descriptions.
+     *
+     * Parse and create multiple leads from an array of descriptions.
+     *
+     * @param array $descriptions Array of description strings
+     * @param int $bloqId Bloq ID
+     * @param array $options Parsing options
+     * @return array Results with created leads and any errors
+     *
+     * @example
+     * ```php
+     * $results = $iris->leads->bulkCreateFromDescriptions([
+     *     "John Doe, john@example.com, needs website redesign",
+     *     "Jane Smith, jane@corp.com, interested in AI agents",
+     *     "Bob Wilson, bob@startup.io, mobile app development",
+     * ], 40);
+     *
+     * echo "Created {$results['success_count']} leads\n";
+     * if ($results['errors']) {
+     *     echo "Errors: " . count($results['errors']) . "\n";
+     * }
+     * ```
+     */
+    public function bulkCreateFromDescriptions(array $descriptions, int $bloqId, array $options = []): array
+    {
+        $results = [
+            'leads' => [],
+            'errors' => [],
+            'success_count' => 0,
+            'error_count' => 0,
+        ];
+
+        foreach ($descriptions as $index => $description) {
+            try {
+                $lead = $this->createFromDescription($description, $bloqId, $options);
+                $results['leads'][] = $lead;
+                $results['success_count']++;
+            } catch (\Exception $e) {
+                $results['errors'][] = [
+                    'index' => $index,
+                    'description' => substr($description, 0, 100) . '...',
+                    'error' => $e->getMessage(),
+                ];
+                $results['error_count']++;
+            }
+        }
+
+        return $results;
     }
 }

@@ -12,6 +12,10 @@ use IRIS\SDK\Resources\Bloqs\BloqsResource;
 use IRIS\SDK\Resources\Leads\LeadsResource;
 use IRIS\SDK\Resources\Integrations\IntegrationsResource;
 use IRIS\SDK\Resources\RAG\RAGResource;
+use IRIS\SDK\Resources\CloudFiles\CloudFilesResource;
+use IRIS\SDK\Resources\Usage\UsageResource;
+use IRIS\SDK\Resources\Vapi\VapiResource;
+use IRIS\SDK\Resources\Models\ModelsResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -101,6 +105,26 @@ class IRIS
     public RAGResource $rag;
 
     /**
+     * Cloud Files resource for file management
+     */
+    public CloudFilesResource $cloudFiles;
+
+    /**
+     * Usage resource for tracking API usage and billing
+     */
+    public UsageResource $usage;
+
+    /**
+     * VAPI resource for Voice AI phone numbers and assistants
+     */
+    public VapiResource $vapi;
+
+    /**
+     * Models resource for listing available AI models
+     */
+    public ModelsResource $models;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -130,6 +154,10 @@ class IRIS
         $this->leads = new LeadsResource($this->http, $this->config);
         $this->integrations = new IntegrationsResource($this->http, $this->config);
         $this->rag = new RAGResource($this->http, $this->config);
+        $this->cloudFiles = new CloudFilesResource($this->http, $this->config);
+        $this->usage = new UsageResource($this->http, $this->config);
+        $this->vapi = new VapiResource($this->http, $this->config);
+        $this->models = new ModelsResource($this->http, $this->config);
     }
 
     /**

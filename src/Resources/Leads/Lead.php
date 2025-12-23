@@ -24,7 +24,7 @@ class Lead
     public ?float $score;
     public array $tags;
     public ?array $customFields;
-    public ?string $notes;
+    public string|array|null $notes;
     public ?string $lastContactedAt;
     public ?string $createdAt;
     public ?string $updatedAt;

@@ -93,7 +93,7 @@ class AgentsResource
     }
 
     /**
-     * Update an existing agent.
+     * Update an existing agent (full replacement).
      *
      * @param int|string $agentId Agent ID
      * @param array $data Update data
@@ -108,6 +108,36 @@ class AgentsResource
         );
 
         return new Agent($response);
+    }
+
+    /**
+     * Partially update an agent (only specified fields).
+     * 
+     * This method fetches the current agent, merges your changes,
+     * and updates. Perfect for updating just one field without
+     * overwriting everything else.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $data Fields to update (e.g., ['initial_prompt' => '...'])
+     * @return Agent
+     * 
+     * @example Update just the prompt
+     * ```php
+     * $agent = $iris->agents->patch(356, [
+     *     'initial_prompt' => 'New instructions...'
+     * ]);
+     * ```
+     */
+    public function patch(int|string $agentId, array $data): Agent
+    {
+        // Get current agent data
+        $current = $this->get($agentId);
+        
+        // Merge with new data (new data overwrites current)
+        $merged = array_merge($current->toArray(), $data);
+        
+        // Update with merged data
+        return $this->update($agentId, $merged);
     }
 
     /**
@@ -301,5 +331,153 @@ class AgentsResource
         ]);
 
         return new ChatResponse($response);
+    }
+
+    /**
+     * Get the current file attachments for an agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @return array Current file attachments
+     */
+    public function getFileAttachments(int|string $agentId): array
+    {
+        $agent = $this->get($agentId);
+        return $agent->fileAttachments ?? [];
+    }
+
+    /**
+     * Add file attachments to an agent.
+     *
+     * This method adds files to the agent's existing attachments without
+     * removing any current ones. The files should be in the format returned
+     * by CloudFilesResource::uploadForAgent().
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $attachments Array of file attachment data
+     * @return Agent Updated agent
+     *
+     * @example
+     * ```php
+     * // Upload a file and attach it to an agent
+     * $attachment = $iris->cloudFiles->uploadForAgent('/path/to/data.csv', 40);
+     * $agent = $iris->agents->addFileAttachments(335, [$attachment]);
+     *
+     * // Or upload and attach in one call
+     * $agent = $iris->agents->uploadAndAttachFiles(335, ['/path/to/file.csv'], 40);
+     * ```
+     */
+    public function addFileAttachments(int|string $agentId, array $attachments): Agent
+    {
+        // Get current agent with its file attachments
+        $agent = $this->get($agentId);
+        $currentAttachments = $agent->fileAttachments ?? [];
+
+        // Merge with new attachments
+        $allAttachments = array_merge($currentAttachments, $attachments);
+
+        // Update agent with new attachments
+        return $this->patch($agentId, [
+            'fileAttachments' => $allAttachments,
+        ]);
+    }
+
+    /**
+     * Replace all file attachments on an agent.
+     *
+     * This method replaces ALL file attachments with the new ones.
+     * Use addFileAttachments() to add without removing existing.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $attachments Array of file attachment data
+     * @return Agent Updated agent
+     */
+    public function setFileAttachments(int|string $agentId, array $attachments): Agent
+    {
+        return $this->patch($agentId, [
+            'fileAttachments' => $attachments,
+        ]);
+    }
+
+    /**
+     * Remove a file attachment from an agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @param int $cloudFileId Cloud file ID to remove
+     * @return Agent Updated agent
+     */
+    public function removeFileAttachment(int|string $agentId, int $cloudFileId): Agent
+    {
+        $agent = $this->get($agentId);
+        $currentAttachments = $agent->fileAttachments ?? [];
+
+        // Filter out the attachment
+        $filtered = array_values(array_filter(
+            $currentAttachments,
+            fn($a) => ($a['cloud_file_id'] ?? 0) !== $cloudFileId
+        ));
+
+        return $this->patch($agentId, [
+            'fileAttachments' => $filtered,
+        ]);
+    }
+
+    /**
+     * Clear all file attachments from an agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @return Agent Updated agent
+     */
+    public function clearFileAttachments(int|string $agentId): Agent
+    {
+        return $this->patch($agentId, [
+            'fileAttachments' => [],
+        ]);
+    }
+
+    /**
+     * Upload files and attach them to an agent in one step.
+     *
+     * This is a convenience method that:
+     * 1. Uploads each file to cloud storage
+     * 2. Formats the attachment data
+     * 3. Adds them to the agent's file attachments
+     *
+     * Requires the CloudFilesResource to be injected.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $filePaths Array of file paths to upload
+     * @param int $bloqId Bloq ID to upload files to
+     * @param array $options Upload options (applied to all files)
+     * @return Agent Updated agent with new attachments
+     *
+     * @example
+     * ```php
+     * // Upload and attach files in one call
+     * $agent = $iris->agents->uploadAndAttachFiles(335, [
+     *     '/path/to/training_data.csv',
+     *     '/path/to/product_info.pdf',
+     * ], 40);
+     *
+     * echo "Agent now has " . count($agent->fileAttachments) . " files attached\n";
+     * ```
+     */
+    public function uploadAndAttachFiles(
+        int|string $agentId,
+        array $filePaths,
+        int $bloqId,
+        array $options = []
+    ): Agent {
+        // We need to access the CloudFilesResource
+        // Since we have access to the same http client and config, we can create one
+        $cloudFiles = new \IRIS\SDK\Resources\CloudFiles\CloudFilesResource(
+            $this->http,
+            $this->config
+        );
+
+        // Upload all files and format for attachment
+        $attachments = $cloudFiles->uploadMultipleForAgent($filePaths, $bloqId, $options);
+
+        // Add to agent
+        return $this->addFileAttachments($agentId, $attachments);
     }
 }

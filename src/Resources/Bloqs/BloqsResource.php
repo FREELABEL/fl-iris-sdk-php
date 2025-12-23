@@ -145,12 +145,88 @@ class BloqsResource
     /**
      * Get bloqs overview with statistics.
      *
-     * @return array
+     * @param array{
+     *     sort_by?: string,
+     *     sort_direction?: string
+     * } $options Sorting options
+     * @return array Overview data with bloqs and statistics
+     *
+     * @example
+     * ```php
+     * // Get overview sorted by recently used
+     * $overview = $iris->bloqs->overview([
+     *     'sort_by' => 'recently_used',
+     *     'sort_direction' => 'desc'
+     * ]);
+     *
+     * // Sort options: recently_used, created_at, updated_at, name
+     * ```
      */
-    public function overview(): array
+    public function overview(array $options = []): array
     {
         $userId = $this->config->requireUserId();
-        return $this->http->get("/api/v1/users/{$userId}/bloqs/overview");
+        return $this->http->get("/api/v1/users/{$userId}/bloqs/overview", $options);
+    }
+
+    /**
+     * List all agents across all bloqs for the user.
+     *
+     * @param array{
+     *     search?: string,
+     *     per_page?: int,
+     *     page?: int
+     * } $options Filter options
+     * @return array List of agents
+     *
+     * @example
+     * ```php
+     * // List all user agents
+     * $agents = $iris->bloqs->agents();
+     *
+     * // Search agents
+     * $agents = $iris->bloqs->agents(['search' => 'recruiter']);
+     * ```
+     */
+    public function agents(array $options = []): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->get("/api/v1/users/{$userId}/bloqs/agents", $options);
+    }
+
+    /**
+     * List agents for a specific bloq.
+     *
+     * @param int $bloqId Bloq ID
+     * @param array $options Filter options
+     * @return array List of agents for the bloq
+     *
+     * @example
+     * ```php
+     * // List agents for bloq 32
+     * $agents = $iris->bloqs->bloqAgents(32);
+     * ```
+     */
+    public function bloqAgents(int $bloqId, array $options = []): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->get("/api/v1/users/{$userId}/bloqs/{$bloqId}/agents", $options);
+    }
+
+    /**
+     * List all workflows for the user.
+     *
+     * @param array $options Filter options
+     * @return array List of workflows
+     *
+     * @example
+     * ```php
+     * $workflows = $iris->bloqs->workflows();
+     * ```
+     */
+    public function workflows(array $options = []): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->get("/api/v1/users/{$userId}/bloqs/workflows", $options);
     }
 
     /**
@@ -335,5 +411,155 @@ class BloqsResource
         $response = $this->http->get("/api/v1/cloud-files/supported-types");
 
         return $response['types'] ?? $response;
+    }
+
+    /**
+     * Get custom fields configuration for a bloq.
+     *
+     * Custom fields allow you to define additional data fields for leads
+     * in this bloq (e.g., company name, phone, service type).
+     *
+     * @param int $bloqId Bloq ID
+     * @return array Custom fields configuration
+     *
+     * @example
+     * ```php
+     * $config = $iris->bloqs->getCustomFieldsConfig(32);
+     * foreach ($config['fields'] as $field) {
+     *     echo "{$field['label']} ({$field['type']})\n";
+     * }
+     * ```
+     */
+    public function getCustomFieldsConfig(int $bloqId): array
+    {
+        return $this->http->get("/api/v1/bloqs/{$bloqId}/custom-fields-config");
+    }
+
+    /**
+     * Update custom fields configuration for a bloq.
+     *
+     * Supported field types:
+     * - text: Single-line text input
+     * - textarea: Multi-line text input
+     * - email: Email input with validation
+     * - tel: Phone number input
+     * - url: URL input with validation
+     * - number: Numeric input
+     * - date: Date picker
+     * - select: Dropdown selection (requires options array)
+     * - radio: Radio button group (requires options array)
+     * - checkbox: Checkbox (single or multiple with options)
+     *
+     * @param int $bloqId Bloq ID
+     * @param array $config Configuration with 'fields' array
+     * @return array Updated configuration
+     *
+     * @example
+     * ```php
+     * $config = $iris->bloqs->updateCustomFieldsConfig(32, [
+     *     'fields' => [
+     *         [
+     *             'id' => 'company_name',
+     *             'label' => 'Company Name',
+     *             'type' => 'text',
+     *             'required' => true,
+     *             'placeholder' => 'Enter company name'
+     *         ],
+     *         [
+     *             'id' => 'contact_phone',
+     *             'label' => 'Phone Number',
+     *             'type' => 'tel',
+     *             'required' => true,
+     *             'placeholder' => '(555) 123-4567'
+     *         ],
+     *         [
+     *             'id' => 'service_type',
+     *             'label' => 'Service Type',
+     *             'type' => 'radio',
+     *             'required' => true,
+     *             'options' => ['Web Development', 'Mobile App', 'Consulting']
+     *         ],
+     *         [
+     *             'id' => 'newsletter',
+     *             'label' => 'Subscribe to newsletter',
+     *             'type' => 'checkbox',
+     *             'required' => false
+     *         ]
+     *     ]
+     * ]);
+     * ```
+     */
+    public function updateCustomFieldsConfig(int $bloqId, array $config): array
+    {
+        return $this->http->put("/api/v1/bloqs/{$bloqId}/custom-fields-config", [
+            'config' => $config,
+        ]);
+    }
+
+    /**
+     * Add a custom field to a bloq's configuration.
+     *
+     * Convenience method to add a single field without overwriting existing ones.
+     *
+     * @param int $bloqId Bloq ID
+     * @param array $field Field definition
+     * @return array Updated configuration
+     *
+     * @example
+     * ```php
+     * $iris->bloqs->addCustomField(32, [
+     *     'id' => 'budget',
+     *     'label' => 'Budget Range',
+     *     'type' => 'select',
+     *     'required' => false,
+     *     'options' => ['Under $5k', '$5k-$10k', '$10k-$25k', '$25k+']
+     * ]);
+     * ```
+     */
+    public function addCustomField(int $bloqId, array $field): array
+    {
+        // Get existing config
+        $existing = $this->getCustomFieldsConfig($bloqId);
+        $fields = $existing['config']['fields'] ?? $existing['fields'] ?? [];
+
+        // Add new field
+        $fields[] = $field;
+
+        return $this->updateCustomFieldsConfig($bloqId, ['fields' => $fields]);
+    }
+
+    /**
+     * Remove a custom field from a bloq's configuration.
+     *
+     * @param int $bloqId Bloq ID
+     * @param string $fieldId Field ID to remove
+     * @return array Updated configuration
+     *
+     * @example
+     * ```php
+     * $iris->bloqs->removeCustomField(32, 'newsletter');
+     * ```
+     */
+    public function removeCustomField(int $bloqId, string $fieldId): array
+    {
+        // Get existing config
+        $existing = $this->getCustomFieldsConfig($bloqId);
+        $fields = $existing['config']['fields'] ?? $existing['fields'] ?? [];
+
+        // Filter out the field
+        $fields = array_values(array_filter($fields, fn($f) => ($f['id'] ?? '') !== $fieldId));
+
+        return $this->updateCustomFieldsConfig($bloqId, ['fields' => $fields]);
+    }
+
+    /**
+     * Clear all custom fields from a bloq.
+     *
+     * @param int $bloqId Bloq ID
+     * @return array Empty configuration
+     */
+    public function clearCustomFields(int $bloqId): array
+    {
+        return $this->updateCustomFieldsConfig($bloqId, ['fields' => []]);
     }
 }

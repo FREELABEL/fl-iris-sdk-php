@@ -1,0 +1,758 @@
+# Lead Management Workflow Guide
+
+Complete workflow documentation for managing leads, deliverables, notes, and tasks using the IRIS SDK.
+
+## Table of Contents
+
+1. [Finding & Analyzing Leads](#finding--analyzing-leads)
+2. [Updating Lead Status](#updating-lead-status)
+3. [Adding Deliverables](#adding-deliverables)
+4. [Managing Notes](#managing-notes)
+5. [Managing Tasks](#managing-tasks)
+6. [Real-World Examples](#real-world-examples)
+
+---
+
+## Finding & Analyzing Leads
+
+### Search Leads
+
+```bash
+# Basic search
+./bin/iris sdk:call leads.search search="john" bloq_id=40
+
+# Search with filters
+./bin/iris sdk:call leads.search \
+  bloq_id=40 \
+  status=Won,Negotiation \
+  include_notes=true \
+  sort=updated_at \
+  order=desc
+
+# Search specific lead types
+./bin/iris sdk:call leads.search \
+  bloq_id=40 \
+  lead_type=client \
+  per_page=20
+```
+
+```php
+// Search leads
+$leads = $iris->leads->search([
+    'bloq_id' => 40,
+    'status' => 'Won,Negotiation',
+    'search' => 'john',
+    'include_notes' => true,
+    'per_page' => 20,
+]);
+
+foreach ($leads as $lead) {
+    echo "{$lead->nickname} - {$lead->status}\n";
+}
+```
+
+### Get Lead Aggregation Statistics
+
+```bash
+# Get overall statistics
+./bin/iris sdk:call leads.aggregation.statistics
+
+# Example output:
+# Total leads: 499
+# Won: 245
+# Negotiation: 78
+# Incomplete tasks: 8
+```
+
+```php
+$stats = $iris->leads->aggregation()->statistics();
+echo "Total leads: {$stats['total_leads']}\n";
+echo "Won deals: {$stats['by_status']['Won']}\n";
+echo "Incomplete tasks: {$stats['incomplete_tasks']}\n";
+```
+
+### Get Priority Leads
+
+```bash
+# Get top 10 priority leads
+./bin/iris sdk:call leads.aggregation.list \
+  sort=priority \
+  order=desc \
+  per_page=10
+
+# Get leads with incomplete tasks
+./bin/iris sdk:call leads.aggregation.list \
+  has_incomplete_tasks=1 \
+  sort=priority
+```
+
+```php
+// Get priority leads
+$priorityLeads = $iris->leads->aggregation()->list([
+    'sort' => 'priority',
+    'order' => 'desc',
+    'per_page' => 10,
+]);
+
+foreach ($priorityLeads as $lead) {
+    echo "Priority {$lead['priority']}: {$lead['nickname']}\n";
+    echo "  Tasks: {$lead['tasks_count']}\n";
+    echo "  Notes: {$lead['note_count']}\n";
+}
+```
+
+### Analyze Priority Scores
+
+Priority scoring formula:
+- **Won**: 80 points (base)
+- **Negotiation**: 70 points (base)
+- **Proposal**: 60 points (base)
+- **+10 points**: Recent activity (last 7 days)
+- **+5 points**: Has incomplete tasks
+- **+3 points**: Has notes
+- **+2 points**: Recently updated
+
+Example priority analysis:
+```bash
+# Get priorities with JSON output for analysis
+./bin/iris sdk:call leads.aggregation.list \
+  sort=priority \
+  order=desc \
+  per_page=10 \
+  --json | jq '.data[] | {id, nickname, status, priority, tasks: .tasks_count, notes: .note_count}'
+```
+
+---
+
+## Updating Lead Status
+
+### Update via CLI
+
+```bash
+# Update lead status
+./bin/iris sdk:call leads.update 412 status=Won
+
+# Update multiple fields
+./bin/iris sdk:call leads.update 80 \
+  status="On Hold" \
+  lead_type=prospect
+```
+
+### Update via PHP SDK
+
+```php
+// Update lead
+$lead = $iris->leads->update(412, [
+    'status' => 'Won',
+    'lead_type' => 'client',
+]);
+
+echo "Updated {$lead->nickname} to {$lead->status}\n";
+```
+
+### Update via Direct API (Fallback)
+
+```bash
+# When SDK has type issues, use direct API
+curl -X PUT "https://apiv2.heyiris.io/api/v1/leads/80" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "On Hold"}'
+```
+
+### Status Options
+
+- `New` - Just entered the pipeline
+- `Contacted` - Initial outreach made
+- `Qualified` - Verified as potential client
+- `Proposal` - Proposal sent
+- `Negotiation` - Discussing terms
+- `Won` - Deal closed successfully
+- `Lost` - Deal lost
+- `On Hold` - Paused temporarily
+
+---
+
+## Adding Deliverables
+
+Deliverables represent work products delivered to clients (AI agents, reports, websites, etc.).
+
+### Create Link Deliverable
+
+```bash
+# Add AI agent deliverable
+./bin/iris sdk:call leads.deliverables.create 53 \
+  type=link \
+  title="AI Recruiter Assistant Agent" \
+  external_url="https://app.heyiris.io/agent/simple/358?bloq=208" \
+  description="AI agent for analyzing resumes, scoring candidates, and creating LinkedIn search queries. Built for recruiter workflow optimization." \
+  user_id=193
+
+# Add deployed website
+./bin/iris sdk:call leads.deliverables.create 24 \
+  type=link \
+  title="Marketing Website" \
+  external_url="https://client-site.com" \
+  user_id=193
+```
+
+```php
+// Create link deliverable
+$deliverable = $iris->leads->deliverables(53)->create([
+    'type' => 'link',
+    'title' => 'AI Recruiter Assistant Agent',
+    'external_url' => 'https://app.heyiris.io/agent/simple/358?bloq=208',
+    'description' => 'AI agent for analyzing resumes, scoring candidates, and creating LinkedIn search queries.',
+    'user_id' => 193,
+]);
+
+echo "Created deliverable #{$deliverable['id']}\n";
+```
+
+### Upload File Deliverable
+
+```bash
+# Upload PDF report
+./bin/iris sdk:call leads.deliverables.uploadFile 24 \
+  file=/path/to/report.pdf \
+  title="Q4 Marketing Report" \
+  user_id=193
+
+# Upload with options
+./bin/iris sdk:call leads.deliverables.uploadFile 53 \
+  file=/path/to/contract.pdf \
+  title="Service Agreement" \
+  description="Signed contract for recruitment services" \
+  user_id=193
+```
+
+```php
+// Upload file
+$deliverable = $iris->leads->deliverables(24)->uploadFile('/path/to/report.pdf', [
+    'title' => 'Q4 Marketing Report',
+    'user_id' => 193,
+]);
+```
+
+### List Deliverables
+
+```bash
+# List all deliverables for a lead
+./bin/iris sdk:call leads.deliverables.list 53
+```
+
+```php
+// List deliverables
+$deliverables = $iris->leads->deliverables(53)->list();
+
+foreach ($deliverables as $deliverable) {
+    echo "{$deliverable['title']} ({$deliverable['type']})\n";
+    echo "  URL: {$deliverable['url']}\n";
+}
+```
+
+### Update Deliverable
+
+```bash
+# Update title/description
+./bin/iris sdk:call leads.deliverables.update 53 335 \
+  title="Enhanced AI Recruiter" \
+  description="Updated with LinkedIn integration"
+```
+
+```php
+$iris->leads->deliverables(53)->update(335, [
+    'title' => 'Enhanced AI Recruiter',
+    'description' => 'Updated with LinkedIn integration',
+]);
+```
+
+### Delete Deliverable
+
+```bash
+./bin/iris sdk:call leads.deliverables.delete 53 335
+```
+
+```php
+$iris->leads->deliverables(53)->delete(335);
+```
+
+---
+
+## Managing Notes
+
+Notes document conversations, decisions, and important context about leads.
+
+### Add Note
+
+```bash
+# Add note to lead
+./bin/iris sdk:call leads.addNote 65 "Client wants Texas mini series featuring local country artists. Discussed budget of $50k-75k for 6-episode series."
+
+# Add note with context
+./bin/iris sdk:call leads.addNote 53 "Gniice asked for recruiter tools to help analyze resumes, score candidates, and create search queries for LinkedIn. We built out the AI Recruiter Assistant Agent for this workflow. Agent available at: https://app.heyiris.io/agent/simple/358?bloq=208"
+```
+
+```php
+// Add note
+$note = $iris->leads->addNote(65, 
+    "Client wants Texas mini series featuring local country artists. Discussed budget of $50k-75k for 6-episode series."
+);
+
+echo "Added note #{$note['id']}\n";
+```
+
+### Add Note via Direct API
+
+```bash
+# When CLI has parameter issues, use direct API
+curl -X POST "https://apiv2.heyiris.io/api/v1/leads/65/notes" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Your note content here"}'
+```
+
+### View Notes in Search
+
+```bash
+# Search with notes included
+./bin/iris sdk:call leads.search \
+  search=nsgbillz \
+  bloq_id=40 \
+  include_notes=true
+```
+
+### Delete Note
+
+```bash
+# Delete specific note
+./bin/iris sdk:call leads.deleteNote 65 391
+```
+
+```php
+// Delete note
+$iris->leads->deleteNote(65, 391);
+```
+
+**Note:** The delete note endpoint uses webhook authentication and requires production deployment of the backend route.
+
+---
+
+## Managing Tasks
+
+Tasks track action items and deliverables for leads.
+
+### Create Task
+
+```bash
+# Create simple task
+./bin/iris sdk:call leads.tasks.create 412 \
+  title="Setup delivery meeting" \
+  status=incomplete
+
+# Create task with details
+./bin/iris sdk:call leads.tasks.create 24 \
+  title="Send Q4 report" \
+  description="Include metrics and recommendations" \
+  status=incomplete \
+  priority=high \
+  due_date="2025-12-30"
+```
+
+```php
+// Create task
+$task = $iris->leads->tasks(412)->create([
+    'title' => 'Setup delivery meeting',
+    'status' => 'incomplete',
+    'priority' => 'medium',
+]);
+
+echo "Created task #{$task['id']}\n";
+```
+
+### List Tasks
+
+```bash
+# List all tasks for a lead
+./bin/iris sdk:call leads.tasks.all 412
+
+# Get tasks from aggregation
+./bin/iris sdk:call leads.aggregation.get 412
+```
+
+```php
+// List tasks
+$tasks = $iris->leads->tasks(412)->all();
+
+foreach ($tasks as $task) {
+    echo "{$task['title']} - {$task['status']}\n";
+}
+```
+
+### Update Task
+
+```bash
+# Mark task complete
+./bin/iris sdk:call leads.tasks.update 412 11 status=complete
+
+# Update multiple fields
+./bin/iris sdk:call leads.tasks.update 412 11 \
+  status=complete \
+  notes="Meeting scheduled for Dec 30th"
+```
+
+```php
+$iris->leads->tasks(412)->update(11, [
+    'status' => 'complete',
+    'notes' => 'Meeting scheduled for Dec 30th',
+]);
+```
+
+### Delete Task
+
+```bash
+./bin/iris sdk:call leads.tasks.delete 412 11
+```
+
+```php
+$iris->leads->tasks(412)->delete(11);
+```
+
+---
+
+## Real-World Examples
+
+### Example 1: Complete Client Onboarding - Rodney Mayo
+
+**Scenario:** Rodney Mayo requested an AI agent for his newsletter workflow. Track the entire delivery process.
+
+```bash
+# 1. Find the lead
+./bin/iris sdk:call leads.search search="Rodney Mayo" bloq_id=40
+
+# Lead ID: 24
+
+# 2. Update status to Negotiation
+./bin/iris sdk:call leads.update 24 status=Negotiation
+
+# 3. Create the agent (via agents.create)
+# Agent ID: 356
+
+# 4. Add deliverable for the agent
+./bin/iris sdk:call leads.deliverables.create 24 \
+  type=link \
+  title="Newsletter AI Agent" \
+  external_url="https://app.heyiris.io/agent/simple/356" \
+  description="Trained AI agent for newsletter content generation and curation" \
+  user_id=193
+
+# 5. Add note documenting requirements
+./bin/iris sdk:call leads.addNote 24 \
+  "Rodney requested AI agent for newsletter workflow. Built custom agent trained on his writing style. Agent can generate content ideas, write drafts, and curate relevant links."
+
+# 6. Create follow-up task
+./bin/iris sdk:call leads.tasks.create 24 \
+  title="Schedule training session" \
+  description="Walk Rodney through agent usage" \
+  status=incomplete
+
+# 7. Update status to Won after delivery
+./bin/iris sdk:call leads.update 24 status=Won
+
+# 8. Verify priority increased
+./bin/iris sdk:call leads.aggregation.list sort=priority order=desc per_page=5
+# Result: Rodney Mayo now shows priority 115 (Won + recent activity + tasks + notes)
+```
+
+### Example 2: Recruiter Tools for @gniice_
+
+**Scenario:** @gniice_ is an event coordinator who needed recruiter tools. Built AI agent and documented the workflow.
+
+```bash
+# 1. Search for the lead
+./bin/iris sdk:call leads.search search="gniice" bloq_id=40
+# Lead ID: 53
+
+# 2. Already Won status (event partnership)
+
+# 3. Create recruiter AI agent
+# Agent ID: 358
+
+# 4. Add deliverable
+./bin/iris sdk:call leads.deliverables.create 53 \
+  type=link \
+  title="AI Recruiter Assistant Agent" \
+  external_url="https://app.heyiris.io/agent/simple/358?bloq=208" \
+  description="AI agent for analyzing resumes, scoring candidates, and creating LinkedIn search queries. Built for recruiter workflow optimization." \
+  user_id=193
+
+# Deliverable ID: 335
+
+# 5. Document the request and solution
+curl -X POST "https://apiv2.heyiris.io/api/v1/leads/53/notes" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Gniice asked for recruiter tools to help analyze resumes, score candidates, and create search queries for LinkedIn. We built out the AI Recruiter Assistant Agent for this workflow. Agent available at: https://app.heyiris.io/agent/simple/358?bloq=208"}'
+
+# Note ID: 393
+
+# 6. Check priority
+./bin/iris sdk:call leads.aggregation.list sort=priority order=desc --json | grep -A 5 "gniice"
+# Priority: 110 (Won + deliverable + notes + recent activity)
+```
+
+### Example 3: Texas Mini Series for @nsgbillz
+
+**Scenario:** Client wants to produce a Texas mini series. Track conversations and requirements.
+
+```bash
+# 1. Find lead
+./bin/iris sdk:call leads.search search="nsgbillz" bloq_id=40
+# Lead ID: 65
+
+# 2. Already Won status
+
+# 3. Add detailed note about requirements
+curl -X POST "https://apiv2.heyiris.io/api/v1/leads/65/notes" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Client wants Texas mini series featuring local country artists. Discussed budget of $50k-75k for 6-episode series. Target release: Q2 2026. Interested in hybrid documentary/performance format."}'
+
+# Note ID: 392
+
+# 4. Create production tasks
+./bin/iris sdk:call leads.tasks.create 65 \
+  title="Artist research and outreach" \
+  description="Identify 10-15 Texas country artists" \
+  status=incomplete \
+  priority=high
+
+./bin/iris sdk:call leads.tasks.create 65 \
+  title="Location scouting" \
+  description="Find authentic Texas venues" \
+  status=incomplete
+
+./bin/iris sdk:call leads.tasks.create 65 \
+  title="Draft production schedule" \
+  status=incomplete
+
+# 5. Track with aggregation
+./bin/iris sdk:call leads.aggregation.get 65
+# Shows: 21 notes, 3 tasks, high priority
+```
+
+### Example 4: Priority Management - Putting Leads On Hold
+
+**Scenario:** Focus team resources on high-priority Won clients by putting lower-priority negotiation leads on hold.
+
+```bash
+# 1. Analyze current priorities
+./bin/iris sdk:call leads.aggregation.list \
+  sort=priority \
+  order=desc \
+  per_page=10 \
+  --json
+
+# Results show:
+# - Top priorities: 90-115 (Won clients)
+# - Lower priorities: 70 (Negotiation stage)
+
+# 2. Update Robert Kerr to On Hold (Priority 70, Negotiation)
+curl -X PUT "https://apiv2.heyiris.io/api/v1/leads/80" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "On Hold"}'
+
+# 3. Update Maxx Baig to On Hold (Priority 70, Negotiation)
+curl -X PUT "https://apiv2.heyiris.io/api/v1/leads/76" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "On Hold"}'
+
+# 4. Verify changes
+./bin/iris sdk:call leads.search search="Robert Kerr" bloq_id=40
+./bin/iris sdk:call leads.search search="Maxx Baig" bloq_id=40
+
+# Both now show "On Hold" status
+```
+
+### Example 5: Delivery Meeting Setup for Tha Juan
+
+**Scenario:** Won client needs delivery meeting scheduled.
+
+```bash
+# 1. Find lead
+./bin/iris sdk:call leads.search search="Tha Juan" bloq_id=40
+# Lead ID: 412
+
+# 2. Update to Won status
+./bin/iris sdk:call leads.update 412 status=Won
+
+# 3. Create delivery meeting task
+./bin/iris sdk:call leads.tasks.create 412 \
+  title="Setup delivery meeting" \
+  description="Schedule meeting to review deliverables and get feedback" \
+  status=incomplete \
+  priority=high
+
+# Task ID: 11
+
+# 4. Check lead priority
+./bin/iris sdk:call leads.aggregation.get 412
+# Priority: 90 (Won + task + recent activity)
+```
+
+---
+
+## Workflow Best Practices
+
+### 1. **Always Search First**
+Before updating, search to confirm the lead ID and current state:
+```bash
+./bin/iris sdk:call leads.search search="client name" bloq_id=40
+```
+
+### 2. **Use Aggregation for Context**
+Get full context before making changes:
+```bash
+./bin/iris sdk:call leads.aggregation.get <lead_id>
+```
+
+### 3. **Document Everything with Notes**
+Add notes for important conversations and decisions:
+```bash
+./bin/iris sdk:call leads.addNote <lead_id> "Detailed note about conversation..."
+```
+
+### 4. **Track Deliverables as You Create Them**
+Immediately add deliverable when work is completed:
+```bash
+./bin/iris sdk:call leads.deliverables.create <lead_id> type=link title="..." external_url="..." user_id=193
+```
+
+### 5. **Create Tasks for Action Items**
+Convert verbal agreements to trackable tasks:
+```bash
+./bin/iris sdk:call leads.tasks.create <lead_id> title="Action item" status=incomplete
+```
+
+### 6. **Monitor Priority Regularly**
+Check top priorities weekly to focus efforts:
+```bash
+./bin/iris sdk:call leads.aggregation.list sort=priority order=desc per_page=20
+```
+
+### 7. **Use Direct API as Fallback**
+When SDK has type issues, use curl:
+```bash
+curl -X PUT "https://apiv2.heyiris.io/api/v1/leads/<lead_id>" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "Won"}'
+```
+
+---
+
+## Colorful CLI Output
+
+The SDK provides beautiful, colorful output with emojis:
+
+- 🔑 **ID** - Cyan
+- 👤 **Name** - Bright blue
+- 📊 **Status** - Color-coded (Won=green ✓, Negotiation=yellow ⚡)
+- ✅ **Tasks** - Yellow
+- 📝 **Notes** - Magenta
+- 🔗 **URLs** - Underlined
+- 📅 **Dates** - Gray
+
+When output has >10 columns, compact mode automatically activates showing only the most relevant fields.
+
+---
+
+## Troubleshooting
+
+### Authentication Errors
+```bash
+# Verify credentials
+echo $IRIS_API_KEY
+echo $IRIS_USER_ID
+
+# Re-export
+export IRIS_API_KEY=your_token_here
+export IRIS_USER_ID=193
+```
+
+### Lead Class Type Error (Notes Field)
+When encountering "Lead class type error: notes expects string but receives array":
+```bash
+# Use direct API call instead
+curl -X PUT "https://apiv2.heyiris.io/api/v1/leads/<lead_id>" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "Won"}'
+```
+
+### addNote Parameter Issues
+The CLI may have issues with string parameters:
+```bash
+# Use direct API instead
+curl -X POST "https://apiv2.heyiris.io/api/v1/leads/<lead_id>/notes" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Your note content"}'
+```
+
+---
+
+## Outreach & Email
+
+For AI-powered email generation and outreach management, see the dedicated guide:
+
+**[OUTREACH_CLI_GUIDE.md](OUTREACH_CLI_GUIDE.md)**
+
+Quick examples:
+
+```bash
+# Generate AI email draft
+./bin/iris sdk:call leads.outreach 123 generateEmail \
+  prompt="Follow up on our meeting about their AI needs" \
+  tone=professional
+
+# Send composed email
+./bin/iris sdk:call leads.outreach 123 sendEmail \
+  to_email="john@example.com" \
+  subject="Quick follow-up" \
+  body_html="<p>Hi John...</p>"
+
+# Manage outreach checklist
+./bin/iris sdk:call leads.outreachSteps 123 list
+./bin/iris sdk:call leads.outreachSteps 123 create title="Initial Email" type=email
+./bin/iris sdk:call leads.outreachSteps 123 complete 5
+```
+
+---
+
+## Related Documentation
+
+- **[README.md](README.md)** - Full SDK documentation
+- **[AGENT_MANAGEMENT_CLI_GUIDE.md](AGENT_MANAGEMENT_CLI_GUIDE.md)** - Agent management guide
+- **[OUTREACH_CLI_GUIDE.md](OUTREACH_CLI_GUIDE.md)** - Email generation and outreach
+- **API Reference** - See README.md API Reference section
+
+---
+
+## Summary
+
+The complete lead management workflow:
+
+1. **Find** leads using search or aggregation
+2. **Analyze** priority scores to focus efforts
+3. **Update** status as deals progress
+4. **Add deliverables** when work is completed
+5. **Document** with notes for context
+6. **Create tasks** for follow-ups
+7. **Send outreach** via AI-generated emails
+8. **Track outreach** with checklist steps
+9. **Monitor** priorities regularly
+
+This workflow ensures nothing falls through the cracks and provides full visibility into client relationships.

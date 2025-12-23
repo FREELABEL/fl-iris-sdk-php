@@ -181,6 +181,35 @@ echo $response->content;
 
 Create, configure, and interact with intelligent AI agents.
 
+#### List Agents
+
+```bash
+# List all agents (requires client credentials)
+./bin/iris sdk:call agents.list
+
+# Search with pagination
+./bin/iris sdk:call agents.list search="recruiter" per_page=10 page=1
+```
+
+```php
+// List all agents
+$agents = $iris->agents->list([
+    'search' => 'marketing',
+    'per_page' => 20,
+]);
+
+foreach ($agents as $agent) {
+    echo "{$agent->name} (#{$agent->id})\n";
+}
+```
+
+#### Create an Agent
+
+```bash
+# Create via CLI - using simplified config
+./bin/iris sdk:call agents.create name="Marketing Assistant" prompt="You are a helpful marketing assistant" model="gpt-4o-mini"
+```
+
 ```php
 // Create an agent
 $agent = $iris->agents->create(new AgentConfig(
@@ -190,13 +219,160 @@ $agent = $iris->agents->create(new AgentConfig(
     integrations: ['gmail', 'google-drive'],
 ));
 
+echo "Created agent #{$agent->id}: {$agent->name}\n";
+```
+
+#### Update an Agent
+
+**⚠️ IMPORTANT: Partial Updates**
+
+The `patch()` method updates ONLY the fields you specify without overwriting other data:
+
+```bash
+# Update just the prompt (recommended)
+./bin/iris sdk:call agents.patch 356 initial_prompt="Updated instructions..."
+
+# Update just the name
+./bin/iris sdk:call agents.patch 356 name="New Agent Name"
+
+# Update multiple fields
+./bin/iris sdk:call agents.patch 356 \
+  initial_prompt="New prompt..." \
+  description="Updated description"
+```
+
+```php
+// RECOMMENDED: Partial update (only changes specified fields)
+$agent = $iris->agents->patch(356, [
+    'initial_prompt' => 'Focus on positive testimonials...',
+]);
+
+// Full update (overwrites ALL fields - use with caution)
+$agent = $iris->agents->update(358, [
+    'name' => 'Talent Recruiter Agent',
+    'initial_prompt' => 'You are an AI recruitment assistant...',
+    'config' => [
+        'model' => 'gpt-4o-mini-2024-07-18',
+        'temperature' => 0.7,
+        'maxTokens' => 2048,
+    ],
+    'settings' => [
+        'communicationStyle' => 'professional',
+        'responseMode' => 'balanced',
+        'functionCalling' => true,
+    ],
+]);
+```
+
+**Why use `patch()` instead of `update()`?**
+- `patch()`: Updates only what you specify, keeps everything else
+- `update()`: Replaces ALL fields, can accidentally clear data
+
+**Real-world example:**
+```bash
+# Production setup
+export IRIS_API_KEY="your_production_token_from_browser"
+export IRIS_USER_ID=193
+
+# Update just the prompt without touching other config
+./bin/iris sdk:call agents.patch 356 \
+  initial_prompt="Enhanced instructions..."
+```
+
+#### Chat with an Agent
+
+```bash
+# Single message chat
+./bin/iris sdk:call agents.chat 358 message="Analyze this resume: John Doe - 5 years experience..."
+```
+
+```php
 // Chat with the agent
 $response = $iris->agents->chat($agent->id, [
     ['role' => 'user', 'content' => 'Write a subject line for our product launch']
 ]);
 
+echo $response->content;
+```
+
+#### Delete an Agent
+
+```bash
+# Delete an agent
+./bin/iris sdk:call agents.delete 358
+```
+
+```php
+// Delete an agent
+$iris->agents->delete(358);
+```
+
+#### Add Knowledge to Agent
+
+```php
 // Add knowledge to agent's memory
 $iris->agents->addMemory($agent->id, '/path/to/brand-guide.pdf');
+```
+
+#### Attach Files to Agent (RAG Knowledge Base)
+
+Upload and attach files to give your agent access to custom training data. These files become part of the agent's knowledge base for RAG (Retrieval-Augmented Generation).
+
+```php
+// Method 1: Upload and attach in one step (recommended)
+$agent = $iris->agents->uploadAndAttachFiles(335, [
+    '/path/to/training_data.csv',
+    '/path/to/product_catalog.pdf',
+    '/path/to/faq.txt',
+], 40);  // 40 is the bloq_id
+
+echo "Agent now has " . count($agent->fileAttachments) . " files\n";
+
+// Method 2: Upload separately, then attach
+$attachment = $iris->cloudFiles->uploadForAgent('/path/to/data.csv', 40, [
+    'title' => 'Lead Data',
+    'description' => 'Training data for lead analysis'
+]);
+$agent = $iris->agents->addFileAttachments(335, [$attachment]);
+
+// Method 3: Upload multiple files separately
+$attachments = $iris->cloudFiles->uploadMultipleForAgent([
+    '/path/to/file1.pdf',
+    '/path/to/file2.csv',
+], 40);
+$agent = $iris->agents->addFileAttachments(335, $attachments);
+```
+
+**Managing File Attachments:**
+
+```php
+// Get current attachments
+$files = $iris->agents->getFileAttachments(335);
+foreach ($files as $file) {
+    echo "{$file['name']} ({$file['type']})\n";
+}
+
+// Remove a specific file
+$agent = $iris->agents->removeFileAttachment(335, $cloudFileId);
+
+// Replace all attachments
+$agent = $iris->agents->setFileAttachments(335, $newAttachments);
+
+// Clear all attachments
+$agent = $iris->agents->clearFileAttachments(335);
+```
+
+**CLI Usage:**
+
+```bash
+# Upload a file for agent attachment
+./bin/iris sdk:call cloudFiles.uploadForAgent /path/to/data.csv bloq_id=40
+
+# List files attached to an agent
+./bin/iris sdk:call agents.getFileAttachments 335
+
+# Clear all attachments
+./bin/iris sdk:call agents.clearFileAttachments 335
 ```
 
 ### 🔄 V5 Multi-Step Workflows
@@ -426,11 +602,29 @@ $iris->leads->deliverables(24)->update($deliverable['id'], [
     'title' => 'Updated Report Title'
 ]);
 
-// Send email notification
-$iris->leads->deliverables(24)->send([
+// Preview email before sending (AI-generated)
+$preview = $iris->leads->deliverables(16)->previewEmail([
+    'deliverable_ids' => [203],
+    'message_mode' => 'ai',
     'subject' => 'Your deliverables are ready',
-    'message' => 'Please review the attached materials.'
+    'include_project_context' => true,
 ]);
+echo "Preview:\n{$preview['body']}\n";
+
+// Send email with AI content
+$result = $iris->leads->deliverables(16)->send([
+    'deliverable_ids' => [203],
+    'message_mode' => 'ai',
+    'subject' => 'Your deliverables are ready',
+    'recipient_emails' => ['mike@greenleaf.co'],
+    'include_project_context' => true,
+]);
+
+// Or generate and send in one step
+$result = $iris->leads->deliverables(16)->generateAndSend(
+    [203, 204],
+    ['subject' => 'Your project is complete!']
+);
 ```
 
 **CLI Deliverables:**
@@ -441,17 +635,62 @@ iris sdk:call leads.deliverables.list 24
 # Add agent link
 iris sdk:call leads.deliverables.create 24 type=link title="Trained AI Agent" external_url="https://app.heyiris.io/agent/simple/356?bloq=203" user_id=193
 
-# Beautiful output:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  #333 │ Trained AI Agent - NCMA │ link
-  🔑 id: 333
-  📄 title: Trained AI Agent - NCMA
-  🏷️ type: link
-  🔗 url: https://app.heyiris.io/agent/simple/356?bloq=203
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Preview email
+iris sdk:call leads.deliverables.previewEmail 16 deliverable_ids='[203]' message_mode=ai
+
+# Send with AI content
+iris sdk:call leads.deliverables.send 16 deliverable_ids='[203]' message_mode=ai recipient_emails='["mike@greenleaf.co"]'
 
 # Delete deliverable
 iris sdk:call leads.deliverables.delete 24 333
+```
+
+#### Invoice Management
+
+Create and manage invoices for leads.
+
+```php
+// List invoices
+$invoices = $iris->leads->invoices(16)->list();
+
+// Create invoice from lead pricing
+$invoice = $iris->leads->invoices(16)->create([
+    'price' => 25000,  // Amount in cents ($250.00)
+    'description' => 'AI Agent Development - Phase 1',
+]);
+
+echo "Invoice #{$invoice['id']} created\n";
+echo "Payment link: {$invoice['payment_url']}\n";
+
+// Send invoice to lead
+$result = $iris->leads->invoices(16)->send($invoice['id'], [
+    'subject' => 'Invoice for AI Agent Development',
+    'message' => 'Please find your invoice attached.',
+]);
+
+// Mark as paid
+$iris->leads->invoices(16)->markPaid($invoice['id'], [
+    'payment_method' => 'stripe',
+    'transaction_id' => 'ch_xxxxx',
+]);
+
+// Void/cancel an invoice
+$iris->leads->invoices(16)->void($invoice['id'], 'Client cancelled project');
+```
+
+**CLI Invoices:**
+```bash
+# List invoices for a lead
+iris sdk:call leads.invoices.list 16
+
+# Create invoice
+iris sdk:call leads.invoices.create 16 price=25000 description="AI Agent Development"
+
+# Send invoice
+iris sdk:call leads.invoices.send 16 123 subject="Your invoice"
+
+# Mark as paid
+iris sdk:call leads.invoices.markPaid 16 123
 ```
 
 #### Lead Aggregation & Priority Analysis
@@ -518,6 +757,109 @@ $iris->leads->activities($lead->id)->create([
 ]);
 ```
 
+#### Lead Enrichment
+
+Automatically enrich leads with additional data from external sources.
+
+```php
+// Enrich a lead (async process)
+$result = $iris->leads->enrich(24, ['auto_update' => false]);
+echo "Enrichment started: {$result['status']}\n";
+
+// Check enrichment status
+$status = $iris->leads->enrichmentStatus(24);
+echo "Status: {$status['status']}\n";  // 'pending', 'processing', 'completed', 'failed'
+
+if ($status['status'] === 'completed') {
+    echo "Found data: " . json_encode($status['data']) . "\n";
+}
+```
+
+**CLI Enrichment:**
+```bash
+# Start enrichment
+iris sdk:call leads.enrich 24 auto_update=false
+
+# Check status
+iris sdk:call leads.enrichmentStatus 24
+```
+
+#### AI-Powered Lead Creation
+
+Create leads from natural language descriptions using AI parsing.
+
+```php
+// Parse a freeform lead description
+$parsed = $iris->leads->parseDescription(
+    'David Park, freelance consultant, david.park.consulting@gmail.com, tech innovation',
+    40  // bloq_id
+);
+
+echo "Parsed name: {$parsed['lead']['first_name']} {$parsed['lead']['last_name']}\n";
+echo "Email: {$parsed['lead']['email']}\n";
+echo "Tags: " . implode(', ', $parsed['lead']['tags']) . "\n";
+
+// Create lead from description in one step (recommended)
+$lead = $iris->leads->createFromDescription(
+    'Sarah Chen, startup founder, sarah@techventure.io, AI enthusiast in San Francisco',
+    40,  // bloq_id
+    ['lifecycle_stage' => 'New']
+);
+
+echo "Created lead #{$lead->id}: {$lead->name}\n";
+
+// Bulk create from multiple descriptions
+$results = $iris->leads->bulkCreateFromDescriptions([
+    'John Doe, developer, john@example.com',
+    'Jane Smith, designer, jane@design.co, creative',
+    'Bob Wilson, CTO at TechCorp, bob@techcorp.io',
+], 40);
+
+echo "Created {$results['successful']} leads\n";
+```
+
+**Helper Methods:**
+
+```php
+// Get available tags for a bloq
+$tags = $iris->leads->getAvailableTags(40);
+foreach ($tags as $tag) {
+    echo "- {$tag['name']}\n";
+}
+
+// Get lifecycle stages
+$stages = $iris->leads->getLifecycleStages();
+// Returns: ['New', 'Qualified', 'Proposal', 'Negotiation', 'Won', 'Lost']
+
+// Check for duplicate before creating
+$duplicate = $iris->leads->checkDuplicate('david@example.com', 40);
+if ($duplicate['exists']) {
+    echo "Lead already exists: #{$duplicate['lead_id']}\n";
+} else {
+    // Safe to create
+    $lead = $iris->leads->createFromDescription($description, 40);
+}
+```
+
+**CLI Usage:**
+
+```bash
+# Parse a lead description (preview without creating)
+./bin/iris sdk:call leads.parseDescription description="John Smith, CEO at Acme, john@acme.com" bloq_id=40
+
+# Create lead from description
+./bin/iris sdk:call leads.createFromDescription description="Sarah Chen, sarah@example.com, AI consultant" bloq_id=40
+
+# Get available tags for a bloq
+./bin/iris sdk:call leads.getAvailableTags 40
+
+# Get lifecycle stages
+./bin/iris sdk:call leads.getLifecycleStages
+
+# Check for duplicate
+./bin/iris sdk:call leads.checkDuplicate email="john@acme.com" bloq_id=40
+```
+
 ### 🔌 Integrations
 
 Access 16+ third-party integrations.
@@ -544,6 +886,190 @@ $oauthUrl = $iris->integrations->getOAuthUrl('google-drive');
 - YouTube, ElevenLabs
 - Servis.ai (15+ functions)
 - And more...
+
+### 📞 Voice AI (VAPI)
+
+Enable AI-powered phone calls with your agents using VAPI integration.
+
+#### List & Configure Phone Numbers
+
+```php
+// List all phone numbers
+$numbers = $iris->vapi->phoneNumbers();
+foreach ($numbers as $number) {
+    echo "{$number['phone_number']} - Agent: {$number['agent_id']}\n";
+}
+
+// Configure a phone number to use an agent
+$iris->vapi->configurePhoneNumber('dd3905f2-08d6-4dc2-a50f-f0c937ada251', [
+    'agent_id' => 335,
+    'use_dynamic_assistant' => true,
+    'allow_override' => true,
+]);
+
+// Disconnect phone from agent
+$iris->vapi->disconnectPhoneNumber('dd3905f2-...');
+```
+
+#### Sync Agent with VAPI
+
+```php
+// Sync agent settings to VAPI assistant
+$result = $iris->vapi->syncAssistant(335);
+echo "VAPI Assistant ID: {$result['assistant_id']}\n";
+
+// Update voice settings
+$iris->vapi->updateVoice(335, [
+    'voice' => 'Lily',
+    'language' => 'en-US',
+    'speed' => 1.0,
+]);
+
+// Get available voices
+$voices = $iris->vapi->voices();
+```
+
+#### Call Handoff (Transfer to Human)
+
+```php
+// Configure handoff settings
+$iris->vapi->updateHandoff(335, [
+    'enabled' => true,
+    'phone_number' => '8788765657',
+    'mode' => 'blind',  // 'blind' or 'warm' transfer
+    'message' => 'Transferring you to a human agent...',
+    'sms_notifications' => true,
+]);
+
+// Get current handoff settings
+$handoff = $iris->vapi->getHandoff(335);
+```
+
+#### Call Management
+
+```php
+// Initiate an outbound call
+$call = $iris->vapi->initiateCall(335, '+15551234567', [
+    'context' => [
+        'lead_id' => 412,
+        'purpose' => 'Follow-up on proposal',
+    ],
+]);
+
+// Get call history
+$calls = $iris->vapi->callHistory(['limit' => 50, 'agent_id' => 335]);
+
+// Get call details and transcript
+$details = $iris->vapi->getCall($callId);
+$transcript = $iris->vapi->getTranscript($callId);
+$recordingUrl = $iris->vapi->getRecording($callId);
+
+// End an active call
+$iris->vapi->endCall($callId);
+
+// Get VAPI usage statistics
+$usage = $iris->vapi->usage();
+```
+
+**CLI Usage:**
+
+```bash
+# List phone numbers
+./bin/iris sdk:call vapi.phoneNumbers
+
+# Configure phone for agent
+./bin/iris sdk:call vapi.configurePhoneNumber dd3905f2-... agent_id=335 use_dynamic_assistant=true
+
+# Sync agent with VAPI
+./bin/iris sdk:call vapi.syncAssistant 335
+
+# Update handoff settings
+./bin/iris sdk:call vapi.updateHandoff 335 handoff='{"enabled":true,"phone_number":"8788765657","mode":"blind"}'
+
+# Get call history
+./bin/iris sdk:call vapi.callHistory agent_id=335 limit=20
+```
+
+### 🤖 AI Models
+
+List and manage available AI models.
+
+```php
+// Get basic/fast models (nano, mini)
+$basic = $iris->models->basic();
+
+// Get popular models
+$popular = $iris->models->popular();
+
+// Get nano models (fastest, cheapest)
+$nano = $iris->models->nano();
+
+// Get models by provider
+$openai = $iris->models->byProvider('openai');
+$anthropic = $iris->models->byProvider('anthropic');
+
+// Get specific model details
+$model = $iris->models->get('gpt-4o-mini-2024-07-18');
+echo "Model: {$model['name']}\n";
+echo "Provider: {$model['provider']}\n";
+
+// Get recommended model for use case
+$recommended = $iris->models->recommended('coding');
+
+// Get pricing info
+$pricing = $iris->models->pricing();
+```
+
+**CLI Usage:**
+
+```bash
+# List basic models
+./bin/iris sdk:call models.basic
+
+# Get popular models
+./bin/iris sdk:call models.popular
+
+# Get nano models
+./bin/iris sdk:call models.nano
+
+# Get model by provider
+./bin/iris sdk:call models.byProvider openai
+```
+
+### 💳 Credit & Billing Status
+
+```php
+// Get credit status
+$credits = $iris->usage->creditStatus();
+echo "Credits remaining: {$credits['credits_remaining']}\n";
+echo "Credits used: {$credits['credits_used']}\n";
+
+if ($credits['credits_remaining'] < 100) {
+    echo "Warning: Low credits!\n";
+}
+
+// Get credit history
+$history = $iris->usage->creditHistory(['limit' => 50]);
+
+// Get subscription details
+$subscription = $iris->usage->subscription();
+
+// Get available upgrade plans
+$plans = $iris->usage->availablePlans();
+```
+
+**CLI Usage:**
+
+```bash
+# Check credit status
+./bin/iris sdk:call usage.creditStatus
+
+# Get subscription info
+./bin/iris sdk:call usage.subscription
+
+# Get available plans
+./bin/iris sdk:call usage.availablePlans
+```
 
 ## Error Handling
 
@@ -747,13 +1273,20 @@ assert($response->content === 'Mocked response');
 
 | Resource | Methods |
 |----------|---------|
-| `$iris->agents` | `list`, `get`, `create`, `update`, `delete`, `chat`, `multiStep`, `addMemory`, `togglePublic`, `generateWebhook` |
+| `$iris->agents` | `list`, `get`, `create`, `update`, `patch`, `delete`, `chat`, `multiStep`, `addMemory`, `togglePublic`, `generateWebhook`, `getFileAttachments`, `addFileAttachments`, `setFileAttachments`, `removeFileAttachment`, `clearFileAttachments`, `uploadAndAttachFiles` |
 | `$iris->workflows` | `execute`, `getStatus`, `continue`, `completeTask`, `generate`, `generateWithAgents`, `templates`, `importTemplate`, `runs`, `getLogs` |
-| `$iris->bloqs` | `list`, `get`, `create`, `update`, `delete`, `lists`, `items`, `uploadFile`, `files` |
-| `$iris->leads` | `list`, `get`, `create`, `update`, `delete`, `search`, `addNote`, `activities`, `tasks`, `deliverables`, `aggregation`, `generateResponse`, `recordOutreach` |
+| `$iris->bloqs` | `list`, `get`, `create`, `update`, `delete`, `overview`, `agents`, `bloqAgents`, `workflows`, `lists`, `items`, `uploadFile`, `files`, `getCustomFieldsConfig`, `updateCustomFieldsConfig`, `addCustomField`, `removeCustomField`, `clearCustomFields` |
+| `$iris->leads` | `list`, `get`, `create`, `update`, `delete`, `search`, `addNote`, `activities`, `tasks`, `deliverables`, `invoices`, `aggregation`, `outreach`, `outreachSteps`, `enrich`, `enrichmentStatus`, `generateResponse`, `recordOutreach`, `parseDescription`, `createFromDescription`, `getAvailableTags`, `getLifecycleStages`, `checkDuplicate`, `bulkCreateFromDescriptions` |
 | `$iris->leads->tasks()` | `all`, `create`, `update`, `delete`, `reorder` |
-| `$iris->leads->deliverables()` | `list`, `create`, `uploadFile`, `update`, `delete`, `send` |
+| `$iris->leads->deliverables()` | `list`, `create`, `uploadFile`, `update`, `delete`, `previewEmail`, `send`, `generateAndSend` |
+| `$iris->leads->invoices()` | `list`, `get`, `create`, `update`, `delete`, `markPaid`, `send`, `getPaymentLink`, `void` |
 | `$iris->leads->aggregation()` | `statistics`, `list`, `get`, `getRecentLeads`, `requirements` |
+| `$iris->leads->outreach()` | `checkEligibility`, `getInfo`, `recordAttempt`, `setAutoRespond`, `generateEmail`, `sendEmail`, `generateAndSend` |
+| `$iris->leads->outreachSteps()` | `list`, `all`, `create`, `update`, `complete`, `reopen`, `delete`, `reorder`, `initializeDefault`, `clearAll` |
+| `$iris->cloudFiles` | `list`, `get`, `upload`, `update`, `delete`, `downloadUrl`, `status`, `content`, `supportedTypes`, `forBloq`, `forAgent`, `attachToAgent`, `detachFromAgent`, `reindex`, `uploadForAgent`, `uploadMultipleForAgent` |
+| `$iris->usage` | `summary`, `details`, `byAgent`, `byModel`, `billing`, `package`, `quota`, `history`, `workflowStats`, `storage`, `creditStatus`, `creditHistory`, `subscription`, `availablePlans` |
+| `$iris->vapi` | `phoneNumbers`, `getPhoneNumber`, `configurePhoneNumber`, `disconnectPhoneNumber`, `syncAssistant`, `updateHandoff`, `getHandoff`, `getAssistant`, `updateVoice`, `voices`, `callHistory`, `getCall`, `getTranscript`, `getRecording`, `initiateCall`, `endCall`, `usage` |
+| `$iris->models` | `list`, `basic`, `popular`, `get`, `byProvider`, `recommended`, `providers`, `sync`, `pricing`, `nano` |
 | `$iris->integrations` | `available`, `connected`, `getOAuthUrl`, `test`, `execute`, `functions` |
 | `$iris->rag` | `query`, `index`, `indexFile`, `searchSimilar`, `delete` |
 
