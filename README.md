@@ -1,138 +1,240 @@
 # IRIS AI Platform
 
-**Create AI assistants that actually know your business.**
+```
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║     ██╗██████╗ ██╗███████╗     █████╗ ██╗                                     ║
+║     ██║██╔══██╗██║██╔════╝    ██╔══██╗██║                                     ║
+║     ██║██████╔╝██║███████╗    ███████║██║                                     ║
+║     ██║██╔══██╗██║╚════██║    ██╔══██║██║                                     ║
+║     ██║██║  ██║██║███████║    ██║  ██║██║                                     ║
+║     ╚═╝╚═╝  ╚═╝╚═╝╚══════╝    ╚═╝  ╚═╝╚═╝                                     ║
+║                                                                               ║
+║              Create AI assistants that actually know your business            ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+```
 
 ---
 
 ## What is IRIS?
 
-IRIS lets you build **AI agents** - intelligent assistants that can answer questions, perform tasks, and connect to your tools. Think of it like creating your own custom ChatGPT that knows your products, your processes, and your data.
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│   YOUR BUSINESS                          YOUR AI AGENT                      │
+│   ─────────────                          ────────────                       │
+│                                                                             │
+│   📄 Documents                              🤖                              │
+│   📊 Data            ──────────────▶      "Hi! I can help                  │
+│   📋 Processes                             you with..."                     │
+│   💬 FAQs                                                                   │
+│                                                                             │
+│   ┌─────────────────────────────────────────────────────────────────────┐   │
+│   │  Think of it like your own ChatGPT that knows YOUR products,        │   │
+│   │  YOUR processes, and YOUR data. Available 24/7. Never forgets.      │   │
+│   └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
-**No coding required.** Everything can be done through our visual interface at [app.heyiris.io](https://app.heyiris.io). This SDK and CLI are optional power tools for developers who want programmatic control.
+**No coding required.** Use our visual interface at [app.heyiris.io](https://app.heyiris.io) — or use this SDK/CLI for programmatic control.
 
 ---
 
 ## Who is This For?
 
-- **Business owners** who want AI assistants for customer support, sales, or internal operations
-- **Agencies** building AI solutions for clients
-- **Developers** integrating AI capabilities into applications
-- **Teams** that need intelligent automation without hiring ML engineers
+```
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│  🏢 BUSINESS     │  │  🏛️ AGENCIES     │  │  💻 DEVELOPERS   │  │  👥 TEAMS        │
+│     OWNERS       │  │                  │  │                  │  │                  │
+├──────────────────┤  ├──────────────────┤  ├──────────────────┤  ├──────────────────┤
+│ AI assistants    │  │ Build AI         │  │ Integrate AI     │  │ Intelligent      │
+│ for support,     │  │ solutions for    │  │ into your apps   │  │ automation       │
+│ sales, ops       │  │ your clients     │  │ via SDK/API      │  │ without ML hire  │
+└──────────────────┘  └──────────────────┘  └──────────────────┘  └──────────────────┘
+```
 
 ---
 
-## Platform Features Explained
+## The IRIS Platform at a Glance
 
-### 🤖 AI Agents — Your Custom AI Assistants
-
-**What it is:** An AI agent is like having a smart employee that's available 24/7. You tell it what you want it to do, give it knowledge about your business, and it handles conversations and tasks for you.
-
-**Real examples:**
-- A **customer support agent** that answers product questions using your documentation
-- A **sales assistant** that qualifies leads and schedules meetings
-- A **recruiting agent** that screens resumes and answers candidate questions
-- An **internal helper** that answers HR policy questions for employees
-
-**How it works:**
-1. Give your agent a name and personality ("friendly and professional")
-2. Write instructions for what it should do ("Help customers with product questions")
-3. Upload files so it knows your business (product guides, FAQs, policies)
-4. Share the link - your agent is live!
-
-**Why this matters:** You don't need to train an AI model or write complex code. Just describe what you want in plain English, upload your files, and your agent is ready to use.
-
----
-
-### 📚 Knowledge Base — Your Agent's Memory
-
-**What it is:** The knowledge base is where your agent stores everything it needs to know. When someone asks a question, your agent searches this memory to find relevant information and give accurate answers.
-
-**Real examples:**
-- Upload your **product catalog** → Agent can answer "What's the price of X?" or "Do you have Y in stock?"
-- Upload your **employee handbook** → Agent answers "How many vacation days do I have?" or "What's the expense policy?"
-- Upload **training materials** → Agent helps onboard new team members
-- Upload **sales playbooks** → Agent coaches reps on handling objections
-
-**How it works:**
-1. Create a knowledge base (just give it a name)
-2. Upload files - PDFs, Word docs, spreadsheets, text files
-3. IRIS automatically reads and indexes everything
-4. Your agent can now search and reference this information
-
-**Why this matters:** Traditional chatbots give generic answers. Your IRIS agent gives answers based on YOUR actual documents and data. When your information changes, just upload the new files - no retraining required.
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                            🌟 IRIS PLATFORM 🌟                                  │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐      │
+│  │ 🤖 AGENTS   │    │ 📚 MEMORY   │    │ 🔗 INTEGR.  │    │ 📊 CRM      │      │
+│  │             │    │             │    │             │    │             │      │
+│  │ AI workers  │    │ Knowledge   │    │ 17+ tools   │    │ Leads &     │      │
+│  │ that chat   │    │ base with   │    │ connected   │    │ pipeline    │      │
+│  │ & take      │    │ auto-RAG    │    │ Gmail,Drive │    │ tracking    │      │
+│  │ action      │    │ indexing    │    │ Slack, etc  │    │             │      │
+│  └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘      │
+│         │                 │                  │                  │              │
+│         └────────────────┴──────────────────┴──────────────────┘              │
+│                                    │                                           │
+│                                    ▼                                           │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │                      🔄 AGENTIC WORKFLOWS                                │  │
+│  │         AI decides what to do • Human-in-the-loop when needed           │  │
+│  │              Describe goals in English • AI figures out the rest        │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                           │
+│         ┌──────────────────────────┼──────────────────────────┐               │
+│         ▼                          ▼                          ▼               │
+│  ┌─────────────┐           ┌─────────────┐           ┌─────────────┐          │
+│  │ 🌐 WEB UI   │           │ ⌨️  CLI     │           │ 📦 PHP SDK  │          │
+│  │ No code     │           │ Terminal    │           │ Full API    │          │
+│  │ needed      │           │ commands    │           │ access      │          │
+│  └─────────────┘           └─────────────┘           └─────────────┘          │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-### 🔗 Integrations — Connect Your Tools
+## Platform Features
 
-**What it is:** Integrations let your agent connect to the software you already use. Instead of just chatting, your agent can actually DO things - search your Google Drive, read your emails, send Slack messages, or update your CRM.
+### 🤖 AI Agents — Your 24/7 AI Employees
 
-**Available integrations:**
-| Category | Services |
-|----------|----------|
-| **Google Workspace** | Drive (search files), Gmail (read/send), Calendar (check/create events) |
-| **Communication** | Slack (send messages), Discord (post updates) |
-| **Email Marketing** | Mailjet, Mailchimp (manage campaigns) |
-| **Business Tools** | Stripe (payments), Buffer (social media) |
-| **AI Models** | OpenAI, Anthropic Claude, Google Gemini |
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                 │
+│     STEP 1              STEP 2              STEP 3              STEP 4         │
+│   ┌─────────┐        ┌─────────┐        ┌─────────┐        ┌─────────┐        │
+│   │  Name   │   ──▶  │ Prompt  │   ──▶  │ Upload  │   ──▶  │  Share  │        │
+│   │  it     │        │  it     │        │ files   │        │  link   │        │
+│   └─────────┘        └─────────┘        └─────────┘        └─────────┘        │
+│   "Sales Bot"        "You help          product.pdf        🔗 Live!           │
+│                      customers..."       faq.docx                              │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
 
-**Real examples:**
-- "Find the Q3 sales report in my Google Drive" → Agent searches and retrieves it
-- "Send a Slack message to #marketing about the campaign launch" → Agent sends it
-- "What meetings do I have tomorrow?" → Agent checks your Google Calendar
-- "Draft a follow-up email to John" → Agent writes it and optionally sends via Gmail
+**What can agents do?**
 
-**Why this matters:** Your agent becomes a true assistant that takes action, not just a chatbot that gives advice. One agent can work across all your tools.
+| Use Case | What the Agent Does |
+|----------|---------------------|
+| 💬 **Customer Support** | Answers product questions using your docs |
+| 📞 **Sales Assistant** | Qualifies leads, schedules meetings |
+| 📋 **Recruiting** | Screens resumes, answers candidate questions |
+| 📖 **Internal Helper** | Answers HR, policy, and process questions |
+| ✍️ **Content Creator** | Writes emails, reports, social posts |
+
+**No ML expertise needed.** Describe what you want in plain English → Upload your files → Done.
+
+---
+
+### 📚 Knowledge Base — Your Agent's Brain
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                 │
+│   UPLOAD                    IRIS MAGIC                      AGENT ANSWERS       │
+│   ──────                    ──────────                      ─────────────       │
+│                                                                                 │
+│   📄 product-guide.pdf      ┌──────────────────┐                               │
+│   📊 pricing.xlsx      ──▶  │  🔮 Auto-Index   │  ──▶    User: "What's the     │
+│   📋 faq.docx               │     & RAG        │         price of Pro plan?"   │
+│   📝 policies.txt           │                  │                               │
+│                             │  Reads, chunks,  │         Agent: "The Pro plan  │
+│                             │  embeds, indexes │         is $49/month and      │
+│                             │  automatically   │         includes..."          │
+│                             └──────────────────┘                               │
+│                                                                                 │
+│   ┌─────────────────────────────────────────────────────────────────────────┐  │
+│   │  💡 Unlike chatbots that give generic answers, IRIS agents answer       │  │
+│   │     based on YOUR actual documents. Update files = agent learns.        │  │
+│   └─────────────────────────────────────────────────────────────────────────┘  │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Supported file types:** PDF, Word, Excel, CSV, TXT, Markdown, HTML
+
+---
+
+### 🔗 Integrations — Agents That Take Action
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                 │
+│   Your agent doesn't just TALK — it DOES things:                               │
+│                                                                                 │
+│   ┌───────────────────────────────────────────────────────────────────────┐    │
+│   │                                                                       │    │
+│   │  "Find the Q3 report"     ──▶  🔍 Searches Google Drive               │    │
+│   │  "Send to #marketing"     ──▶  💬 Posts to Slack                      │    │
+│   │  "What's on my calendar?" ──▶  📅 Checks Google Calendar              │    │
+│   │  "Draft follow-up email"  ──▶  ✉️  Creates Gmail draft                │    │
+│   │  "Add to CRM"             ──▶  📊 Updates lead record                 │    │
+│   │                                                                       │    │
+│   └───────────────────────────────────────────────────────────────────────┘    │
+│                                                                                 │
+│   ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐     │
+│   │ Google  │ │ Google  │ │ Google  │ │  Slack  │ │ Discord │ │ Mailjet │     │
+│   │  Drive  │ │  Gmail  │ │Calendar │ │         │ │         │ │         │     │
+│   └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘     │
+│   ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐     │
+│   │ Stripe  │ │ Buffer  │ │ YouTube │ │ OpenAI  │ │ Claude  │ │ Gemini  │     │
+│   └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘     │
+│                                                                                 │
+│                           + Webhooks, Custom APIs, MCP Protocol                 │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ### 📊 Lead Management — Complete CRM System
 
-**What it is:** A full-featured CRM built right into IRIS. Track contacts, manage deals, assign tasks, send invoices, and automate follow-ups. Your AI agents can access and update this data, creating a seamless workflow between human and AI.
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           📊 BUILT-IN CRM                                       │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│   PIPELINE VIEW                                                                 │
+│   ─────────────                                                                 │
+│                                                                                 │
+│   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐    │
+│   │   NEW    │ → │CONTACTED │ → │NEGOTIATION│ → │   WON    │   │   LOST   │    │
+│   │          │   │          │   │          │   │          │   │          │    │
+│   │  John D. │   │  Sarah M.│   │  Mike R. │   │  Lisa K. │   │  Tom B.  │    │
+│   │  Acme Co │   │  TechCorp│   │  StartupX│   │  BigCo   │   │  SmallBiz│    │
+│   │  $5,000  │   │  $12,000 │   │  $8,500  │   │  $15,000 │   │  $3,000  │    │
+│   └──────────┘   └──────────┘   └──────────┘   └──────────┘   └──────────┘    │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
 
-**Lead Tracking:**
-- **Contact information** - Name, email, phone, company, and any custom fields you need
-- **Pipeline stages** - New → Contacted → Negotiation → Won/Lost (customizable)
-- **Lead scoring** - Automatically prioritize based on engagement and fit
-- **Source tracking** - Know where each lead came from
+**Everything you need to manage contacts & deals:**
 
-**Tasks & Follow-ups:**
-- **Task management** - Create to-dos with due dates for each lead
-- **Automated reminders** - Never miss a follow-up
-- **Task templates** - Standard checklists for your sales process
-- **Assignment** - Delegate tasks to team members or AI agents
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                 │
+│  👤 CONTACTS        ✅ TASKS           📝 NOTES          💰 INVOICES           │
+│  ───────────        ──────             ─────             ────────              │
+│  Name, email,       To-dos with        Log every         Create & send        │
+│  phone, company,    due dates,         interaction,      invoices via         │
+│  custom fields      reminders          AI summaries      Stripe               │
+│                                                                                 │
+│  📦 DELIVERABLES    🔄 AUTOMATION      📊 ANALYTICS      🤖 AI ASSIST          │
+│  ────────────       ──────────         ─────────         ─────────            │
+│  Track files &      Auto-assign,       Pipeline stats,   AI drafts emails,    │
+│  links delivered    trigger flows      forecasting       enriches leads       │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
 
-**Notes & Activity History:**
-- **Conversation notes** - Log every interaction
-- **Activity timeline** - See the complete history of each lead
-- **AI-generated summaries** - Your agent can summarize long email threads
-- **Searchable history** - Find any conversation instantly
+**Invoicing flow:**
+```
+Create Invoice → Add Line Items → Send to Client → Track Payment → Mark Paid
+     📄              📋                ✉️               👀            ✅
+```
 
-**Invoicing & Payments:**
-- **Create invoices** - Generate professional invoices for leads
-- **Stripe integration** - Accept payments directly
-- **Invoice tracking** - See paid, pending, and overdue invoices
-- **Itemized billing** - Add line items, quantities, and descriptions
-
-**Deliverables:**
-- **Track what you've delivered** - Files, links, access credentials
-- **Proof of delivery** - Document what was provided and when
-- **Client portal** - Leads can view their deliverables
-- **Version history** - Track updates to deliverables
-
-**Automation Capabilities:**
-- **Auto-assign leads** - Route new leads to the right person or agent
-- **Trigger workflows** - When lead status changes, kick off automations
-- **AI follow-up** - Let your agent draft and send follow-up emails
-- **Lead enrichment** - Automatically research companies and contacts
-
-**Real examples:**
-- Sales team tracks prospects from first contact to closed deal, with AI drafting follow-up emails
-- Recruiting agency manages candidates, with agents scheduling interviews
-- Agency tracks client projects, invoices for work completed, and delivers assets
-- Service business manages customer requests, dispatches work, and collects payment
-
-**Why this matters:** You don't need a separate CRM like Salesforce or HubSpot. Everything is built-in, and your AI agents can work with your leads directly - researching, following up, and even closing deals.
+**Why this matters:** No need for Salesforce or HubSpot. CRM is built-in, and your AI agents can access and update leads directly.
 
 ---
 
