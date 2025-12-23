@@ -197,6 +197,61 @@ With IRIS, **prompts are your workflow logic**:
 
 ---
 
+## Train Your AI Coding Assistant
+
+**Give [TECHNICAL.md](TECHNICAL.md) to your AI coding assistant and it becomes an IRIS expert.**
+
+The technical documentation is specifically structured for LLM consumption. Your AI assistant can learn the entire SDK and CLI, then help you build agents, manage leads, and automate workflows.
+
+### Supported Platforms
+
+| Platform | How to Use |
+|----------|------------|
+| **Claude Code** | Add `TECHNICAL.md` to your project or reference it in prompts |
+| **GitHub Copilot** | Include in your workspace for context-aware suggestions |
+| **Cursor** | Add to your project's docs folder for AI indexing |
+| **Windsurf** | Reference in your codebase for intelligent completions |
+| **Lovable** | Upload as project documentation |
+| **Codex / ChatGPT** | Paste or upload for code generation assistance |
+| **Google AI Studio** | Upload as context for Gemini-powered development |
+
+### Example: Teaching Claude Code
+
+```bash
+# In your project, tell Claude:
+"Read TECHNICAL.md and help me build an agent that processes
+customer support emails and escalates urgent issues to Slack"
+```
+
+Claude will understand:
+- All available SDK methods (`$iris->agents->create()`, etc.)
+- CLI commands (`./bin/iris chat`, `./bin/iris sdk:call`)
+- Integration options (Gmail, Slack, Google Drive, etc.)
+- Best practices for prompts and agent configuration
+
+### Example: Automated Development Pipeline
+
+```bash
+# Your AI assistant can now run IRIS commands directly
+./bin/iris sdk:call agents.create name="Support Bot" prompt="..."
+./bin/iris sdk:call agents.uploadAndAttachFiles 123 /docs/knowledge.pdf bloq_id=40
+./bin/iris chat 123 "Test: How do I reset my password?"
+```
+
+### What Your AI Assistant Learns
+
+From [TECHNICAL.md](TECHNICAL.md), your AI coding assistant understands:
+
+- **40+ SDK methods** across agents, leads, bloqs, workflows, and integrations
+- **CLI syntax** for rapid prototyping and testing
+- **Authentication patterns** (API keys, OAuth, credential management)
+- **Code examples** for every feature with copy-paste snippets
+- **Best practices** for agent prompts, RAG setup, and workflow design
+
+**The result?** Ask your AI assistant to "create a lead qualification agent with Google Calendar integration" and it knows exactly how to do it.
+
+---
+
 ## Core Features
 
 ### 🤖 AI Agents
