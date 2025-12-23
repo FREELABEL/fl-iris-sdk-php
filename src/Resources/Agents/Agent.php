@@ -92,14 +92,57 @@ class Agent
     }
 
     /**
-     * Get agent's public URL (if public).
+     * Get agent's public URL (if public, uses slug).
      */
-    public function getPublicUrl(string $baseUrl = 'https://app.freelabel.net'): ?string
+    public function getPublicUrl(string $baseUrl = 'https://app.heyiris.io'): ?string
     {
         if (!$this->isPublic || !$this->slug) {
             return null;
         }
 
         return "{$baseUrl}/agent/{$this->slug}";
+    }
+
+    /**
+     * Get the simple embed/share URL for this agent.
+     *
+     * This URL works for any agent (public or private) and includes bloq context.
+     * Format: /agent/simple/{id}?bloq={bloqId}
+     *
+     * @param string $baseUrl Base URL (default: https://app.heyiris.io)
+     * @return string The simple agent URL
+     */
+    public function getSimpleUrl(string $baseUrl = 'https://app.heyiris.io'): string
+    {
+        $url = "{$baseUrl}/agent/simple/{$this->id}";
+
+        if ($this->bloqId) {
+            $url .= "?bloq={$this->bloqId}";
+        }
+
+        return $url;
+    }
+
+    /**
+     * Get the embed URL for this agent (alias for getSimpleUrl).
+     */
+    public function getEmbedUrl(string $baseUrl = 'https://app.heyiris.io'): string
+    {
+        return $this->getSimpleUrl($baseUrl);
+    }
+
+    /**
+     * Get all available URLs for this agent.
+     *
+     * @param string $baseUrl Base URL
+     * @return array{simple: string, public: ?string, embed: string}
+     */
+    public function getUrls(string $baseUrl = 'https://app.heyiris.io'): array
+    {
+        return [
+            'simple' => $this->getSimpleUrl($baseUrl),
+            'embed' => $this->getEmbedUrl($baseUrl),
+            'public' => $this->getPublicUrl($baseUrl),
+        ];
     }
 }

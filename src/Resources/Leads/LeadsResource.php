@@ -705,6 +705,33 @@ class LeadsResource
     }
 
     /**
+     * Get Stripe payment history for a lead.
+     *
+     * Retrieves payment history from Stripe based on the lead's email address.
+     * Includes invoices, payments, and checkout sessions.
+     *
+     * @param int $leadId Lead ID
+     * @return array Payment history data
+     *
+     * @example
+     * ```php
+     * $payments = $iris->leads->stripePayments(16);
+     *
+     * echo "Customer found: " . ($payments['has_stripe_customer'] ? 'Yes' : 'No') . "\n";
+     * echo "Total paid: $" . ($payments['total_paid'] / 100) . "\n";
+     *
+     * foreach ($payments['payments'] as $payment) {
+     *     echo "- {$payment['description']}: \${$payment['amount'] / 100} ({$payment['status']})\n";
+     * }
+     * ```
+     */
+    public function stripePayments(int $leadId): array
+    {
+        $response = $this->http->get("/api/v1/leads/{$leadId}/stripe-payments");
+        return $response['data'] ?? $response;
+    }
+
+    /**
      * Get activity types.
      *
      * @return array

@@ -435,6 +435,52 @@ class AgentsResource
     }
 
     /**
+     * Get the public/shareable URL for an agent.
+     *
+     * Returns URLs in the format: https://app.heyiris.io/agent/simple/{id}?bloq={bloqId}
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $baseUrl Base URL (default: https://app.heyiris.io)
+     * @return array{simple: string, embed: string, public: ?string}
+     *
+     * @example
+     * ```php
+     * // Get all URLs for an agent
+     * $urls = $iris->agents->getUrls(11);
+     * echo $urls['simple'];  // https://app.heyiris.io/agent/simple/11?bloq=40
+     * echo $urls['embed'];   // Same as simple
+     * echo $urls['public'];  // https://app.heyiris.io/agent/my-agent-slug (if public)
+     * ```
+     */
+    public function getUrls(int|string $agentId, string $baseUrl = 'https://app.heyiris.io'): array
+    {
+        $agent = $this->get($agentId);
+        return $agent->getUrls($baseUrl);
+    }
+
+    /**
+     * Get the simple/embed URL for an agent.
+     *
+     * This is the direct link to chat with the agent.
+     * Format: https://app.heyiris.io/agent/simple/{id}?bloq={bloqId}
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $baseUrl Base URL (default: https://app.heyiris.io)
+     * @return string
+     *
+     * @example
+     * ```php
+     * $url = $iris->agents->getUrl(11);
+     * // https://app.heyiris.io/agent/simple/11?bloq=40
+     * ```
+     */
+    public function getUrl(int|string $agentId, string $baseUrl = 'https://app.heyiris.io'): string
+    {
+        $agent = $this->get($agentId);
+        return $agent->getSimpleUrl($baseUrl);
+    }
+
+    /**
      * Upload files and attach them to an agent in one step.
      *
      * This is a convenience method that:

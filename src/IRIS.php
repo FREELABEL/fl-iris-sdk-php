@@ -16,6 +16,7 @@ use IRIS\SDK\Resources\CloudFiles\CloudFilesResource;
 use IRIS\SDK\Resources\Usage\UsageResource;
 use IRIS\SDK\Resources\Vapi\VapiResource;
 use IRIS\SDK\Resources\Models\ModelsResource;
+use IRIS\SDK\Resources\Chat\ChatResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -125,6 +126,11 @@ class IRIS
     public ModelsResource $models;
 
     /**
+     * Chat resource for real-time agent conversations
+     */
+    public ChatResource $chat;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -158,6 +164,7 @@ class IRIS
         $this->usage = new UsageResource($this->http, $this->config);
         $this->vapi = new VapiResource($this->http, $this->config);
         $this->models = new ModelsResource($this->http, $this->config);
+        $this->chat = new ChatResource($this->http, $this->config);
     }
 
     /**

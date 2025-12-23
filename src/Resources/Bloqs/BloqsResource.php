@@ -562,4 +562,220 @@ class BloqsResource
     {
         return $this->updateCustomFieldsConfig($bloqId, ['fields' => []]);
     }
+
+    // =========================================================================
+    // SHARING & COLLABORATION
+    // =========================================================================
+
+    /**
+     * Share a bloq with another user.
+     *
+     * @param int $bloqId Bloq ID
+     * @param int $targetUserId User ID to share with
+     * @param string $permission Permission level: 'read', 'write', 'admin'
+     * @return array Share result
+     *
+     * @example
+     * ```php
+     * // Share bloq with read access
+     * $iris->bloqs->share(40, 456, 'read');
+     *
+     * // Share with write access
+     * $iris->bloqs->share(40, 456, 'write');
+     * ```
+     */
+    public function share(int $bloqId, int $targetUserId, string $permission = 'read'): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->post("/api/v1/user/bloqs/{$bloqId}/share", [
+            'user_id' => $targetUserId,
+            'permission' => $permission,
+        ]);
+    }
+
+    /**
+     * Get users who have access to a bloq.
+     *
+     * @param int $bloqId Bloq ID
+     * @return array List of shared users with permissions
+     */
+    public function getSharedUsers(int $bloqId): array
+    {
+        return $this->http->get("/api/v1/user/bloqs/{$bloqId}/shared-users");
+    }
+
+    /**
+     * Update sharing permissions for a user.
+     *
+     * @param int $bloqId Bloq ID
+     * @param int $targetUserId User ID to update
+     * @param string $permission New permission level
+     * @return array Updated share info
+     */
+    public function updateSharePermission(int $bloqId, int $targetUserId, string $permission): array
+    {
+        return $this->http->put("/api/v1/user/bloqs/{$bloqId}/share/{$targetUserId}", [
+            'permission' => $permission,
+        ]);
+    }
+
+    /**
+     * Remove sharing access for a user.
+     *
+     * @param int $bloqId Bloq ID
+     * @param int $targetUserId User ID to remove
+     * @return bool
+     */
+    public function unshare(int $bloqId, int $targetUserId): bool
+    {
+        $this->http->delete("/api/v1/user/bloqs/{$bloqId}/share/{$targetUserId}");
+        return true;
+    }
+
+    // =========================================================================
+    // CONTENT MANAGEMENT (for RAG/Knowledge Base)
+    // =========================================================================
+
+    /**
+     * Get all content in a bloq (for knowledge base/RAG).
+     *
+     * @param int $bloqId Bloq ID
+     * @return array Content items with metadata
+     */
+    public function getContent(int $bloqId): array
+    {
+        return $this->http->get("/api/v1/user/bloqs/{$bloqId}/content");
+    }
+
+    /**
+     * Add content to a bloq (automatically indexed for RAG).
+     *
+     * @param int $bloqId Bloq ID
+     * @param array $content Content to add
+     * @return array Added content
+     *
+     * @example
+     * ```php
+     * // Add text content (auto-vectorized for RAG)
+     * $iris->bloqs->addContent(40, [
+     *     'title' => 'Company Policy',
+     *     'content' => 'Our vacation policy allows 20 days PTO...',
+     *     'type' => 'document',
+     * ]);
+     * ```
+     */
+    public function addContent(int $bloqId, array $content): array
+    {
+        return $this->http->post("/api/v1/user/bloqs/{$bloqId}/content", $content);
+    }
+
+    /**
+     * Remove content from a bloq.
+     *
+     * @param int $bloqId Bloq ID
+     * @param int $contentId Content ID to remove
+     * @return bool
+     */
+    public function removeContent(int $bloqId, int $contentId): bool
+    {
+        $this->http->delete("/api/v1/user/bloqs/{$bloqId}/content/{$contentId}");
+        return true;
+    }
+
+    // =========================================================================
+    // PUBLIC SHARING (Items)
+    // =========================================================================
+
+    /**
+     * Make a bloq item publicly accessible.
+     *
+     * @param int $itemId Item ID
+     * @return array Public share info with UUID
+     *
+     * @example
+     * ```php
+     * $result = $iris->bloqs->makeItemPublic(123);
+     * echo "Public URL: {$result['public_url']}";
+     * ```
+     */
+    public function makeItemPublic(int $itemId): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->post("/api/v1/users/{$userId}/bloqs/list/item/{$itemId}/make-public");
+    }
+
+    /**
+     * Revoke public access to a bloq item.
+     *
+     * @param int $itemId Item ID
+     * @return bool
+     */
+    public function makeItemPrivate(int $itemId): bool
+    {
+        $userId = $this->config->requireUserId();
+        $this->http->post("/api/v1/users/{$userId}/bloqs/list/item/{$itemId}/make-private");
+        return true;
+    }
+
+    /**
+     * Get a public item by UUID (no authentication required).
+     *
+     * @param string $uuid Public UUID
+     * @return BloqItem
+     */
+    public function getPublicItem(string $uuid): BloqItem
+    {
+        $response = $this->http->get("/api/bloq/item/{$uuid}");
+        return new BloqItem($response);
+    }
+
+    // =========================================================================
+    // CHAT MESSAGES (for conversational memory)
+    // =========================================================================
+
+    /**
+     * Store a chat message for an item (conversation history).
+     *
+     * @param int $itemId Item ID
+     * @param array $message Message data
+     * @return array Stored message
+     *
+     * @example
+     * ```php
+     * $iris->bloqs->storeChatMessage(123, [
+     *     'role' => 'user',
+     *     'content' => 'What is our refund policy?',
+     * ]);
+     * ```
+     */
+    public function storeChatMessage(int $itemId, array $message): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->post("/api/v1/users/{$userId}/bloqs/list/item/{$itemId}/chat/messages", $message);
+    }
+
+    /**
+     * Get chat messages for an item.
+     *
+     * @param int $itemId Item ID
+     * @return array Chat messages
+     */
+    public function getChatMessages(int $itemId): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->get("/api/v1/users/{$userId}/bloqs/list/item/{$itemId}/chat/messages");
+    }
+
+    /**
+     * Clear chat messages for an item.
+     *
+     * @param int $itemId Item ID
+     * @return bool
+     */
+    public function clearChatMessages(int $itemId): bool
+    {
+        $userId = $this->config->requireUserId();
+        $this->http->delete("/api/v1/users/{$userId}/bloqs/list/item/{$itemId}/chat/messages");
+        return true;
+    }
 }

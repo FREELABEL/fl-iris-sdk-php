@@ -240,8 +240,12 @@ class Client
      */
     protected function buildUrl(string $endpoint): string
     {
-        // Use IRIS URL for workflow-related endpoints
-        if (str_contains($endpoint, '/iris/') || str_contains($endpoint, '/chat/')) {
+        // Use IRIS URL for workflow-related endpoints (V5 system)
+        // These endpoints live on the IRIS API, not the main FL API
+        if (str_contains($endpoint, '/iris/')
+            || str_contains($endpoint, '/chat/')
+            || str_contains($endpoint, '/workflows/')
+        ) {
             return $this->config->irisUrl . '/' . ltrim($endpoint, '/');
         }
 
@@ -344,7 +348,7 @@ class Client
      */
     protected function retryDelay(): callable
     {
-        return function (int $retries, ResponseInterface $response = null): int {
+        return function (int $retries, ?ResponseInterface $response = null): int {
             // Use Retry-After header if present
             if ($response && $retryAfter = $response->getHeaderLine('Retry-After')) {
                 return (int) $retryAfter * 1000;

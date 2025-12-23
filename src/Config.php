@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace IRIS\SDK;
 
+use IRIS\SDK\Auth\CredentialStore;
+
 /**
  * SDK Configuration
  *
  * Holds all configuration options for the IRIS SDK.
+ * Can auto-load credentials from ~/.iris/credentials.json or environment variables.
  */
 class Config
 {
@@ -160,5 +163,36 @@ class Config
     public function isDebug(): bool
     {
         return $this->debug;
+    }
+
+    /**
+     * Create a Config instance by auto-loading from credential store.
+     *
+     * Loads credentials from:
+     * 1. ~/.iris/credentials.json (persistent storage)
+     * 2. Environment variables (take precedence)
+     * 3. Provided options array (highest precedence)
+     *
+     * @param array $options Additional options to merge
+     * @return static
+     */
+    public static function fromCredentialStore(array $options = []): static
+    {
+        $store = new CredentialStore();
+        $storedConfig = $store->toConfigArray();
+
+        // Merge: stored < options (options take precedence)
+        $mergedOptions = array_merge($storedConfig, $options);
+
+        return new static($mergedOptions);
+    }
+
+    /**
+     * Check if stored credentials exist for auto-loading.
+     */
+    public static function hasStoredCredentials(): bool
+    {
+        $store = new CredentialStore();
+        return $store->hasMinimumCredentials();
     }
 }
