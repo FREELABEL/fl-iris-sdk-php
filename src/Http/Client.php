@@ -71,14 +71,19 @@ class Client
 
         // Add logging middleware in debug mode
         if ($this->config->isDebug()) {
-            $stack->push(Middleware::tap(
-                function (RequestInterface $request) {
-                    error_log("[IRIS SDK] Request: {$request->getMethod()} {$request->getUri()}");
-                },
-                function (RequestInterface $request, array $options, ResponseInterface $response) {
-                    error_log("[IRIS SDK] Response: {$response->getStatusCode()}");
+            $stack->push(Middleware::mapRequest(function (RequestInterface $request) {
+                error_log("[IRIS SDK] Request: {$request->getMethod()} {$request->getUri()}");
+                $body = (string) $request->getBody();
+                if ($body) {
+                    error_log("[IRIS SDK] Request Body: " . $body);
                 }
-            ));
+                return $request;
+            }));
+            
+            $stack->push(Middleware::mapResponse(function (ResponseInterface $response) {
+                error_log("[IRIS SDK] Response: {$response->getStatusCode()}");
+                return $response;
+            }));
         }
 
         return new GuzzleClient([

@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use IRIS\SDK\IRIS;
+use IRIS\SDK\Auth\CredentialStore;
 
 class SDKCommand extends Command
 {
@@ -32,16 +33,45 @@ class SDKCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $endpoint = $input->getArgument('endpoint');
         
-        $apiKey = $input->getOption('api-key') ?: getenv('IRIS_API_KEY');
-        $userId = $input->getOption('user-id') ?: getenv('IRIS_USER_ID');
+        // Load credentials from store first, then override with CLI options/env vars
+        $store = new CredentialStore();
+
+        // Priority: CLI options > env vars > stored credentials
+        $apiKey = $input->getOption('api-key')
+            ?: getenv('IRIS_API_KEY')
+            ?: $store->get('api_key');
+
+        $userId = $input->getOption('user-id')
+            ?: getenv('IRIS_USER_ID')
+            ?: $store->get('user_id');
         
         if (!$apiKey || !$userId) {
-            $io->error('Missing API credentials. Set IRIS_API_KEY and IRIS_USER_ID environment variables.');
+            $io->error('Missing API credentials. Run "iris config setup" to configure credentials.');
             return Command::FAILURE;
         }
         
         try {
-            $iris = new IRIS(['api_key' => $apiKey, 'user_id' => (int)$userId]);
+            // Build config array with all available credentials
+            $config = [
+                'api_key' => $apiKey,
+                'user_id' => (int)$userId,
+            ];
+
+            // Add optional credentials from store
+            if ($store->has('client_id')) {
+                $config['client_id'] = $store->get('client_id');
+            }
+            if ($store->has('client_secret')) {
+                $config['client_secret'] = $store->get('client_secret');
+            }
+            if ($store->has('iris_url')) {
+                $config['iris_url'] = $store->get('iris_url');
+            }
+            if ($store->has('base_url')) {
+                $config['base_url'] = $store->get('base_url');
+            }
+
+            $iris = new IRIS($config);
             
             // Parse endpoint (resource.method or resource.subresource.method)
             $parts = explode('.', $endpoint);

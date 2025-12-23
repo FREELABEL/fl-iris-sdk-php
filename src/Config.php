@@ -45,13 +45,16 @@ class Config
     public ?string $webhookSecret = null;
 
     /**
-     * OAuth2 Client ID for client credentials flow
-     * Required for management operations (agents, bloqs, content)
+     * OAuth2 Client ID for client credentials flow (OPTIONAL)
+     * Only needed for advanced machine-to-machine scenarios.
+     * Most operations work with just api_key!
      */
     public ?string $clientId = null;
 
     /**
-     * OAuth2 Client Secret for client credentials flow
+     * OAuth2 Client Secret for client credentials flow (OPTIONAL)
+     * Only needed for advanced machine-to-machine scenarios.
+     * Most operations work with just api_key!
      */
     public ?string $clientSecret = null;
 

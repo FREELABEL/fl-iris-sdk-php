@@ -24,38 +24,42 @@ use IRIS\SDK\Events\WebhookHandler;
  *
  * The main entry point for interacting with the IRIS AI platform.
  *
- * The SDK supports dual authentication:
- * - User Token: For chat and interaction routes
- * - Client Credentials: For management routes (agents, bloqs, content)
+ * Simple authentication with just your API token:
+ * - User Token: Works for ALL operations (chat, leads, agents, workflows, etc.)
+ * - Client Credentials: OPTIONAL - rarely needed
  *
- * @example Basic usage (chat/leads - works with user token):
+ * @example Basic usage (works for everything!):
  * ```php
  * $iris = new IRIS([
- *     'api_key' => 'your-user-token',
- *     'user_id' => 123,
+ *     'api_key' => 'your-api-token',
+ *     'user_id' => 193,
  * ]);
  *
- * // Chat with an agent (public endpoint)
- * $response = $iris->agents->chat(456, [
- *     ['role' => 'user', 'content' => 'Hello!']
- * ]);
- * ```
- *
- * @example Full management (with client credentials):
- * ```php
- * $iris = new IRIS([
- *     'api_key' => 'your-user-token',
- *     'client_id' => 'your-client-id',
- *     'client_secret' => 'your-client-secret',
- *     'user_id' => 123,
+ * // Chat with agents
+ * $response = $iris->chat->execute([
+ *     'query' => 'Hello!',
+ *     'agentId' => 11,
  * ]);
  *
- * // Now you can manage agents
+ * // Create agents (yes, with just a token!)
  * $agent = $iris->agents->create(new AgentConfig(
  *     name: 'My Agent',
  *     prompt: 'You are helpful',
- *     model: 'gpt-4o-mini',
  * ));
+ *
+ * // Search leads
+ * $leads = $iris->leads->search(['status' => 'Won']);
+ * ```
+ *
+ * @example Advanced usage (optional client credentials):
+ * ```php
+ * // Only needed for specific machine-to-machine scenarios
+ * $iris = new IRIS([
+ *     'api_key' => 'your-api-token',
+ *     'user_id' => 193,
+ *     'client_id' => 'optional-client-id',      // Rarely needed
+ *     'client_secret' => 'optional-secret',     // Rarely needed
+ * ]);
  * ```
  */
 class IRIS
@@ -145,13 +149,14 @@ class IRIS
      *     client_secret?: string,
      *     debug?: bool
      * } $options Configuration options
+     * @param Client|null $httpClient Optional HTTP client (for testing)
      *
      * @throws \InvalidArgumentException If api_key is not provided
      */
-    public function __construct(array $options)
+    public function __construct(array $options, ?Client $httpClient = null)
     {
         $this->config = new Config($options);
-        $this->http = new Client($this->config);
+        $this->http = $httpClient ?? new Client($this->config);
 
         // Initialize resource modules
         $this->agents = new AgentsResource($this->http, $this->config);

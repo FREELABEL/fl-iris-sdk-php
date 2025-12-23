@@ -289,46 +289,6 @@ IRIS lets you build **AI agents** - intelligent assistants that can answer quest
 
 ---
 
-## Pricing & Plans
-
-IRIS offers flexible pricing from free to enterprise. Start free and scale as you grow.
-
-### Plan Overview
-
-| Feature | Free | Starter | Growth | Professional | Enterprise |
-|---------|------|---------|--------|--------------|------------|
-| **AI Agents** | 50 | 50 | 500 | 1,000 | Unlimited |
-| **Workflows** | 3 | 10 | 25 | 100 | Unlimited |
-| **Contacts (CRM)** | 100 | 100 | 10,000 | 250,000 | Unlimited |
-| **Knowledge Items** | 50 | 100 | 2,000 | 10,000 | Unlimited |
-| **AI Credits/month** | 100 | 1,000 | 5,000 | 20,000 | Unlimited |
-| **Voice AI** | ❌ | ❌ | ❌ | ✅ | ✅ |
-| **White Label** | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **API Access** | Limited | ✅ | ✅ | ✅ | ✅ |
-
-### What's Included in Every Plan
-
-- ✅ All AI models (GPT-4o, Claude, Gemini, etc.)
-- ✅ Knowledge base with automatic RAG
-- ✅ 17+ integrations (Google, Slack, etc.)
-- ✅ Lead management CRM
-- ✅ Web UI, CLI, and SDK access
-
-### Usage-Based Pricing
-
-AI credits are consumed when your agents respond. Different models cost different amounts:
-- **Budget models** (GPT-4o-mini, Haiku) - ~1 credit per response
-- **Standard models** (GPT-4o, Sonnet) - ~5 credits per response
-- **Premium models** (Claude Opus) - ~15 credits per response
-
-Most users find the included credits more than enough. If you need more, credits are available as add-ons.
-
-### Free Trial
-
-Every new account gets **7 days of Enterprise access** - all features, unlimited usage. After the trial, you're automatically moved to the Free plan unless you upgrade.
-
----
-
 ## Three Ways to Use IRIS
 
 ### 1. Web Interface (No Code)
@@ -385,19 +345,85 @@ Create an agent in the **web interface**, update it from the **CLI**, access it 
 **No installation, no code, no technical setup.**
 
 ### Option 2: Use the SDK/CLI (Developers)
+
+#### Step 1: Get Your SDK Key
+
+1. Log in to [app.heyiris.io](https://app.heyiris.io)
+2. Open any project
+3. Click **Actions** → **Developer Portal**
+4. Click **New Key** and give it a name
+5. **Copy and save your key** - it's only shown once!
+
+#### Step 2: Install & Configure
+
 ```bash
 # Install the SDK
 composer require iris-ai/sdk
 
-# Configure your credentials
-./bin/iris config setup
+# Configure with your key (from Developer Portal)
+./bin/iris config set api_key YOUR_SDK_KEY
+./bin/iris config set user_id YOUR_USER_ID
 
-# Start chatting with agents
+# Or set via environment variables
+export IRIS_API_KEY=your_sdk_key
+export IRIS_USER_ID=your_user_id
+```
+
+#### Step 3: Start Building
+
+```bash
+# Chat with your agent via CLI
 ./bin/iris chat 11 "Hello!"
 
-# Or use in your PHP code
-$iris = new IRIS(['api_key' => 'your-key', 'user_id' => 193]);
-$response = $iris->agents->chat(11, [['role' => 'user', 'content' => 'Hello!']]);
+# Or use in PHP code
+$iris = new IRIS([
+    'api_key' => 'your_sdk_key',
+    'user_id' => 193,
+]);
+$response = $iris->agents->chat(11, [
+    ['role' => 'user', 'content' => 'Hello!']
+]);
+```
+
+### Building an Integration
+
+Here's a complete example: let users upload files to your agent and chat with it.
+
+```php
+<?php
+use IRIS\SDK\IRIS;
+
+// Initialize the SDK
+$iris = new IRIS([
+    'api_key' => $_ENV['IRIS_API_KEY'],
+    'user_id' => $_ENV['IRIS_USER_ID'],
+]);
+
+// 1. Upload user files to agent's knowledge base
+$agentId = 335;
+$bloqId = 40;  // Your project ID
+
+$iris->agents->uploadAndAttachFiles($agentId, [
+    '/uploads/user_document.pdf',
+    '/uploads/product_data.csv',
+], $bloqId);
+
+// 2. Chat with the agent (it now knows about the uploaded files)
+$response = $iris->agents->chat($agentId, [
+    ['role' => 'user', 'content' => 'Summarize the document I just uploaded']
+]);
+
+echo $response->content;
+
+// 3. For complex queries, use multi-step workflows
+$workflow = $iris->agents->multiStep($agentId,
+    'Research the uploaded companies and create a comparison report'
+);
+
+// Track progress
+foreach ($workflow->steps() as $step) {
+    echo "[{$step->progress}%] {$step->description}\n";
+}
 ```
 
 ---
@@ -796,6 +822,46 @@ composer require iris-ai/sdk
 ```
 
 **Questions?** Open an issue or contact us at [support@heyiris.io](mailto:support@heyiris.io)
+
+---
+
+## Pricing & Plans
+
+IRIS offers flexible pricing from free to enterprise. Start free and scale as you grow.
+
+### Plan Overview
+
+| Feature | Free | Starter | Growth | Professional | Enterprise |
+|---------|------|---------|--------|--------------|------------|
+| **AI Agents** | 50 | 50 | 500 | 1,000 | Unlimited |
+| **Workflows** | 3 | 10 | 25 | 100 | Unlimited |
+| **Contacts (CRM)** | 100 | 100 | 10,000 | 250,000 | Unlimited |
+| **Knowledge Items** | 50 | 100 | 2,000 | 10,000 | Unlimited |
+| **AI Credits/month** | 100 | 1,000 | 5,000 | 20,000 | Unlimited |
+| **Voice AI** | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **White Label** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **API Access** | Limited | ✅ | ✅ | ✅ | ✅ |
+
+### What's Included in Every Plan
+
+- ✅ All AI models (GPT-4o, Claude, Gemini, etc.)
+- ✅ Knowledge base with automatic RAG
+- ✅ 17+ integrations (Google, Slack, etc.)
+- ✅ Lead management CRM
+- ✅ Web UI, CLI, and SDK access
+
+### Usage-Based Pricing
+
+AI credits are consumed when your agents respond. Different models cost different amounts:
+- **Budget models** (GPT-4o-mini, Haiku) - ~1 credit per response
+- **Standard models** (GPT-4o, Sonnet) - ~5 credits per response
+- **Premium models** (Claude Opus) - ~15 credits per response
+
+Most users find the included credits more than enough. If you need more, credits are available as add-ons.
+
+### Free Trial
+
+Every new account gets **7 days of Enterprise access** - all features, unlimited usage. After the trial, you're automatically moved to the Free plan unless you upgrade.
 
 ---
 

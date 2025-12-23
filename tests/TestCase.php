@@ -35,7 +35,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Create a test client instance.
+     * Create a test client instance with mock HTTP client.
      *
      * @param array $options Configuration options
      * @return IRIS
@@ -46,7 +46,7 @@ abstract class TestCase extends BaseTestCase
             'api_key' => 'test_api_key',
             'user_id' => 123,
             'base_url' => 'https://api.test.iris.ai',
-        ], $options));
+        ], $options), $this->mockHttp);
     }
 
     /**

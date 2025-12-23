@@ -112,10 +112,10 @@ HELP
 
         // Check credential status
         $checks = [
-            ['API Key', $store->has('api_key'), 'Required for all authenticated requests'],
-            ['User ID', $store->has('user_id'), 'Required for user-scoped operations'],
-            ['Client ID', $store->has('client_id'), 'Required for management operations'],
-            ['Client Secret', $store->has('client_secret'), 'Required for management operations'],
+            ['API Key', $store->has('api_key'), 'Required - Your user API token'],
+            ['User ID', $store->has('user_id'), 'Required - Your numeric user ID'],
+            ['Client ID', $store->has('client_id'), 'Optional - Rarely needed'],
+            ['Client Secret', $store->has('client_secret'), 'Optional - Rarely needed'],
             ['IRIS URL', $store->has('iris_url'), 'Optional (has default)'],
             ['Base URL', $store->has('base_url'), 'Optional (has default)'],
         ];
@@ -130,15 +130,15 @@ HELP
 
         // Overall status
         if ($store->hasMinimumCredentials()) {
-            $io->success('SDK is configured for basic operations (chat, queries)');
+            $io->success('✅ SDK is ready to use!');
 
             if ($store->hasOAuthCredentials()) {
-                $io->success('OAuth credentials configured for management operations');
+                $io->text('   <fg=gray>OAuth credentials configured (advanced scenarios)</>');
             } else {
-                $io->warning('OAuth credentials not set. Run "iris config setup" to configure for full access.');
+                $io->text('   <fg=gray>💡 OAuth not configured (not needed for most operations)</>');
             }
         } else {
-            $io->error('SDK is not fully configured. Run "iris config setup" to get started.');
+            $io->error('SDK is not configured. Run "iris config setup" to get started.');
         }
 
         $io->text([
@@ -269,9 +269,18 @@ HELP
         ]);
 
         // API Key (required)
-        $io->section('Step 1: API Key (Required)');
-        $io->text('Your API key is used for authenticated requests.');
-        $io->text('Get your key from: https://app.freelabel.net/settings/api');
+        $io->section('Step 1: Get Your API Token');
+        $io->text([
+            '<fg=cyan>Don\'t have an account yet?</>',
+            '  1. Sign up at: <fg=green>https://heyiris.io/</>',
+            '  2. After signup, click <fg=yellow>"Developer"</> in the navigation',
+            '  3. Generate your API token',
+            '',
+            '<fg=cyan>Already have an account?</>',
+            '  • Go to: <fg=green>https://app.heyiris.io/developer</> (or click "Developer" in nav)',
+            '  • Copy your API token',
+            '',
+        ]);
 
         $currentApiKey = $store->get('api_key');
         $apiKeyPrompt = $currentApiKey
@@ -291,7 +300,12 @@ HELP
 
         // User ID (required)
         $io->section('Step 2: User ID (Required)');
-        $io->text('Your numeric user ID (found in your account settings).');
+        $io->text([
+            'Your numeric user ID can be found:',
+            '  • In the Developer section at <fg=green>https://app.heyiris.io/developer</>',
+            '  • Or in your account settings',
+            '',
+        ]);
 
         $currentUserId = $store->get('user_id');
         $userIdPrompt = $currentUserId
@@ -313,15 +327,21 @@ HELP
             $store->set('user_id', $userId);
         }
 
-        // OAuth Credentials (optional but recommended)
-        $io->section('Step 3: OAuth Credentials (Optional)');
+        // OAuth Credentials (optional - rarely needed!)
+        $io->section('Step 3: OAuth Credentials (Optional - Advanced)');
         $io->text([
-            'OAuth client credentials enable management operations (create/update agents, bloqs).',
-            'If you only need chat functionality, you can skip this.',
+            '<fg=yellow>⚠️  Most users can skip this!</>',
+            '',
+            'OAuth credentials are only needed for:',
+            '  • Advanced machine-to-machine scenarios',
+            '  • Specific enterprise integrations',
+            '',
+            'Regular operations work fine with just your API key!',
+            'You can always add these later if needed.',
             '',
         ]);
 
-        if ($io->confirm('Configure OAuth credentials?', $store->hasOAuthCredentials())) {
+        if ($io->confirm('Configure OAuth credentials? (most users: No)', false)) {
             $currentClientId = $store->get('client_id');
             $clientIdPrompt = $currentClientId
                 ? "Client ID [current: " . substr($currentClientId, 0, 8) . "...]"

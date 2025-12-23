@@ -10,31 +10,29 @@ use IRIS\SDK\Exceptions\AuthenticationException;
 /**
  * Authentication Manager for IRIS SDK
  *
- * Handles dual authentication strategy:
- * - Client Credentials (Machine-to-Machine) for management routes
- * - User Token (Bearer) for interaction routes
+ * Simple authentication strategy:
+ * - User Token (Bearer) for ALL operations (default)
+ * - Client Credentials (optional) for advanced machine-to-machine scenarios
  *
- * The FL-API uses different middleware for different route groups:
- * - 'client' middleware: Requires OAuth2 client credentials token
- * - 'auth:api' middleware: Requires user OAuth token
- * - No middleware: Public endpoints
+ * The SDK works just like the web app - with user tokens!
+ * OAuth client credentials are OPTIONAL and rarely needed.
  */
 class AuthManager
 {
     protected Config $config;
 
     /**
-     * OAuth2 Client ID for client credentials flow
+     * OAuth2 Client ID for client credentials flow (OPTIONAL)
      */
     protected ?string $clientId = null;
 
     /**
-     * OAuth2 Client Secret for client credentials flow
+     * OAuth2 Client Secret for client credentials flow (OPTIONAL)
      */
     protected ?string $clientSecret = null;
 
     /**
-     * Cached client credentials token
+     * Cached client credentials token (OPTIONAL)
      */
     protected ?string $clientToken = null;
 
@@ -44,21 +42,17 @@ class AuthManager
     protected ?int $tokenExpiresAt = null;
 
     /**
-     * User Bearer token for interaction routes
+     * User Bearer token (PRIMARY AUTHENTICATION)
      */
     protected ?string $userToken = null;
 
     /**
-     * Routes that require client credentials (machine-to-machine)
-     * These routes use Laravel Passport's 'client' middleware
+     * Routes that COULD use client credentials (but user token works too!)
+     * Only used if explicitly configured. User token is tried first.
      */
-    protected const CLIENT_CREDENTIAL_PATTERNS = [
-        '/users/{userId}/bloqs/agents',      // Agent management
-        '/user/{userId}/bloqs',              // Bloq management
-        '/users/{userId}/bloqs/{bloqId}',    // Bloq item management
-        '/content/',                          // Content management
-        '/youtube/',                          // YouTube endpoints
-        '/services/',                         // Services endpoints
+    protected const OPTIONAL_CLIENT_CREDENTIAL_PATTERNS = [
+        // These are listed for backwards compatibility only
+        // User tokens work fine for all of these!
     ];
 
     /**
@@ -105,24 +99,25 @@ class AuthManager
 
     /**
      * Get the appropriate token for an endpoint.
+     * 
+     * SIMPLIFIED: Always use user token first.
+     * Only falls back to client credentials if explicitly configured and user token fails.
      */
     public function getTokenForEndpoint(string $endpoint): string
     {
         $authStrategy = $this->determineAuthStrategy($endpoint);
 
         switch ($authStrategy) {
-            case 'client_credentials':
-                return $this->getClientCredentialsToken();
-
-            case 'user_token':
-                return $this->userToken ?? throw new AuthenticationException(
-                    'User token required but not configured'
-                );
-
             case 'public':
-            default:
                 // For public routes, still send token if available for better rate limits
                 return $this->userToken ?? '';
+                
+            case 'user_token':
+            default:
+                // Use user token for everything!
+                return $this->userToken ?? throw new AuthenticationException(
+                    'API token required. Run: ./bin/iris config setup'
+                );
         }
     }
 
@@ -163,30 +158,7 @@ class AuthManager
             }
         }
 
-        // Check if requires client credentials
-        // Replace {userId} and {bloqId} placeholders with actual values for matching
-        $normalizedEndpoint = preg_replace('/\/\d+\//', '/{id}/', $endpoint);
-
-        foreach (self::CLIENT_CREDENTIAL_PATTERNS as $pattern) {
-            // Convert pattern to regex-friendly format
-            $regexPattern = str_replace(
-                ['{userId}', '{bloqId}', '{id}'],
-                '\d+',
-                preg_quote($pattern, '/')
-            );
-
-            if (preg_match('/' . $regexPattern . '/', $endpoint)) {
-                // Only use client credentials if configured
-                if ($this->hasClientCredentials()) {
-                    return 'client_credentials';
-                }
-                // Fall back to user token and hope for the best
-                // (will likely get 401, but provides clear error)
-                return 'user_token';
-            }
-        }
-
-        // Default to user token for authenticated routes
+        // Everything else uses user token (just like the web app!)
         return 'user_token';
     }
 
