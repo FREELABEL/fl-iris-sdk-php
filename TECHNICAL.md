@@ -1266,6 +1266,104 @@ iris sdk:call leads.enrich 24 auto_update=false
 iris sdk:call leads.enrichmentStatus 24
 ```
 
+#### ReAct AI Enrichment (Advanced)
+
+The ReAct (Reasoning + Acting) enrichment pattern provides intelligent, goal-driven lead enrichment. It uses AI reasoning to select optimal search strategies and includes free native HTTP scraping before using paid APIs.
+
+**How ReAct Works:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    ReAct Loop (max 3-5 iterations)              │
+├─────────────────────────────────────────────────────────────────┤
+│  1. OBSERVE: Analyze current state - what do we have/need?      │
+│  2. THINK: AI reasons about best search strategy                │
+│  3. ACT: Execute search (native HTTP → Tavily → FireCrawl)      │
+│  4. EVALUATE: Did we achieve the goal? Stop or continue.        │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Features:**
+- **Goal-driven**: Specify what you need (email, phone, or all)
+- **Cost-optimized**: Native HTTP scraping tries first (free)
+- **AI-powered**: Smart strategy selection based on context
+- **Early exit**: Stops as soon as goal is achieved
+
+```php
+// ReAct enrichment with email goal
+$result = $iris->leads->enrichReAct(510, [
+    'goal' => 'email',          // 'email', 'phone', or 'all'
+    'max_iterations' => 3,      // 1-5 iterations
+    'use_native_http' => true   // Try free scraping first
+]);
+
+if ($result['goal_achieved']) {
+    echo "Found emails!\n";
+    foreach ($result['found_contacts']['emails'] as $email) {
+        echo "  - {$email}\n";
+    }
+}
+
+// View AI reasoning
+foreach ($result['reasoning'] as $thought) {
+    echo "AI: {$thought}\n";
+}
+
+// Apply confirmed data to lead
+if (!empty($result['found_contacts']['emails'])) {
+    $iris->leads->applyEnrichment(510, [
+        'email' => $result['found_contacts']['emails'][0],
+        'company' => $result['found_contacts']['company'],
+        'linkedin_url' => $result['found_contacts']['linkedin_url']
+    ]);
+}
+```
+
+**CLI ReAct Enrichment:**
+
+```bash
+# Find email using ReAct pattern
+./bin/iris sdk:call leads.enrichReAct 510 goal=email max_iterations=3 use_native_http=true
+
+# Find all contact info
+./bin/iris sdk:call leads.enrichReAct 510 goal=all
+
+# Apply confirmed data
+./bin/iris sdk:call leads.applyEnrichment 510 email="john@example.com" company="Acme Corp"
+```
+
+**Response Structure:**
+
+```json
+{
+    "success": true,
+    "lead_id": 510,
+    "found_contacts": {
+        "emails": ["john@coffee.com", "info@coffee.com"],
+        "phones": ["512-555-1234", "(512) 555-5678"],
+        "company": "Jo's Coffee",
+        "website": "https://joscoffee.com",
+        "linkedin_url": "https://linkedin.com/company/joscoffee",
+        "address": "123 Main St, Austin, TX"
+    },
+    "goal": "email",
+    "goal_achieved": true,
+    "iterations": 2,
+    "reasoning": [
+        "Lead has no email. Starting with general web search.",
+        "Found website. Trying native HTTP scrape on contact page.",
+        "Email found! Goal achieved."
+    ],
+    "sources": ["https://joscoffee.com/contact"]
+}
+```
+
+**Best Practices:**
+- Use `goal=email` for faster results when you only need email
+- Set `use_native_http=true` (default) to minimize API costs
+- Keep `max_iterations` at 3 unless you need exhaustive search
+- Always review results before applying with `applyEnrichment()`
+
 #### AI-Powered Lead Creation
 
 Create leads from natural language descriptions using AI parsing.
@@ -1996,7 +2094,7 @@ assert($response->content === 'Mocked response');
 | `$iris->agents` | `list`, `get`, `create`, `update`, `patch`, `delete`, `chat`, `multiStep`, `addMemory`, `togglePublic`, `generateWebhook`, `getFileAttachments`, `addFileAttachments`, `setFileAttachments`, `removeFileAttachment`, `clearFileAttachments`, `uploadAndAttachFiles`, `getUrl`, `getUrls` |
 | `$iris->workflows` | `execute`, `getStatus`, `continue`, `completeTask`, `generate`, `generateWithAgents`, `templates`, `importTemplate`, `runs`, `getLogs` |
 | `$iris->bloqs` | `list`, `get`, `create`, `update`, `delete`, `overview`, `agents`, `bloqAgents`, `workflows`, `lists`, `items`, `uploadFile`, `files`, `getCustomFieldsConfig`, `updateCustomFieldsConfig`, `addCustomField`, `removeCustomField`, `clearCustomFields`, `share`, `getSharedUsers`, `updateSharePermission`, `unshare`, `getContent`, `addContent`, `removeContent`, `makeItemPublic`, `makeItemPrivate`, `getPublicItem`, `storeChatMessage`, `getChatMessages`, `clearChatMessages` |
-| `$iris->leads` | `list`, `get`, `create`, `update`, `delete`, `search`, `addNote`, `activities`, `tasks`, `deliverables`, `invoices`, `aggregation`, `outreach`, `outreachSteps`, `enrich`, `enrichmentStatus`, `generateResponse`, `recordOutreach`, `parseDescription`, `createFromDescription`, `getAvailableTags`, `getLifecycleStages`, `checkDuplicate`, `bulkCreateFromDescriptions`, `stripePayments` |
+| `$iris->leads` | `list`, `get`, `create`, `update`, `delete`, `search`, `addNote`, `activities`, `tasks`, `deliverables`, `invoices`, `aggregation`, `outreach`, `outreachSteps`, `enrich`, `enrichReAct`, `applyEnrichment`, `enrichmentStatus`, `generateResponse`, `recordOutreach`, `parseDescription`, `createFromDescription`, `getAvailableTags`, `getLifecycleStages`, `checkDuplicate`, `bulkCreateFromDescriptions`, `stripePayments` |
 | `$iris->leads->tasks()` | `all`, `create`, `update`, `delete`, `reorder` |
 | `$iris->leads->deliverables()` | `list`, `create`, `uploadFile`, `update`, `delete`, `previewEmail`, `send`, `generateAndSend` |
 | `$iris->leads->invoices()` | `list`, `get`, `create`, `update`, `delete`, `markPaid`, `send`, `getPaymentLink`, `void` |

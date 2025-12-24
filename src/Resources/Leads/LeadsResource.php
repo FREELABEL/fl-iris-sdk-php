@@ -830,6 +830,95 @@ class LeadsResource
     }
 
     /**
+     * Enrich a lead using ReAct AI pattern (goal-driven reasoning + acting).
+     *
+     * This advanced enrichment method uses a ReAct (Reasoning + Acting) loop
+     * that intelligently selects search strategies based on what data is needed.
+     * It includes native HTTP scraping as a free first option before using
+     * paid APIs like Tavily or FireCrawl.
+     *
+     * @param int $leadId Lead ID to enrich
+     * @param array{
+     *     goal?: string,            // 'email' (default), 'phone', or 'all'
+     *     max_iterations?: int,     // 1-5 iterations (default 3)
+     *     use_native_http?: bool    // Use free HTTP scraping first (default true)
+     * } $options Enrichment options
+     * @return array{
+     *     success: bool,
+     *     lead_id: int,
+     *     found_contacts: array{
+     *         emails: array<string>,
+     *         phones: array<string>,
+     *         company: ?string,
+     *         website: ?string,
+     *         linkedin_url: ?string,
+     *         address: ?string
+     *     },
+     *     goal: string,
+     *     goal_achieved: bool,
+     *     iterations: int,
+     *     reasoning: array<string>,
+     *     sources: array<string>
+     * }
+     *
+     * @example
+     * ```php
+     * // Find email using ReAct pattern
+     * $result = $iris->leads->enrichReAct(510, [
+     *     'goal' => 'email',
+     *     'max_iterations' => 3,
+     *     'use_native_http' => true
+     * ]);
+     *
+     * if ($result['goal_achieved']) {
+     *     echo "Found emails: " . implode(', ', $result['found_contacts']['emails']);
+     * }
+     *
+     * // Find all contact info
+     * $result = $iris->leads->enrichReAct(510, ['goal' => 'all']);
+     * ```
+     */
+    public function enrichReAct(int $leadId, array $options = []): array
+    {
+        return $this->http->post("/api/v1/leads/{$leadId}/enrich-react", $options);
+    }
+
+    /**
+     * Apply confirmed enrichment data to a lead.
+     *
+     * After reviewing the enrichment results, apply the confirmed data to update
+     * the lead's contact information.
+     *
+     * @param int $leadId Lead ID
+     * @param array{
+     *     email?: string,
+     *     phone?: string,
+     *     company?: string,
+     *     job_title?: string,
+     *     linkedin_url?: string,
+     *     website?: string
+     * } $updates Confirmed contact data to apply
+     * @return array Updated lead data
+     *
+     * @example
+     * ```php
+     * // After reviewing enrichReAct results, apply confirmed data
+     * $enriched = $iris->leads->enrichReAct(510);
+     *
+     * if ($enriched['success'] && !empty($enriched['found_contacts']['emails'])) {
+     *     $iris->leads->applyEnrichment(510, [
+     *         'email' => $enriched['found_contacts']['emails'][0],
+     *         'company' => $enriched['found_contacts']['company']
+     *     ]);
+     * }
+     * ```
+     */
+    public function applyEnrichment(int $leadId, array $updates): array
+    {
+        return $this->http->post("/api/v1/leads/{$leadId}/apply-enrichment", $updates);
+    }
+
+    /**
      * Parse a lead description using AI to extract structured data.
      *
      * This endpoint uses AI to parse freeform text and extract lead information
