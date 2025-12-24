@@ -243,29 +243,30 @@ class Client
     /**
      * Build the full URL for an endpoint.
      * Routes to appropriate API based on endpoint type:
-     * - IRIS API: agents, chat, workflows
-     * - FL-API: leads, deliverables, profiles
+     * - IRIS API: workflows, chat (V5 system)
+     * - FL-API: leads, deliverables, profiles, services, agents management, integrations
      */
     protected function buildUrl(string $endpoint): string
     {
-        // Use IRIS URL for agent/workflow-related endpoints (V5 system)
-        if (str_contains($endpoint, '/iris/')
-            || str_contains($endpoint, '/chat/')
-            || str_contains($endpoint, '/workflows/')
-            || str_contains($endpoint, '/agents/')
-            || str_contains($endpoint, '/bloqs/')
-        ) {
-            return $this->config->irisUrl . '/' . ltrim($endpoint, '/');
-        }
-
-        // Use FL-API URL for leads, deliverables, profiles, services
-        if (str_contains($endpoint, '/leads')
+        // Use FL-API URL for leads, deliverables, profiles, services, agents management
+        // Check /users/ FIRST because /users/{id}/bloqs/agents needs to go to FL-API
+        if (str_contains($endpoint, '/users/')
+            || str_contains($endpoint, '/leads')
             || str_contains($endpoint, '/deliverables')
             || str_contains($endpoint, '/profile')
             || str_contains($endpoint, '/services')
-            || str_contains($endpoint, '/users/')
+            || str_contains($endpoint, '/integrations')
         ) {
             return $this->config->flApiUrl . '/' . ltrim($endpoint, '/');
+        }
+
+        // Use IRIS URL for workflow/chat endpoints (V5 system)
+        if (str_contains($endpoint, '/iris/')
+            || str_contains($endpoint, '/chat/')
+            || str_contains($endpoint, '/workflows/')
+            || str_contains($endpoint, '/bloqs/')
+        ) {
+            return $this->config->irisUrl . '/' . ltrim($endpoint, '/');
         }
 
         return $this->config->baseUrl . '/' . ltrim($endpoint, '/');

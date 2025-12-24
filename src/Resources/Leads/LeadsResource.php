@@ -238,6 +238,23 @@ class LeadsResource
     }
 
     /**
+     * Update an existing note on a lead.
+     *
+     * @param int $leadId Lead ID
+     * @param int $noteId Note ID
+     * @param string $content Updated note content
+     * @param array $metadata Additional metadata
+     * @return array
+     */
+    public function updateNote(int $leadId, int $noteId, string $content, array $metadata = []): array
+    {
+        return $this->http->put("/api/v1/leads/{$leadId}/notes/{$noteId}", array_merge(
+            ['message' => $content],
+            $metadata
+        ));
+    }
+
+    /**
      * Delete a note from a lead.
      *
      * @param int $leadId Lead ID

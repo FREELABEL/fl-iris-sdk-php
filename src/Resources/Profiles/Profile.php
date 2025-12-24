@@ -117,4 +117,16 @@ class Profile
             'updated_at' => $this->updated_at,
         ];
     }
+
+    /**
+     * Get the public profile URL.
+     *
+     * @param string|null $baseUrl Optional base URL (defaults to production)
+     * @return string
+     */
+    public function getPublicUrl(?string $baseUrl = null): string
+    {
+        $base = $baseUrl ?? 'https://freelabel.net';
+        return $base . '/' . $this->id;
+    }
 }

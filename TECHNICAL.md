@@ -1344,7 +1344,11 @@ if ($duplicate['exists']) {
 
 ### � Profile & Services Management
 
-Create and manage user profiles with service offerings. Profiles live at public URLs (e.g., `oh.heyiris.io/username`) and can showcase multiple services.
+Create and manage user profiles with service offerings. Profiles live at public URLs on the FreeLABEL network:
+
+- **Primary URL**: `freelabel.net/username` (redirects to production)
+- **Production**: `the.freelabel.net/username`
+- **Local Dev**: `local.elon.freelabel.net/username`
 
 #### Create a Profile
 
@@ -1361,7 +1365,14 @@ $profile = $iris->profiles->create([
 ]);
 
 echo "Profile created: {$profile['id']}\n";
-echo "URL: https://oh.heyiris.io/{$profile['username']}\n";
+
+// Get public URL
+$url = $profile->getPublicUrl();
+echo "URL: {$url}\n";  // https://freelabel.net/nsg-billz
+
+// Or specify environment
+$prodUrl = $profile->getPublicUrl('https://the.freelabel.net');
+$localUrl = $profile->getPublicUrl('https://local.elon.freelabel.net');
 ```
 
 **CLI:**
@@ -1375,6 +1386,8 @@ echo "URL: https://oh.heyiris.io/{$profile['username']}\n";
   state='Texas' \
   instagram=nsgbillz \
   user_id=193
+
+# Profile will be accessible at: https://freelabel.net/nsg-billz
 ```
 
 #### Create Services for a Profile
@@ -1996,6 +2009,119 @@ assert($response->content === 'Mocked response');
 | `$iris->models` | `list`, `basic`, `popular`, `get`, `byProvider`, `recommended`, `providers`, `sync`, `pricing`, `nano` |
 | `$iris->integrations` | `available`, `connected`, `getOAuthUrl`, `test`, `execute`, `functions` |
 | `$iris->rag` | `query`, `index`, `indexFile`, `searchSimilar`, `delete` |
+
+## Troubleshooting
+
+### "The POST method is not supported for route..."
+
+**Problem:** Getting this error when trying to create profiles or other resources.
+
+**Cause:** The HTTP Client's routing logic doesn't recognize the endpoint pattern, so it routes to the wrong API.
+
+**Solution:**
+
+1. **Check your endpoint pattern** - The Client routes based on URL patterns:
+   - `/profile` (singular) → FL-API ✅
+   - `/profiles` (plural) → FL-API ✅
+   - `/leads` → FL-API ✅
+   - `/agents/*` → IRIS API ✅
+   - `/chat/*` → IRIS API ✅
+
+2. **Verify routing in `src/Http/Client.php`**:
+   ```php
+   // This check must include BOTH singular and plural forms
+   if (str_contains($endpoint, '/profile')  // ✅ Both work
+       || str_contains($endpoint, '/leads')
+       || str_contains($endpoint, '/services')
+       || str_contains($endpoint, '/users/')) {
+       return $this->config->flApiUrl . '/' . ltrim($endpoint, '/');
+   }
+   ```
+
+3. **Check your `.env` configuration**:
+   ```bash
+   # Production
+   IRIS_API_URL=https://iris-api.freelabel.net  # For agents/chat/workflows
+   FL_API_URL=https://apiv2.heyiris.io          # For leads/profiles/services
+   
+   # Local
+   IRIS_LOCAL_URL=https://local.iris.freelabel.net
+   FL_API_LOCAL_URL=https://local.raichu.freelabel.net
+   ```
+
+**Key lesson:** Always check for both singular and plural forms of resource names in routing logic. Backend routes may use `/api/v1/profile` (singular) even though SDK resources are named `profiles` (plural).
+
+### Services Returning All Records Instead of Filtered Results
+
+**Problem:** Calling `services.list(profile_id=123)` returns ALL services from the entire platform.
+
+**Cause:** Missing `profile_id` parameter or backend not applying the filter.
+
+**Solution:**
+
+1. **Always specify `profile_id`**:
+   ```php
+   // ✅ CORRECT - Only returns services for this profile
+   $services = $iris->services->list(['profile_id' => 9203684]);
+   
+   // ❌ WRONG - Returns ALL services (can be thousands)
+   $services = $iris->services->list();
+   ```
+
+2. **CLI usage**:
+   ```bash
+   # ✅ CORRECT
+   ./bin/iris sdk:call services.list profile_id=9203684
+   
+   # ❌ WRONG - Returns everything
+   ./bin/iris sdk:call services.list
+   ```
+
+3. **Backend fix** - Ensure `ServicesController.php` applies filters:
+   ```php
+   private function searchServices(Request $request) {
+       $services = Service::query();
+       
+       // Must check profile_id FIRST
+       $profileId = $request->query('profile_id');
+       if ($profileId) {
+           $services->where('profile_id', $profileId);
+       }
+       // ... other filters
+   }
+   ```
+
+### Wrong API URL Configuration
+
+**Problem:** SDK calls failing or routing to wrong endpoints.
+
+**Symptoms:**
+- 404 errors on valid endpoints
+- CORS errors
+- "Method not supported" on working endpoints
+
+**Solution:** Verify your API URLs in `.env`:
+
+```bash
+# ❌ WRONG - Both pointing to same URL
+IRIS_API_URL=https://apiv2.heyiris.io
+FL_API_URL=https://apiv2.heyiris.io
+
+# ✅ CORRECT - Separate APIs
+IRIS_API_URL=https://iris-api.freelabel.net  # Chat, agents, workflows
+FL_API_URL=https://apiv2.heyiris.io          # Leads, profiles, services
+```
+
+**Quick test:**
+```bash
+# Test IRIS API (agents, chat)
+curl https://iris-api.freelabel.net/api/health
+
+# Test FL-API (leads, profiles)
+curl https://apiv2.heyiris.io/api/health
+
+# Both should return: {"status":"ok","database":"connected"}
+```
 
 ## License
 
