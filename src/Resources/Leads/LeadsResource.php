@@ -52,15 +52,29 @@ class LeadsResource
      *     page?: int,
      *     per_page?: int,
      *     search?: string,
+     *     bloq_id?: int,
+     *     status?: string,
+     *     lead_type?: string,
+     *     sort?: string,
+     *     order?: string,
      *     stage_id?: int,
      *     tags?: array,
-     *     source?: string
+     *     source?: string,
+     *     include_notes?: bool,
+     *     include_events?: bool
      * } $filters Filter options
      * @return LeadCollection
      */
     public function list(array $filters = []): LeadCollection
     {
-        $response = $this->http->get("/api/v1/leads", $filters);
+        // If user_id is set in filters, use the user-specific endpoint
+        if (isset($filters['user_id'])) {
+            $userId = $filters['user_id'];
+            unset($filters['user_id']);
+            $response = $this->http->get("/api/v1/users/{$userId}/leads", $filters);
+        } else {
+            $response = $this->http->get("/api/v1/leads", $filters);
+        }
 
         return new LeadCollection(
             array_map(fn($data) => new Lead($data), $response['data'] ?? $response),
@@ -71,12 +85,24 @@ class LeadsResource
     /**
      * List leads for the current user.
      *
+     * @param array{
+     *     search?: string,
+     *     bloq_id?: int,
+     *     status?: string,
+     *     lead_type?: string,
+     *     page?: int,
+     *     per_page?: int,
+     *     sort?: string,
+     *     order?: string,
+     *     include_notes?: bool,
+     *     include_events?: bool
+     * } $filters Filter and search options
      * @return LeadCollection
      */
-    public function listForUser(): LeadCollection
+    public function listForUser(array $filters = []): LeadCollection
     {
         $userId = $this->config->requireUserId();
-        $response = $this->http->get("/api/v1/users/{$userId}/leads");
+        $response = $this->http->get("/api/v1/users/{$userId}/leads", $filters);
 
         return new LeadCollection(
             array_map(fn($data) => new Lead($data), $response['data'] ?? $response),

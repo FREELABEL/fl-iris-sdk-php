@@ -360,13 +360,23 @@ Create an agent in the **web interface**, update it from the **CLI**, access it 
 # Install the SDK
 composer require iris-ai/sdk
 
-# Configure with your key (from Developer Portal)
-./bin/iris config set api_key YOUR_SDK_KEY
-./bin/iris config set user_id YOUR_USER_ID
+# Copy the example .env file and configure your credentials
+cp .env.example .env
+```
 
-# Or set via environment variables
-export IRIS_API_KEY=your_sdk_key
-export IRIS_USER_ID=your_user_id
+Edit `.env` with your credentials from the Developer Portal:
+
+```bash
+# .env - IRIS SDK Configuration
+IRIS_API_KEY=your_sdk_key_from_developer_portal
+IRIS_USER_ID=your_user_id
+
+# Environment: 'production' or 'local'
+IRIS_ENV=production
+
+# API URLs (defaults work for most users)
+IRIS_API_URL=https://apiv2.heyiris.io
+FL_API_URL=https://apiv2.heyiris.io
 ```
 
 #### Step 3: Start Building

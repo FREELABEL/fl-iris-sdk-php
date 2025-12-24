@@ -30,6 +30,11 @@ class Config
     public string $irisUrl = 'https://iris.freelabel.net';
 
     /**
+     * Base URL for FL-API (leads, deliverables, etc.)
+     */
+    public string $flApiUrl = 'https://raichu.freelabel.net';
+
+    /**
      * Request timeout in seconds
      */
     public int $timeout = 30;
@@ -115,6 +120,7 @@ class Config
         $this->apiKey = $options['api_key'];
         $this->baseUrl = rtrim($options['base_url'] ?? $this->baseUrl, '/');
         $this->irisUrl = rtrim($options['iris_url'] ?? $this->irisUrl, '/');
+        $this->flApiUrl = rtrim($options['fl_api_url'] ?? $this->flApiUrl, '/');
         $this->userId = $options['user_id'] ?? null;
         $this->timeout = $options['timeout'] ?? $this->timeout;
         $this->retries = $options['retries'] ?? $this->retries;
@@ -182,12 +188,15 @@ class Config
             $environment = $env['IRIS_ENV'] ?? 'production';
             
             if ($environment === 'local') {
-                $config['base_url'] = $env['IRIS_LOCAL_URL'] ?? 'https://local.raichu.freelabel.net';
-                $config['iris_url'] = 'https://local.iris.freelabel.net';
+                // Local development URLs
+                $config['base_url'] = $env['IRIS_LOCAL_URL'] ?? 'https://local.iris.freelabel.net';
+                $config['iris_url'] = $env['IRIS_LOCAL_URL'] ?? 'https://local.iris.freelabel.net';
+                $config['fl_api_url'] = $env['FL_API_LOCAL_URL'] ?? 'https://local.raichu.freelabel.net';
             } else {
-                // Default to production
-                $config['base_url'] = $env['IRIS_PRODUCTION_URL'] ?? 'https://apiv2.heyiris.io';
-                $config['iris_url'] = 'https://iris-api.freelabel.net';
+                // Production URLs
+                $config['base_url'] = $env['IRIS_API_URL'] ?? 'https://apiv2.heyiris.io';
+                $config['iris_url'] = $env['IRIS_API_URL'] ?? 'https://apiv2.heyiris.io';
+                $config['fl_api_url'] = $env['FL_API_URL'] ?? 'https://raichu.freelabel.net';
             }
             
             // Optional fields

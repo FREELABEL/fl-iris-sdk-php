@@ -40,84 +40,61 @@ The SDK includes a lightweight CLI for quick access to all SDK features from the
 
 ### Setup
 
-The easiest way to set up credentials is using the interactive setup wizard:
+Configure the SDK using the `.env` file:
 
 ```bash
-# Run the setup wizard (recommended)
-./bin/iris config setup
+# Copy the example and edit with your credentials
+cp .env.example .env
 ```
 
-This will guide you through configuring:
-- **API Key** (required) - Your user API token
-- **User ID** (required) - Your numeric user ID
-- **OAuth Credentials** (optional) - For agent management operations
-- **Custom URLs** (optional) - For local development
-
-Credentials are stored securely in `~/.iris/credentials.json` with restricted file permissions (600).
-
-#### Alternative: Environment Variables
-
-You can also use environment variables (these override stored credentials):
+**Required `.env` Configuration:**
 
 ```bash
-export IRIS_API_KEY=sk_live_xxxxx
-export IRIS_USER_ID=123
-export IRIS_CLIENT_ID=your-oauth-client-id
-export IRIS_CLIENT_SECRET=your-oauth-client-secret
-export IRIS_URL=https://local.iris.freelabel.net  # For local dev
+# IRIS SDK Configuration
+# ======================
+# The SDK uses the IRIS API for all operations.
+
+# API Authentication (required)
+IRIS_API_KEY=your_sdk_key_from_developer_portal
+IRIS_USER_ID=your_user_id
+
+# Environment: 'production' or 'local'
+IRIS_ENV=production
+
+# ========================================
+# API URLs (defaults work for most users)
+# ========================================
+IRIS_API_URL=https://apiv2.heyiris.io
+FL_API_URL=https://apiv2.heyiris.io
+
+# Local development URLs (when IRIS_ENV=local)
+IRIS_LOCAL_URL=https://local.iris.freelabel.net
+FL_API_LOCAL_URL=https://local.raichu.freelabel.net
+
+# Optional: OAuth credentials for advanced use
+# IRIS_CLIENT_ID=your-oauth-client-id
+# IRIS_CLIENT_SECRET=your-oauth-client-secret
 ```
 
-### Credential Management Commands
+### Configuration Status
+
+Check your configuration:
 
 ```bash
-# Check configuration status
 ./bin/iris config
-
-# Set individual credentials
-./bin/iris config set api_key "your-api-key"
-./bin/iris config set user_id 193
-./bin/iris config set client_id "oauth-client-id"
-./bin/iris config set client_secret "oauth-client-secret"
-
-# View stored credentials (masked)
-./bin/iris config list
-
-# Get a specific credential
-./bin/iris config get api_key
-
-# Clear all credentials
-./bin/iris config clear
-
-# Run interactive setup
-./bin/iris config setup
 ```
 
-**Example Configuration Status:**
-```
-IRIS SDK Configuration Status
-=============================
+### Override via CLI
 
- Credentials file: ~/.iris/credentials.json
-
- --------------- -------------- -----------------------------------------
-  Credential      Status         Description
- --------------- -------------- -----------------------------------------
-  API Key         ✓ Configured   Required for all authenticated requests
-  User ID         ✓ Configured   Required for user-scoped operations
-  Client ID       ✓ Configured   Required for management operations
-  Client Secret   ✓ Configured   Required for management operations
-  IRIS URL        ✓ Configured   Optional (has default)
-  Base URL        ✗ Not set      Optional (has default)
- --------------- -------------- -----------------------------------------
-
- [OK] SDK is configured for basic operations (chat, queries)
- [OK] OAuth credentials configured for management operations
-```
-
-Once configured, you can use any CLI command without passing credentials:
+You can override `.env` values using CLI flags:
 
 ```bash
-# No more --api-key or environment variables needed!
+./bin/iris chat 11 "Hello!" --api-key=sk_xxx --user-id=123
+```
+
+Once configured, use any CLI command:
+
+```bash
 ./bin/iris chat 11 "Hello!"
 ./bin/iris sdk:call leads.search search=john bloq_id=40
 ```

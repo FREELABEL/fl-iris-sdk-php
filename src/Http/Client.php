@@ -242,16 +242,28 @@ class Client
 
     /**
      * Build the full URL for an endpoint.
+     * Routes to appropriate API based on endpoint type:
+     * - IRIS API: agents, chat, workflows
+     * - FL-API: leads, deliverables, profiles
      */
     protected function buildUrl(string $endpoint): string
     {
-        // Use IRIS URL for workflow-related endpoints (V5 system)
-        // These endpoints live on the IRIS API, not the main FL API
+        // Use IRIS URL for agent/workflow-related endpoints (V5 system)
         if (str_contains($endpoint, '/iris/')
             || str_contains($endpoint, '/chat/')
             || str_contains($endpoint, '/workflows/')
+            || str_contains($endpoint, '/agents/')
+            || str_contains($endpoint, '/bloqs/')
         ) {
             return $this->config->irisUrl . '/' . ltrim($endpoint, '/');
+        }
+
+        // Use FL-API URL for leads, deliverables, profiles
+        if (str_contains($endpoint, '/leads/')
+            || str_contains($endpoint, '/deliverables/')
+            || str_contains($endpoint, '/profiles/')
+        ) {
+            return $this->config->flApiUrl . '/' . ltrim($endpoint, '/');
         }
 
         return $this->config->baseUrl . '/' . ltrim($endpoint, '/');

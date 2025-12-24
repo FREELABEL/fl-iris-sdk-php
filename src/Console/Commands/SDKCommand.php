@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use IRIS\SDK\IRIS;
-use IRIS\SDK\Auth\CredentialStore;
+use IRIS\SDK\Config;
 
 class SDKCommand extends Command
 {
@@ -32,63 +32,23 @@ class SDKCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $endpoint = $input->getArgument('endpoint');
-        
-        // Load credentials from store first, then override with CLI options/env vars
-        $store = new CredentialStore();
 
-        // Try to load from .env first, then check other sources
-        // Priority: .env > CLI options > env vars > stored credentials
-        $apiKey = $input->getOption('api-key')
-            ?: getenv('IRIS_API_KEY')
-            ?: $store->get('api_key');
-
-        $userId = $input->getOption('user-id')
-            ?: getenv('IRIS_USER_ID')
-            ?: $store->get('user_id');
-        
-        // If still no credentials, try to initialize SDK to let Config load from .env
-        if (!$apiKey || !$userId) {
-            try {
-                // Attempt to load from .env via Config
-                $tempConfig = new \IRIS\SDK\Config([]);
-                if (!$apiKey && isset($tempConfig->apiKey)) {
-                    $apiKey = $tempConfig->apiKey;
-                }
-                if (!$userId && isset($tempConfig->userId)) {
-                    $userId = $tempConfig->userId;
-                }
-            } catch (\Exception $e) {
-                // Config will throw if api_key not found, that's ok
-            }
-        }
-        
-        if (!$apiKey || !$userId) {
-            $io->error('Missing API credentials. Run "iris config setup" to configure credentials.');
-            return Command::FAILURE;
-        }
-        
         try {
-            // Build config array with all available credentials
-            $config = [
-                'api_key' => $apiKey,
-                'user_id' => (int)$userId,
-            ];
+            // Build config options from CLI flags (override .env if provided)
+            $configOptions = [];
 
-            // Add optional credentials from store
-            if ($store->has('client_id')) {
-                $config['client_id'] = $store->get('client_id');
+            if ($apiKey = $input->getOption('api-key')) {
+                $configOptions['api_key'] = $apiKey;
             }
-            if ($store->has('client_secret')) {
-                $config['client_secret'] = $store->get('client_secret');
-            }
-            if ($store->has('iris_url')) {
-                $config['iris_url'] = $store->get('iris_url');
-            }
-            if ($store->has('base_url')) {
-                $config['base_url'] = $store->get('base_url');
+            if ($userId = $input->getOption('user-id')) {
+                $configOptions['user_id'] = (int)$userId;
             }
 
-            $iris = new IRIS($config);
+            // Config auto-loads from .env file, CLI options override
+            $sdkConfig = new Config($configOptions);
+            $userId = $sdkConfig->userId;
+
+            $iris = new IRIS($configOptions);
             
             // Parse endpoint (resource.method or resource.subresource.method)
             $parts = explode('.', $endpoint);
@@ -98,7 +58,12 @@ class SDKCommand extends Command
             
             // Parse parameters
             $params = $this->parseParams($input->getArgument('params'));
-            
+
+            // Auto-inject user_id if not provided (needed for many API calls)
+            if (!isset($params['user_id']) && $userId) {
+                $params['user_id'] = (int)$userId;
+            }
+
             // Execute dynamic call
             $result = $this->executeDynamicCall($iris, $parts, $params);
             
@@ -136,18 +101,40 @@ class SDKCommand extends Command
                 
                 // Only extract positional params if the method requires them
                 if ($requiredParams > 0) {
-                    // Extract positional params (numeric keys) for sub-resource
-                    $positionalParams = [];
-                    foreach ($params as $key => $value) {
-                        if (is_int($key) && count($positionalParams) < $requiredParams) {
-                            $positionalParams[] = $value;
-                            unset($params[$key]);
+                    // Get the parameter names from reflection
+                    $methodParams = $reflection->getParameters();
+                    $subResourceParams = [];
+
+                    // First, try to match named params to method parameter names
+                    foreach ($methodParams as $methodParam) {
+                        $paramName = $methodParam->getName();
+                        // Check for exact match (e.g., 'leadId')
+                        if (isset($params[$paramName])) {
+                            $subResourceParams[] = $params[$paramName];
+                            unset($params[$paramName]);
+                        }
+                        // Check for snake_case version (e.g., 'lead_id')
+                        $snakeName = strtolower(preg_replace('/([A-Z])/', '_$1', $paramName));
+                        $snakeName = ltrim($snakeName, '_');
+                        if (isset($params[$snakeName])) {
+                            $subResourceParams[] = $params[$snakeName];
+                            unset($params[$snakeName]);
                         }
                     }
-                    
-                    if (!empty($positionalParams)) {
-                        // Call sub-resource method with positional params
-                        $target = $target->{$sub}(...$positionalParams);
+
+                    // Fall back to positional params (numeric keys) if no named matches
+                    if (empty($subResourceParams)) {
+                        foreach ($params as $key => $value) {
+                            if (is_int($key) && count($subResourceParams) < $requiredParams) {
+                                $subResourceParams[] = $value;
+                                unset($params[$key]);
+                            }
+                        }
+                    }
+
+                    if (!empty($subResourceParams)) {
+                        // Call sub-resource method with params
+                        $target = $target->{$sub}(...$subResourceParams);
                     } else {
                         // Call without params
                         $target = $target->{$sub}();
@@ -297,6 +284,16 @@ class SDKCommand extends Command
         
         // JSON output
         if ($input->getOption('json')) {
+            // Convert objects to arrays for JSON serialization
+            if (is_object($result)) {
+                if (method_exists($result, 'toArray')) {
+                    $result = $result->toArray();
+                } elseif (method_exists($result, 'jsonSerialize')) {
+                    $result = $result->jsonSerialize();
+                } else {
+                    $result = json_decode(json_encode($result), true);
+                }
+            }
             $output->writeln(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
             return;
         }
