@@ -311,7 +311,9 @@ class CloudFilesResource
     /**
      * Upload multiple files for agent attachment.
      *
-     * @param array $files Array of file paths
+     * Supports mixed inputs: local file paths, URLs, or existing CloudFile IDs.
+     *
+     * @param array $files Array of file paths, URLs, or CloudFile IDs
      * @param int $bloqId Bloq ID to upload to
      * @param array $options Options applied to all files
      * @return array Array of file attachment data
@@ -319,17 +321,177 @@ class CloudFilesResource
      * @example
      * ```php
      * $attachments = $iris->cloudFiles->uploadMultipleForAgent([
-     *     '/path/to/file1.pdf',
-     *     '/path/to/file2.csv',
+     *     '/path/to/file1.pdf',              // Local file
+     *     'https://example.com/doc.pdf',     // URL
+     *     336,                                // Existing CloudFile ID
      * ], 40);
      * ```
      */
     public function uploadMultipleForAgent(array $files, int $bloqId, array $options = []): array
     {
         $attachments = [];
-        foreach ($files as $filePath) {
-            $attachments[] = $this->uploadForAgent($filePath, $bloqId, $options);
+        foreach ($files as $file) {
+            $attachments[] = $this->attachAnyFile($file, $bloqId, $options);
         }
         return $attachments;
+    }
+
+    /**
+     * Upload a file from a URL for agent attachment.
+     *
+     * Downloads the file from the URL and uploads it to cloud storage.
+     *
+     * @param string $url URL to download from
+     * @param int $bloqId Bloq ID to upload to
+     * @param array{
+     *     title?: string,
+     *     description?: string,
+     *     filename?: string
+     * } $options Upload options
+     * @return array File attachment data ready for agent update
+     *
+     * @example
+     * ```php
+     * $attachment = $iris->cloudFiles->uploadFromUrl(
+     *     'https://example.com/training-data.pdf',
+     *     40,
+     *     ['title' => 'External Training Data']
+     * );
+     * ```
+     */
+    public function uploadFromUrl(string $url, int $bloqId, array $options = []): array
+    {
+        // Download the file to a temp location
+        $tempFile = $this->downloadToTemp($url, $options['filename'] ?? null);
+
+        try {
+            // Upload the temp file
+            $result = $this->uploadForAgent($tempFile, $bloqId, $options);
+
+            // Update the name to reflect original URL if no title specified
+            if (!isset($options['title'])) {
+                $result['name'] = $options['filename'] ?? basename(parse_url($url, PHP_URL_PATH)) ?: 'downloaded_file';
+            }
+
+            return $result;
+        } finally {
+            // Clean up temp file
+            if (file_exists($tempFile)) {
+                unlink($tempFile);
+            }
+        }
+    }
+
+    /**
+     * Format an existing CloudFile for agent attachment.
+     *
+     * Use this when you already have a CloudFile ID and want to attach it to an agent.
+     *
+     * @param int $cloudFileId Existing CloudFile ID
+     * @return array File attachment data ready for agent update
+     *
+     * @example
+     * ```php
+     * // Attach an existing file (ID 336) to an agent
+     * $attachment = $iris->cloudFiles->formatForAgentAttachment(336);
+     * $agent = $iris->agents->addFileAttachments(12, [$attachment]);
+     * ```
+     */
+    public function formatForAgentAttachment(int $cloudFileId): array
+    {
+        // Get the file details from the API
+        $file = $this->get($cloudFileId);
+
+        return [
+            'cloud_file_id' => $file['id'] ?? $cloudFileId,
+            'name' => $file['name'] ?? $file['title'] ?? "file_{$cloudFileId}",
+            'size' => $file['size'] ?? 0,
+            'type' => $file['mime_type'] ?? $file['type'] ?? 'application/octet-stream',
+            'filepath' => $file['url'] ?? $file['filepath'] ?? '',
+            'processingStatus' => $file['processing_status'] ?? $file['status'] ?? 'completed',
+            'uploadedAt' => $file['created_at'] ?? date('c'),
+        ];
+    }
+
+    /**
+     * Smart file attachment that handles any input type.
+     *
+     * Automatically detects and handles:
+     * - Local file paths (e.g., '/path/to/file.pdf')
+     * - URLs (e.g., 'https://example.com/doc.pdf')
+     * - Existing CloudFile IDs (e.g., 336)
+     *
+     * @param string|int $file File path, URL, or CloudFile ID
+     * @param int $bloqId Bloq ID to upload to (ignored for existing files)
+     * @param array $options Upload options
+     * @return array File attachment data ready for agent update
+     *
+     * @example
+     * ```php
+     * // Local file
+     * $a1 = $iris->cloudFiles->attachAnyFile('/path/to/file.pdf', 40);
+     *
+     * // URL
+     * $a2 = $iris->cloudFiles->attachAnyFile('https://example.com/doc.pdf', 40);
+     *
+     * // Existing CloudFile
+     * $a3 = $iris->cloudFiles->attachAnyFile(336, 40);
+     * ```
+     */
+    public function attachAnyFile(string|int $file, int $bloqId, array $options = []): array
+    {
+        // If it's an integer, treat as existing CloudFile ID
+        if (is_int($file)) {
+            return $this->formatForAgentAttachment($file);
+        }
+
+        // If it's a URL, download and upload
+        if ($this->isUrl($file)) {
+            return $this->uploadFromUrl($file, $bloqId, $options);
+        }
+
+        // Otherwise, treat as local file path
+        return $this->uploadForAgent($file, $bloqId, $options);
+    }
+
+    /**
+     * Check if a string is a URL.
+     */
+    protected function isUrl(string $str): bool
+    {
+        return (bool) filter_var($str, FILTER_VALIDATE_URL)
+            && in_array(parse_url($str, PHP_URL_SCHEME), ['http', 'https']);
+    }
+
+    /**
+     * Download a file from URL to a temporary location.
+     */
+    protected function downloadToTemp(string $url, ?string $filename = null): string
+    {
+        // Determine filename
+        if (!$filename) {
+            $filename = basename(parse_url($url, PHP_URL_PATH)) ?: 'downloaded_file';
+        }
+
+        // Create temp file with proper extension
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $tempFile = sys_get_temp_dir() . '/iris_upload_' . uniqid() . ($extension ? ".{$extension}" : '');
+
+        // Download the file
+        $context = stream_context_create([
+            'http' => [
+                'timeout' => 60,
+                'user_agent' => 'IRIS-SDK/1.0',
+            ],
+        ]);
+
+        $content = file_get_contents($url, false, $context);
+        if ($content === false) {
+            throw new \RuntimeException("Failed to download file from URL: {$url}");
+        }
+
+        file_put_contents($tempFile, $content);
+
+        return $tempFile;
     }
 }
