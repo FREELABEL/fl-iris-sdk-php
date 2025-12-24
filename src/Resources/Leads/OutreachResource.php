@@ -148,7 +148,8 @@ class OutreachResource
      *     to_name?: string,
      *     body_text?: string,
      *     from_email?: string,
-     *     sender_name?: string
+     *     sender_name?: string,
+     *     plain_text_only?: bool
      * } $emailData Email data
      * @return array Sent email info
      *
@@ -166,6 +167,14 @@ class OutreachResource
      * ]);
      *
      * echo "Email sent! ID: {$result['email']['id']}";
+     *
+     * // Send plain text only (no HTML template)
+     * $result = $outreach->sendEmail([
+     *     'to_email' => 'john@example.com',
+     *     'subject' => 'Quick note',
+     *     'body_html' => 'Just a simple message.',
+     *     'plain_text_only' => true,
+     * ]);
      * ```
      */
     public function sendEmail(array $emailData): array

@@ -22,6 +22,9 @@ Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execut
 # 📊 Get priority insights
 ./bin/iris sdk:call leads.aggregation.statistics
 ./bin/iris sdk:call leads.aggregation.list has_incomplete_tasks=1 sort=priority
+
+# 📝 Generate article from YouTube video
+./bin/iris tools article --url="https://www.youtube.com/watch?v=abc123" --length=medium --style=informative
 ```
 
 ## Installation
@@ -121,6 +124,20 @@ You can override `.env` values using CLI flags:
 ```bash
 ./bin/iris chat 11 "Hello!" --api-key=sk_xxx --user-id=123
 ```
+
+### Environment Switching (Local vs Production)
+
+If your `.env` is set to `IRIS_ENV=local` for development, but you need to run a quick command against the **Production API**, you can override the environment variable directly in your shell command without changing your `.env` file:
+
+```bash
+# Force production environment for a single command
+IRIS_ENV=production ./bin/iris sdk:call leads.list
+
+# Force local environment
+IRIS_ENV=local ./bin/iris chat 11 "Hello local agent"
+```
+
+This is the preferred way to interact with live production data while keeping your local development environment intact.
 
 Once configured, use any CLI command:
 
@@ -246,6 +263,298 @@ echo $LEADS | jq '.[] | select(.priority_score > 50)'
 ### Extensibility
 
 The CLI is a pure proxy - any new SDK resources or methods are automatically available without code changes.
+
+### Recruitment Tools
+
+Generate recruitment search queries and score candidates using AI-powered analysis.
+
+#### List Available Tools
+
+```bash
+./bin/iris tools
+```
+
+#### Generate Recruitment Queries from Job Description
+
+```bash
+# From a PDF file
+./bin/iris tools recruitment \
+  --file=/path/to/job-description.pdf \
+  --location="Austin, TX" \
+  --experience=senior
+
+# From text
+./bin/iris tools recruitment \
+  --job-description="Senior Solutions Engineer with 5+ years SaaS implementation..." \
+  --platform=linkedin \
+  --location="Austin, TX"
+
+# JSON output for scripting
+./bin/iris tools recruitment \
+  --file=/path/to/job.pdf \
+  --json
+```
+
+**Options:**
+| Option | Description |
+|--------|-------------|
+| `--file`, `-f` | Path to PDF or DOCX file containing job description |
+| `--job-description`, `-d` | Job description text (alternative to file) |
+| `--platform`, `-p` | Target platform: `linkedin`, `github`, `twitter` (default: linkedin) |
+| `--location`, `-l` | Target location for candidates |
+| `--experience`, `-e` | Experience level: `entry`, `mid`, `senior`, `lead`, `executive` |
+| `--json` | Output as JSON for scripting |
+
+**Example Output:**
+```
+Generating recruitment queries...
+
+Job Title: Senior Solutions Engineer, Insurance
+
+=== Extracted Requirements ===
+Must-Have Skills:
+  • Client-facing SaaS implementation experience (4+ years)
+  • Ownership of deployments from kickoff to go-live
+  • Platform configuration for customers
+  • Insurance or healthcare-adjacent industry experience
+
+Nice-to-Have Skills:
+  • Training, workshop, or enablement session facilitation
+  • Ability to translate technical concepts into plain English
+
+Title Keywords:
+  Senior Solutions Engineer, Solutions Engineer, Implementation Engineer
+
+Experience: 4+ years
+
+=== Search URLs ===
+Primary: Job Title Search:
+  https://www.linkedin.com/search/results/people/?keywords=Senior+Solutions+Engineer...
+
+Extended Network Search:
+  https://www.linkedin.com/search/results/people/?keywords=Senior+Solutions+Engineer&network=...
+
+=== Boolean Queries ===
+Primary Boolean Query:
+  ("Senior Solutions Engineer" OR "Implementation Engineer") AND (SaaS implementation OR...)
+
+=== Browser Extraction Script ===
+Copy this JavaScript into browser console on LinkedIn search results:
+  // LinkedIn Profile Extractor v3.0...
+
+=== Instructions ===
+## How to Extract Candidate Profiles
+...
+```
+
+#### Score Candidates
+
+After extracting candidate profiles using the browser script:
+
+```bash
+# Score candidates against job requirements
+./bin/iris tools candidate-score \
+  --data='[{"name":"John Smith","title":"Solutions Engineer",...}]' \
+  --requirements='{"must_have_skills":["SaaS","API"],...}'
+
+# Or via sdk:call
+./bin/iris sdk:call tools.scoreCandidates \
+  candidate_data='[{"name":"John Smith","title":"Solutions Engineer",...}]' \
+  requirements='{"must_have_skills":["SaaS","API"],...}'
+```
+
+```php
+// PHP SDK usage
+$result = $iris->tools->recruitment([
+    'job_description_file' => '/path/to/job.pdf',
+    'platform' => 'linkedin',
+    'location' => 'Austin, TX',
+]);
+
+echo "Found " . count($result->searchUrls) . " search URLs\n";
+echo "Must-have skills: " . implode(', ', $result->getMustHaveSkills()) . "\n";
+
+// Score extracted candidates
+$scoring = $iris->tools->scoreCandidates([
+    'candidate_data' => $extractedCandidatesJson,
+    'requirements' => $result->requirements,
+]);
+
+echo "Strong matches: " . count($scoring->strongMatches) . "\n";
+foreach ($scoring->getTopCandidates(5) as $candidate) {
+    echo "  {$candidate['rank']}. {$candidate['name']} - {$candidate['overall_score']}%\n";
+}
+```
+
+#### Full Recruitment Workflow
+
+```bash
+# 1. Generate search queries from PDF
+./bin/iris tools recruitment --file=/path/to/job.pdf --location="Austin, TX" --json > queries.json
+
+# 2. Open LinkedIn search URLs from queries.json
+# 3. Run extraction script in browser console
+# 4. Copy extracted JSON data to candidates.json
+
+# 5. Score candidates
+./bin/iris tools candidate-score \
+  --data="$(cat candidates.json)" \
+  --requirements="$(jq '.requirements' queries.json)"
+```
+
+**Output includes:**
+- Ranked candidate list with scores (0-100%)
+- Categorized matches: Strong (80%+), Good (60-79%), Potential (40-59%), Low (<40%)
+- Scoring breakdown per candidate (skills, experience, title, location, network)
+
+### Article Generation
+
+Generate articles from YouTube videos, topics, webpages, or RSS feeds using AI-powered content generation.
+
+#### From YouTube Video (Most Common)
+
+```bash
+# Generate article from YouTube video
+./bin/iris tools article \
+  --url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" \
+  --length=medium \
+  --style=informative
+
+# Dry run (don't publish to Freelabel)
+./bin/iris tools article \
+  --url="https://www.youtube.com/watch?v=abc123" \
+  --length=long \
+  --style=analysis \
+  --no-publish
+
+# Publish to specific profile
+./bin/iris tools article \
+  --url="https://www.youtube.com/watch?v=xyz789" \
+  --profile-id=9203684 \
+  --publish
+```
+
+#### From Topic (Research-Based)
+
+```bash
+# Generate article from research topic
+./bin/iris tools article \
+  --topic="The future of AI in healthcare" \
+  --source-type=topic \
+  --length=long \
+  --style=editorial
+
+# Short newsletter style
+./bin/iris tools article \
+  --topic="Top 10 productivity tips for remote workers" \
+  --source-type=topic \
+  --length=short \
+  --style=newsletter
+```
+
+#### From Webpage or RSS Feed
+
+```bash
+# Generate from webpage content
+./bin/iris tools article \
+  --url="https://example.com/blog/interesting-article" \
+  --source-type=webpage \
+  --length=medium
+
+# Generate from RSS feed
+./bin/iris tools article \
+  --url="https://example.com/feed.xml" \
+  --source-type=rss \
+  --length=short
+```
+
+**Options:**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--url`, `-u` | YouTube URL, webpage URL, or RSS feed URL | - |
+| `--topic`, `-t` | Topic for research-based article generation | - |
+| `--source-type`, `-s` | Source type: `video`, `topic`, `webpage`, `rss` | `video` |
+| `--length` | Article length: `short`, `medium`, `long` | `medium` |
+| `--style` | Writing style: `informative`, `editorial`, `newsletter`, `analysis` | `informative` |
+| `--profile-id` | Profile ID for publishing the article | - |
+| `--publish` | Publish to Freelabel platform | - |
+| `--no-publish` | Don't publish (dry run mode) | - |
+| `--json` | Output as JSON for scripting | - |
+
+**Example Output:**
+
+```
+Article Generation
+==================
+
+Source Type: video
+Source: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+Length: medium
+Style: informative
+Publish: No (dry run)
+
+ Dispatching article generation job...
+
+ [OK] Article generation job dispatched!
+
+The article is being generated in the background.
+
+Job Details:
+  Message: Article generation started
+  Queue: article-generation
+  Source: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+Note: Article generation takes 1-3 minutes. Check your dashboard for the result.
+```
+
+**How It Works:**
+
+1. **For YouTube videos**: Extracts transcript via SupaData.ai API
+2. **For topics**: Performs AI-powered research using web search
+3. **For webpages**: Extracts and summarizes content
+4. **For RSS feeds**: Synthesizes content from feed items
+5. NeuronAI RAG processes content through 4-phase pipeline:
+   - **Indexer**: Structures and indexes source content
+   - **Editor**: Plans article structure and key points
+   - **Reporter**: Writes the full article draft
+   - **Publisher**: Polishes and formats for publication
+
+**PHP SDK Usage:**
+
+```php
+// Generate from YouTube video
+$result = $iris->articles->generateFromVideo([
+    'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    'article_length' => 'medium',
+    'article_style' => 'informative',
+]);
+
+// Generate from topic
+$result = $iris->articles->generateFromTopic(
+    'The impact of AI on modern education',
+    ['article_length' => 'long', 'article_style' => 'analysis']
+);
+
+// Generate from any source
+$result = $iris->articles->generate([
+    'source_type' => 'video',
+    'source' => 'https://www.youtube.com/watch?v=abc123',
+    'article_length' => 'medium',
+    'article_style' => 'informative',
+    'profile_id' => 9203684,
+    'publish_to_fl' => true,
+]);
+
+// Create article directly (skip AI generation)
+$article = $iris->articles->create([
+    'profile_id' => 9203684,
+    'title' => 'My Custom Article',
+    'content' => '<p>Article content here...</p>',
+]);
+```
+
+**Note:** Article generation is an **async operation**. The job is dispatched to a background queue and typically takes 1-3 minutes to complete. Check your dashboard or use webhooks to receive notifications when the article is ready.
 
 ## Quick Start
 
@@ -2107,6 +2416,8 @@ assert($response->content === 'Mocked response');
 | `$iris->models` | `list`, `basic`, `popular`, `get`, `byProvider`, `recommended`, `providers`, `sync`, `pricing`, `nano` |
 | `$iris->integrations` | `available`, `connected`, `getOAuthUrl`, `test`, `execute`, `functions` |
 | `$iris->rag` | `query`, `index`, `indexFile`, `searchSimilar`, `delete` |
+| `$iris->tools` | `list`, `invoke`, `recruitment`, `scoreCandidates`, `enrichLead` |
+| `$iris->articles` | `generate`, `generateFromVideo`, `generateFromTopic`, `generateFromWebpage`, `generateFromRss`, `create` |
 
 ## Troubleshooting
 

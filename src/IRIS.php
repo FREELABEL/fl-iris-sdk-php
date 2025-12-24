@@ -19,6 +19,8 @@ use IRIS\SDK\Resources\Models\ModelsResource;
 use IRIS\SDK\Resources\Chat\ChatResource;
 use IRIS\SDK\Resources\Profiles\ProfilesResource;
 use IRIS\SDK\Resources\Services\ServicesResource;
+use IRIS\SDK\Resources\Tools\ToolsResource;
+use IRIS\SDK\Resources\Articles\ArticlesResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -147,6 +149,16 @@ class IRIS
     public ServicesResource $services;
 
     /**
+     * Tools resource for invoking Neuron AI tools (recruitment, enrichment, etc.)
+     */
+    public ToolsResource $tools;
+
+    /**
+     * Articles resource for generating articles from videos, topics, etc.
+     */
+    public ArticlesResource $articles;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -184,6 +196,8 @@ class IRIS
         $this->chat = new ChatResource($this->http, $this->config);
         $this->profiles = new ProfilesResource($this->http, $this->config);
         $this->services = new ServicesResource($this->http, $this->config);
+        $this->tools = new ToolsResource($this->http, $this->config);
+        $this->articles = new ArticlesResource($this->http, $this->config);
     }
 
     /**

@@ -6,6 +6,7 @@ use Symfony\Component\Console\Application as BaseApplication;
 use IRIS\SDK\Console\Commands\SDKCommand;
 use IRIS\SDK\Console\Commands\ChatCommand;
 use IRIS\SDK\Console\Commands\ConfigCommand;
+use IRIS\SDK\Console\Commands\ToolsCommand;
 
 class Application extends BaseApplication
 {
@@ -17,6 +18,7 @@ class Application extends BaseApplication
             new SDKCommand(),
             new ChatCommand(),
             new ConfigCommand(),
+            new ToolsCommand(),
         ]);
     }
 }
