@@ -80,7 +80,8 @@ class CloudFilesResource
      */
     public function get(int $fileId): array
     {
-        return $this->http->get("/api/v1/cloud-files/{$fileId}");
+        $userId = $this->config->requireUserId();
+        return $this->http->get("/api/v1/cloud-files/{$fileId}", ['user_id' => $userId]);
     }
 
     /**
@@ -122,6 +123,8 @@ class CloudFilesResource
      */
     public function update(int $fileId, array $data): array
     {
+        $userId = $this->config->requireUserId();
+        $data['user_id'] = $userId;
         return $this->http->put("/api/v1/cloud-files/{$fileId}", $data);
     }
 
@@ -133,7 +136,8 @@ class CloudFilesResource
      */
     public function delete(int $fileId): bool
     {
-        $this->http->delete("/api/v1/cloud-files/{$fileId}");
+        $userId = $this->config->requireUserId();
+        $this->http->delete("/api/v1/cloud-files/{$fileId}?user_id={$userId}");
         return true;
     }
 
@@ -145,7 +149,8 @@ class CloudFilesResource
      */
     public function downloadUrl(int $fileId): string
     {
-        $response = $this->http->get("/api/v1/cloud-files/{$fileId}/download");
+        $userId = $this->config->requireUserId();
+        $response = $this->http->get("/api/v1/cloud-files/{$fileId}/download", ['user_id' => $userId]);
         return $response['url'] ?? '';
     }
 
@@ -157,7 +162,8 @@ class CloudFilesResource
      */
     public function status(int $fileId): array
     {
-        return $this->http->get("/api/v1/cloud-files/{$fileId}/status");
+        $userId = $this->config->requireUserId();
+        return $this->http->get("/api/v1/cloud-files/{$fileId}/status", ['user_id' => $userId]);
     }
 
     /**
@@ -170,7 +176,8 @@ class CloudFilesResource
      */
     public function content(int $fileId): array
     {
-        return $this->http->get("/api/v1/cloud-files/{$fileId}/content");
+        $userId = $this->config->requireUserId();
+        return $this->http->get("/api/v1/cloud-files/{$fileId}/content", ['user_id' => $userId]);
     }
 
     /**

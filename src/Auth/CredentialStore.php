@@ -4,27 +4,16 @@ declare(strict_types=1);
 
 namespace IRIS\SDK\Auth;
 
+use Dotenv\Dotenv;
+
 /**
- * Persistent Credential Storage
+ * Credential Store - Loads from .env file ONLY
  *
- * Stores SDK credentials in ~/.iris/credentials.json for persistent access.
- * This eliminates the need to provide credentials on every CLI command.
+ * Uses IRIS_ENV to determine which credentials to use:
+ * - IRIS_ENV=local → uses IRIS_LOCAL_API_KEY, FL_API_LOCAL_URL, IRIS_LOCAL_URL
+ * - IRIS_ENV=production (default) → uses IRIS_API_KEY, FL_API_URL, IRIS_API_URL
  *
- * Security Notes:
- * - File is stored with 0600 permissions (owner read/write only)
- * - Directory is created with 0700 permissions (owner only)
- * - Never commit this file to version control
- *
- * @example Save credentials
- * ```php
- * $store = new CredentialStore();
- * $store->set('api_key', 'your-token');
- * $store->set('client_id', 'oauth-client-id');
- * $store->set('client_secret', 'oauth-client-secret');
- * $store->save();
- * ```
- *
- * @example Load credentials
+ * @example
  * ```php
  * $store = new CredentialStore();
  * $config = $store->toConfigArray();
@@ -33,123 +22,97 @@ namespace IRIS\SDK\Auth;
  */
 class CredentialStore
 {
-    /**
-     * Default storage directory name
-     */
-    private const STORAGE_DIR = '.iris';
-
-    /**
-     * Default credentials filename
-     */
-    private const CREDENTIALS_FILE = 'credentials.json';
-
-    /**
-     * Path to credentials file
-     */
-    protected string $filePath;
-
-    /**
-     * Cached credentials
-     */
     protected array $credentials = [];
+    protected string $environment;
 
-    /**
-     * Available credential keys with descriptions
-     */
-    public const CREDENTIAL_KEYS = [
-        'api_key' => 'User API token (Bearer token for authenticated requests)',
-        'user_id' => 'User ID for API context',
-        'client_id' => 'OAuth2 Client ID (for management operations)',
-        'client_secret' => 'OAuth2 Client Secret',
-        'base_url' => 'Main API URL (default: https://apiv2.heyiris.io)',
-        'iris_url' => 'IRIS API URL (default: https://iris.freelabel.net)',
-        'webhook_secret' => 'Webhook signing secret',
-    ];
-
-    /**
-     * Create a new credential store instance.
-     *
-     * @param string|null $filePath Custom path to credentials file
-     */
-    public function __construct(?string $filePath = null)
+    public function __construct()
     {
-        $this->filePath = $filePath ?? $this->getDefaultPath();
-        $this->load();
+        $this->loadDotenv();
+        $this->environment = $this->getEnv('IRIS_ENV', 'production');
+        $this->loadCredentials();
     }
 
     /**
-     * Get the default credentials file path.
+     * Load .env file from SDK directory
      */
-    protected function getDefaultPath(): string
+    protected function loadDotenv(): void
     {
-        $homeDir = getenv('HOME') ?: getenv('USERPROFILE') ?: '/tmp';
-        return $homeDir . '/' . self::STORAGE_DIR . '/' . self::CREDENTIALS_FILE;
-    }
+        // Find SDK root directory (where .env file is)
+        $dir = dirname(__DIR__, 2); // Go up from src/Auth to sdk/php
 
-    /**
-     * Load credentials from file.
-     */
-    public function load(): self
-    {
-        if (file_exists($this->filePath)) {
-            $content = file_get_contents($this->filePath);
-            $this->credentials = json_decode($content, true) ?? [];
-        }
-
-        // Also load from environment variables as fallback
-        $this->loadFromEnvironment();
-
-        return $this;
-    }
-
-    /**
-     * Load credentials from environment variables.
-     * Environment variables take precedence over stored values.
-     */
-    protected function loadFromEnvironment(): void
-    {
-        $envMappings = [
-            'IRIS_API_KEY' => 'api_key',
-            'IRIS_USER_ID' => 'user_id',
-            'IRIS_CLIENT_ID' => 'client_id',
-            'IRIS_CLIENT_SECRET' => 'client_secret',
-            'IRIS_URL' => 'iris_url',
-            'IRIS_BASE_URL' => 'base_url',
-            'IRIS_WEBHOOK_SECRET' => 'webhook_secret',
-        ];
-
-        foreach ($envMappings as $envKey => $credKey) {
-            $value = getenv($envKey);
-            if ($value !== false && $value !== '') {
-                $this->credentials[$credKey] = $value;
-            }
+        if (file_exists($dir . '/.env')) {
+            $dotenv = Dotenv::createImmutable($dir);
+            $dotenv->safeLoad();
         }
     }
 
     /**
-     * Save credentials to file.
+     * Get environment variable with fallback
      */
-    public function save(): self
+    protected function getEnv(string $key, ?string $default = null): ?string
     {
-        $dir = dirname($this->filePath);
-
-        // Create directory if it doesn't exist
-        if (!is_dir($dir)) {
-            mkdir($dir, 0700, true);
-        }
-
-        // Save with pretty print for readability
-        $json = json_encode($this->credentials, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        file_put_contents($this->filePath, $json);
-
-        // Ensure secure permissions
-        chmod($this->filePath, 0600);
-
-        return $this;
+        $value = $_ENV[$key] ?? getenv($key);
+        return ($value !== false && $value !== '') ? $value : $default;
     }
 
     /**
-     * Get a credential value.
+     * Load credentials based on IRIS_ENV
+     */
+    protected function loadCredentials(): void
+    {
+        $isLocal = $this->environment === 'local';
+
+        // API Key - use local or production
+        $apiKey = $isLocal
+            ? $this->getEnv('IRIS_LOCAL_API_KEY')
+            : $this->getEnv('IRIS_API_KEY') ?? $this->getEnv('IRIS_PROD_API_KEY');
+
+        if ($apiKey) {
+            $this->credentials['api_key'] = $apiKey;
+        }
+
+        // User ID
+        $userId = $this->getEnv('IRIS_USER_ID');
+        if ($userId) {
+            $this->credentials['user_id'] = $userId;
+        }
+
+        // Base URL (FL-API) - use local or production
+        $baseUrl = $isLocal
+            ? $this->getEnv('FL_API_LOCAL_URL', 'https://local.raichu.freelabel.net')
+            : $this->getEnv('FL_API_URL', 'https://apiv2.heyiris.io');
+
+        $this->credentials['base_url'] = $baseUrl;
+
+        // IRIS URL - use local or production
+        $irisUrl = $isLocal
+            ? $this->getEnv('IRIS_LOCAL_URL', 'https://local.iris.freelabel.net')
+            : $this->getEnv('IRIS_API_URL', 'https://iris-api.freelabel.net');
+
+        $this->credentials['iris_url'] = $irisUrl;
+
+        // Optional OAuth credentials
+        if ($clientId = $this->getEnv('IRIS_CLIENT_ID')) {
+            $this->credentials['client_id'] = $clientId;
+        }
+        if ($clientSecret = $this->getEnv('IRIS_CLIENT_SECRET')) {
+            $this->credentials['client_secret'] = $clientSecret;
+        }
+        if ($webhookSecret = $this->getEnv('IRIS_WEBHOOK_SECRET')) {
+            $this->credentials['webhook_secret'] = $webhookSecret;
+        }
+    }
+
+    /**
+     * Get the current environment
+     */
+    public function getEnvironment(): string
+    {
+        return $this->environment;
+    }
+
+    /**
+     * Get a credential value
      */
     public function get(string $key, mixed $default = null): mixed
     {
@@ -157,21 +120,7 @@ class CredentialStore
     }
 
     /**
-     * Set a credential value.
-     */
-    public function set(string $key, mixed $value): self
-    {
-        if ($value === null || $value === '') {
-            unset($this->credentials[$key]);
-        } else {
-            $this->credentials[$key] = $value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Check if a credential exists.
+     * Check if a credential exists
      */
     public function has(string $key): bool
     {
@@ -179,30 +128,7 @@ class CredentialStore
     }
 
     /**
-     * Remove a credential.
-     */
-    public function remove(string $key): self
-    {
-        unset($this->credentials[$key]);
-        return $this;
-    }
-
-    /**
-     * Clear all credentials.
-     */
-    public function clear(): self
-    {
-        $this->credentials = [];
-
-        if (file_exists($this->filePath)) {
-            unlink($this->filePath);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get all stored credentials.
+     * Get all credentials
      */
     public function all(): array
     {
@@ -210,7 +136,7 @@ class CredentialStore
     }
 
     /**
-     * Convert credentials to SDK config array format.
+     * Convert to SDK config array
      */
     public function toConfigArray(): array
     {
@@ -224,20 +150,20 @@ class CredentialStore
             $config['user_id'] = (int) $this->get('user_id');
         }
 
-        if ($this->has('client_id')) {
-            $config['client_id'] = $this->get('client_id');
-        }
-
-        if ($this->has('client_secret')) {
-            $config['client_secret'] = $this->get('client_secret');
-        }
-
         if ($this->has('base_url')) {
             $config['base_url'] = $this->get('base_url');
         }
 
         if ($this->has('iris_url')) {
             $config['iris_url'] = $this->get('iris_url');
+        }
+
+        if ($this->has('client_id')) {
+            $config['client_id'] = $this->get('client_id');
+        }
+
+        if ($this->has('client_secret')) {
+            $config['client_secret'] = $this->get('client_secret');
         }
 
         if ($this->has('webhook_secret')) {
@@ -248,7 +174,7 @@ class CredentialStore
     }
 
     /**
-     * Check if minimum required credentials exist for SDK usage.
+     * Check if minimum credentials exist
      */
     public function hasMinimumCredentials(): bool
     {
@@ -256,23 +182,7 @@ class CredentialStore
     }
 
     /**
-     * Check if OAuth credentials exist for management operations.
-     */
-    public function hasOAuthCredentials(): bool
-    {
-        return $this->has('client_id') && $this->has('client_secret');
-    }
-
-    /**
-     * Get the credentials file path.
-     */
-    public function getFilePath(): string
-    {
-        return $this->filePath;
-    }
-
-    /**
-     * Create a masked version of credentials for display.
+     * Get masked credentials for display
      */
     public function getMaskedCredentials(): array
     {
@@ -280,26 +190,12 @@ class CredentialStore
 
         foreach ($this->credentials as $key => $value) {
             if (is_string($value) && strlen($value) > 8) {
-                // Show first 4 and last 4 characters
-                $masked[$key] = substr($value, 0, 4) . str_repeat('*', 8) . substr($value, -4);
-            } elseif (is_string($value)) {
-                $masked[$key] = str_repeat('*', strlen($value));
+                $masked[$key] = substr($value, 0, 4) . '****' . substr($value, -4);
             } else {
                 $masked[$key] = $value;
             }
         }
 
         return $masked;
-    }
-
-    /**
-     * Factory method to create from environment variables only.
-     */
-    public static function fromEnvironment(): self
-    {
-        $store = new self('/dev/null'); // Don't use file storage
-        $store->credentials = []; // Clear any loaded data
-        $store->loadFromEnvironment();
-        return $store;
     }
 }
