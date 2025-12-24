@@ -258,10 +258,12 @@ class Client
             return $this->config->irisUrl . '/' . ltrim($endpoint, '/');
         }
 
-        // Use FL-API URL for leads, deliverables, profiles
-        if (str_contains($endpoint, '/leads/')
-            || str_contains($endpoint, '/deliverables/')
-            || str_contains($endpoint, '/profiles/')
+        // Use FL-API URL for leads, deliverables, profiles, services
+        if (str_contains($endpoint, '/leads')
+            || str_contains($endpoint, '/deliverables')
+            || str_contains($endpoint, '/profiles')
+            || str_contains($endpoint, '/services')
+            || str_contains($endpoint, '/users/')
         ) {
             return $this->config->flApiUrl . '/' . ltrim($endpoint, '/');
         }
