@@ -207,54 +207,51 @@ class SDKCommand extends Command
         }
         
         // Use reflection to intelligently map parameters to method signature
-        if (!empty($namedParams)) {
-            try {
-                $reflection = new \ReflectionMethod($target, $method);
-                $methodParams = $reflection->getParameters();
-                $args = $positionalParams;
+        try {
+            $reflection = new \ReflectionMethod($target, $method);
+            $methodParams = $reflection->getParameters();
+            $args = $positionalParams;
+            
+            // Start from the position after positional params
+            $startIndex = count($positionalParams);
+            
+            // Map named parameters to method signature
+            for ($i = $startIndex; $i < count($methodParams); $i++) {
+                $param = $methodParams[$i];
+                $paramName = $param->getName();
                 
-                // Start from the position after positional params
-                $startIndex = count($positionalParams);
-                
-                for ($i = $startIndex; $i < count($methodParams); $i++) {
-                    $param = $methodParams[$i];
-                    $paramName = $param->getName();
-                    
-                    if (isset($namedParams[$paramName])) {
-                        // Found matching named parameter
-                        $args[] = $namedParams[$paramName];
-                        unset($namedParams[$paramName]);
-                    } elseif ($param->isOptional()) {
-                        // Skip optional params not provided
-                        break;
-                    } else {
-                        // Required param not provided, pass remaining as array
-                        if (!empty($namedParams)) {
-                            $args[] = $namedParams;
-                            $namedParams = [];
-                        }
-                        break;
-                    }
-                }
-                
-                // If there are leftover named params, append as array
-                if (!empty($namedParams)) {
-                    $args[] = $namedParams;
-                }
-                
-                return $target->{$method}(...$args);
-            } catch (\ReflectionException $e) {
-                // Fallback to old behavior if reflection fails
-                if (!empty($positionalParams)) {
-                    $args = array_merge($positionalParams, [$namedParams]);
-                    return $target->{$method}(...$args);
+                if (isset($namedParams[$paramName])) {
+                    // Found matching named parameter
+                    $args[] = $namedParams[$paramName];
+                    unset($namedParams[$paramName]);
+                } elseif (!$param->isOptional()) {
+                    // Required param not provided
+                    break;
                 } else {
-                    return $target->{$method}($namedParams);
+                    // Optional param not provided - use default value
+                    break;
                 }
             }
-        } else {
-            // Only positional parameters - spread as individual arguments
-            return $target->{$method}(...$positionalParams);
+            
+            // If there are leftover named params and the last method param accepts an array, merge them
+            if (!empty($namedParams) && !empty($methodParams)) {
+                $lastParam = $methodParams[count($methodParams) - 1];
+                $lastParamType = $lastParam->getType();
+                
+                // If last param is array type, merge remaining named params into it
+                if ($lastParamType && $lastParamType->getName() === 'array') {
+                    $args[] = $namedParams;
+                }
+            }
+            
+            return $target->{$method}(...$args);
+        } catch (\ReflectionException $e) {
+            // Fallback: spread positional, then pass named as array if any
+            if (!empty($namedParams)) {
+                return $target->{$method}(...array_merge($positionalParams, [$namedParams]));
+            } else {
+                return $target->{$method}(...$positionalParams);
+            }
         }
     }
     
@@ -334,13 +331,35 @@ class SDKCommand extends Command
                 $table->render();
             }
         } elseif ($this->isAssoc($data)) {
-            // Single item - render as key-value
-            $table = new Table($output);
-            $table->setHeaders(['Key', 'Value']);
+            // Single item - check for special fields that need full display
+            $specialFields = ['notes', 'tasks', 'deliverables', 'activities'];
+            $regularData = [];
+            $specialData = [];
+            
             foreach ($data as $key => $value) {
-                $table->addRow([$key, $this->formatValue($value)]);
+                if (in_array($key, $specialFields) && is_array($value) && !empty($value)) {
+                    $specialData[$key] = $value;
+                } else {
+                    $regularData[$key] = $value;
+                }
             }
-            $table->render();
+            
+            // Render regular fields in table
+            if (!empty($regularData)) {
+                $table = new Table($output);
+                $table->setStyle('compact');
+                $table->setHeaders(['Key', 'Value']);
+                $table->setColumnMaxWidth(1, 80);
+                foreach ($regularData as $key => $value) {
+                    $table->addRow([$key, $this->formatValue($value, 80)]);
+                }
+                $table->render();
+            }
+            
+            // Render special fields (notes, etc.) in clean format
+            foreach ($specialData as $key => $items) {
+                $this->renderSpecialField($key, $items, $output);
+            }
         } else {
             // Simple list
             $io->listing($data);
@@ -511,13 +530,78 @@ class SDKCommand extends Command
     
     private function formatValue($value, int $maxLength = 50): string
     {
-        if (is_array($value)) return json_encode($value);
+        if (is_array($value)) {
+            // For arrays, show count or compact representation
+            if (empty($value)) return '[]';
+            $count = count($value);
+            // If it's a simple array and short, show it
+            $json = json_encode($value);
+            if (strlen($json) <= $maxLength) return $json;
+            // Otherwise show count
+            return "[Array: {$count} items]";
+        }
         if (is_object($value)) return method_exists($value, '__toString') ? (string)$value : get_class($value);
         if (is_bool($value)) return $value ? 'true' : 'false';
         if (is_null($value)) return 'null';
         
         $str = (string)$value;
         return strlen($str) > $maxLength ? substr($str, 0, $maxLength - 3) . '...' : $str;
+    }
+    
+    private function renderSpecialField(string $fieldName, array $items, OutputInterface $output): void
+    {
+        $output->writeln('');
+        $output->writeln("<fg=cyan>═══ {$fieldName} ({" . count($items) . "} items) ═══</>");
+        $output->writeln('');
+        
+        foreach ($items as $index => $item) {
+            $num = $index + 1;
+            $output->writeln("<fg=yellow>── #{$num} ──</>");
+            
+            if (is_array($item)) {
+                foreach ($item as $key => $value) {
+                    if ($key === 'content' && is_string($value)) {
+                        // Clean and display content
+                        $cleaned = $this->cleanDecorativeFormatting($value);
+                        $output->writeln("<fg=green>{$key}:</>");
+                        $output->writeln($cleaned);
+                    } elseif (!in_array($key, ['metadata', 'activity_data', 'lead_id'])) {
+                        // Show other fields except metadata/bloat
+                        $formatted = $this->formatValue($value, 100);
+                        $output->writeln("<fg=green>{$key}:</> {$formatted}");
+                    }
+                }
+            } else {
+                $output->writeln($this->formatValue($item, 200));
+            }
+            
+            if ($index < count($items) - 1) {
+                $output->writeln('');
+            }
+        }
+        
+        $output->writeln('');
+    }
+    
+    private function cleanDecorativeFormatting(string $text): string
+    {
+        // Strip Unicode box-drawing characters and decorative elements
+        $text = preg_replace('/[\x{2500}-\x{257F}]/u', '', $text); // Box drawing
+        $text = preg_replace('/[\x{2580}-\x{259F}]/u', '', $text); // Block elements
+        $text = preg_replace('/[\x{25A0}-\x{25FF}]/u', '', $text); // Geometric shapes
+        
+        // Remove excessive repeated equal signs, dashes, underscores used as dividers
+        $text = preg_replace('/[=\-_]{10,}/u', '', $text);
+        
+        // Clean up multiple consecutive newlines (more than 2)
+        $text = preg_replace('/\n{3,}/u', "\n\n", $text);
+        
+        // Trim whitespace from each line
+        $lines = explode("\n", $text);
+        $lines = array_map('trim', $lines);
+        $text = implode("\n", $lines);
+        
+        return trim($text);
     }
     
     private function isAssoc(array $arr): bool

@@ -18,6 +18,7 @@ use IRIS\SDK\Resources\Vapi\VapiResource;
 use IRIS\SDK\Resources\Models\ModelsResource;
 use IRIS\SDK\Resources\Chat\ChatResource;
 use IRIS\SDK\Resources\Profiles\ProfilesResource;
+use IRIS\SDK\Resources\Services\ServicesResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -141,6 +142,11 @@ class IRIS
     public ProfilesResource $profiles;
 
     /**
+     * Services resource for managing service offerings
+     */
+    public ServicesResource $services;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -177,6 +183,7 @@ class IRIS
         $this->models = new ModelsResource($this->http, $this->config);
         $this->chat = new ChatResource($this->http, $this->config);
         $this->profiles = new ProfilesResource($this->http, $this->config);
+        $this->services = new ServicesResource($this->http, $this->config);
     }
 
     /**

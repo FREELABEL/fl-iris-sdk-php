@@ -14,6 +14,19 @@ use IRIS\SDK\Http\Client;
  *
  * @example
  * ```php
+ * // Create a new profile
+ * $profile = $iris->profiles->create([
+ *     'name' => 'B&C Detailing',
+ *     'bio' => 'Professional mobile detailing service',
+ *     'city' => 'Fort Worth',
+ *     'state' => 'TX',
+ *     'country' => 'United States',
+ *     'country_code' => 'US',
+ *     'phone' => '817-854-6161',
+ *     'website_url' => 'https://bcdetailing.com',
+ *     'instagram' => 'bcdetailing'
+ * ]);
+ *
  * // List user profiles
  * $profiles = $iris->profiles->list();
  *
@@ -89,6 +102,61 @@ class ProfilesResource
     }
 
     /**
+     * Create a new profile.
+     *
+     * @param array{
+     *     name: string,
+     *     bio?: string,
+     *     city?: string,
+     *     state?: string,
+     *     country?: string,
+     *     country_code?: string,
+     *     lat?: float,
+     *     lng?: float,
+     *     email?: string,
+     *     phone?: string,
+     *     photo?: string,
+     *     website_url?: string,
+     *     twitter?: string,
+     *     instagram?: string,
+     *     tiktok?: string,
+     *     youtube?: string,
+     *     spotify?: string,
+     *     facebook?: string,
+     *     linkedin?: string,
+     *     github?: string,
+     *     twitch?: string,
+     *     soundcloud?: string,
+     *     active?: int,
+     *     add_profile_to_user?: bool
+     * } $data Profile data
+     * @return Profile
+     */
+    public function create(array $data): Profile
+    {
+        $userId = $this->config->requireUserId();
+
+        // Format data with defaults
+        $payload = array_merge([
+            'user_id' => $userId,
+            'add_profile_to_user' => true,
+            'active' => 1,
+            'date_created' => date('c')
+        ], $data);
+
+        // Strip @ from social handles if present
+        foreach (['twitter', 'instagram', 'tiktok', 'youtube', 'spotify', 'facebook', 'linkedin', 'github', 'twitch', 'soundcloud'] as $platform) {
+            if (isset($payload[$platform]) && is_string($payload[$platform])) {
+                $payload[$platform] = ltrim($payload[$platform], '@');
+            }
+        }
+
+        $response = $this->http->post("/api/v1/profile", $payload);
+
+        return new Profile($response['data']['profile'] ?? $response['profile'] ?? $response);
+    }
+
+    /**
      * Get a single profile by ID.
      *
      * @param int $profileId Profile ID
@@ -157,26 +225,6 @@ class ProfilesResource
     }
 
     /**
-     * Create a new profile.
-     *
-     * @param array{
-     *     username: string,
-     *     display_name?: string,
-     *     bio?: string,
-     *     avatar_url?: string,
-     *     cover_url?: string
-     * } $data Profile data
-     * @return Profile
-     */
-    public function create(array $data): Profile
-    {
-        $userId = $this->config->requireUserId();
-        $response = $this->http->post("/api/v1/user/{$userId}/profiles", $data);
-
-        return new Profile($response);
-    }
-
-    /**
      * Update an existing profile.
      *
      * @param int $profileId Profile ID
@@ -185,9 +233,16 @@ class ProfilesResource
      */
     public function update(int $profileId, array $data): Profile
     {
-        $response = $this->http->patch("/api/v1/profile/{$profileId}", $data);
+        // Strip @ from social handles if present
+        foreach (['twitter', 'instagram', 'tiktok', 'youtube', 'spotify', 'facebook', 'linkedin', 'github', 'twitch', 'soundcloud'] as $platform) {
+            if (isset($data[$platform]) && is_string($data[$platform])) {
+                $data[$platform] = ltrim($data[$platform], '@');
+            }
+        }
 
-        return new Profile($response);
+        $response = $this->http->put("/api/v1/profile/{$profileId}", $data);
+
+        return new Profile($response['data']['profile'] ?? $response['profile'] ?? $response);
     }
 
     /**

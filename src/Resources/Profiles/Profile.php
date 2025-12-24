@@ -22,6 +22,21 @@ class Profile
     public ?string $photo;
     public ?string $city;
     public ?string $state;
+    public ?string $country;
+    public ?string $country_code;
+    public ?string $email;
+    public ?string $phone;
+    public ?string $website_url;
+    public ?string $instagram;
+    public ?string $twitter;
+    public ?string $tiktok;
+    public ?string $youtube;
+    public ?string $spotify;
+    public ?string $facebook;
+    public ?string $linkedin;
+    public ?string $github;
+    public ?string $twitch;
+    public ?string $soundcloud;
     public ?int $views;
     public ?int $followers;
     public ?int $following;
@@ -42,6 +57,21 @@ class Profile
         $this->photo = $data['photo'] ?? $data['avatar_url'] ?? null;
         $this->city = $data['city'] ?? null;
         $this->state = $data['state'] ?? null;
+        $this->country = $data['country'] ?? null;
+        $this->country_code = $data['country_code'] ?? null;
+        $this->email = $data['email'] ?? null;
+        $this->phone = isset($data['phone']) ? (string) $data['phone'] : null;
+        $this->website_url = $data['website_url'] ?? null;
+        $this->instagram = $data['instagram'] ?? null;
+        $this->twitter = $data['twitter'] ?? null;
+        $this->tiktok = $data['tiktok'] ?? null;
+        $this->youtube = $data['youtube'] ?? null;
+        $this->spotify = $data['spotify'] ?? null;
+        $this->facebook = $data['facebook'] ?? null;
+        $this->linkedin = $data['linkedin'] ?? null;
+        $this->github = $data['github'] ?? null;
+        $this->twitch = $data['twitch'] ?? null;
+        $this->soundcloud = $data['soundcloud'] ?? null;
         $this->views = isset($data['views']) ? (int) $data['views'] : null;
         $this->followers = isset($data['followers']) ? (int) $data['followers'] : null;
         $this->following = isset($data['following']) ? (int) $data['following'] : null;
@@ -64,6 +94,21 @@ class Profile
             'photo' => $this->photo,
             'city' => $this->city,
             'state' => $this->state,
+            'country' => $this->country,
+            'country_code' => $this->country_code,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'website_url' => $this->website_url,
+            'instagram' => $this->instagram,
+            'twitter' => $this->twitter,
+            'tiktok' => $this->tiktok,
+            'youtube' => $this->youtube,
+            'spotify' => $this->spotify,
+            'facebook' => $this->facebook,
+            'linkedin' => $this->linkedin,
+            'github' => $this->github,
+            'twitch' => $this->twitch,
+            'soundcloud' => $this->soundcloud,
             'views' => $this->views,
             'followers' => $this->followers,
             'following' => $this->following,

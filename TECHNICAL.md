@@ -151,6 +151,41 @@ The CLI uses a dynamic proxy pattern to access any SDK resource and method:
 ./vendor/bin/iris sdk:call rag.query question="vacation policy" topK=5
 ```
 
+#### ⚠️ Important: String Parameters with Spaces
+
+**Always use quotes for multi-word strings** - this is standard CLI behavior:
+
+```bash
+# ✅ CORRECT - Use quotes for content with spaces
+./bin/iris sdk:call leads.addNote 518 "This is a multi-word note about the meeting"
+./bin/iris sdk:call leads.tasks.create 412 title="Setup delivery meeting" description="Prepare demo materials"
+
+# ❌ WRONG - Without quotes, each word becomes a separate argument
+./bin/iris sdk:call leads.addNote 518 This is wrong
+
+# Quote types (all valid)
+./bin/iris sdk:call leads.addNote 518 "Double quotes work"
+./bin/iris sdk:call leads.addNote 518 'Single quotes work too'
+./bin/iris sdk:call leads.addNote 518 "He said \"hello\""  # Escaped quotes
+
+# For long multi-line content, use heredoc or text files
+./bin/iris sdk:call leads.addNote 518 "$(cat << 'EOF'
+Line 1 of note
+Line 2 of note
+Line 3 of note
+EOF
+)"
+
+# Or read from file
+./bin/iris sdk:call leads.addNote 518 "$(cat meeting-notes.txt)"
+```
+
+**Why quotes are required:**
+- Shell interprets spaces as argument separators
+- Quotes group words into a single argument
+- Standard behavior across all CLI tools (`git commit -m "message"`, `echo "hello world"`, etc.)
+- Ensures predictable, type-safe parameter passing
+
 ### Output Formats
 
 ```bash
