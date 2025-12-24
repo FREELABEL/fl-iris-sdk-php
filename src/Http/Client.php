@@ -261,7 +261,7 @@ class Client
         // Use FL-API URL for leads, deliverables, profiles, services
         if (str_contains($endpoint, '/leads')
             || str_contains($endpoint, '/deliverables')
-            || str_contains($endpoint, '/profiles')
+            || str_contains($endpoint, '/profile')
             || str_contains($endpoint, '/services')
             || str_contains($endpoint, '/users/')
         ) {

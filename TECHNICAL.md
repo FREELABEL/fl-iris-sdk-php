@@ -52,9 +52,11 @@ cp .env.example .env
 ```bash
 # IRIS SDK Configuration
 # ======================
-# The SDK uses the IRIS API for all operations.
+# The SDK uses TWO separate APIs:
+# - IRIS API: agents, chat, workflows (iris-api.freelabel.net)
+# - FL-API: leads, deliverables, profiles, services (apiv2.heyiris.io)
 
-# API Authentication (required)
+# API Authentication (same token works for both APIs)
 IRIS_API_KEY=your_sdk_key_from_developer_portal
 IRIS_USER_ID=your_user_id
 
@@ -62,12 +64,17 @@ IRIS_USER_ID=your_user_id
 IRIS_ENV=production
 
 # ========================================
-# API URLs (defaults work for most users)
+# Production API URLs
 # ========================================
-IRIS_API_URL=https://apiv2.heyiris.io
+# IRIS API - agents, chat, workflows, bloqs
+IRIS_API_URL=https://iris-api.freelabel.net
+
+# FL-API - leads, deliverables, profiles, services
 FL_API_URL=https://apiv2.heyiris.io
 
-# Local development URLs (when IRIS_ENV=local)
+# ========================================
+# Local Development URLs (when IRIS_ENV=local)
+# ========================================
 IRIS_LOCAL_URL=https://local.iris.freelabel.net
 FL_API_LOCAL_URL=https://local.raichu.freelabel.net
 
@@ -75,6 +82,29 @@ FL_API_LOCAL_URL=https://local.raichu.freelabel.net
 # IRIS_CLIENT_ID=your-oauth-client-id
 # IRIS_CLIENT_SECRET=your-oauth-client-secret
 ```
+
+### ⚠️ Critical: API Routing
+
+The SDK automatically routes requests to the correct API based on the endpoint pattern:
+
+**IRIS API** (`iris-api.freelabel.net`) handles:
+- `/iris/*` - Core IRIS functionality
+- `/chat/*` - AI chat and workflows
+- `/workflows/*` - Multi-step workflows
+- `/agents/*` - Agent management
+- `/bloqs/*` - Knowledge bases
+
+**FL-API** (`apiv2.heyiris.io`) handles:
+- `/leads` - Lead management and CRM
+- `/deliverables` - Lead deliverables
+- `/profile` and `/profiles` - Profile creation and management (both singular and plural!)
+- `/services` - Service offerings
+- `/users/*` - User-specific endpoints
+
+**Important:** The HTTP Client checks for endpoint patterns to route correctly. If you're getting "method not supported" errors, verify:
+1. The endpoint pattern is included in the routing logic (see `src/Http/Client.php`)
+2. Both `/profile` (singular) and `/profiles` (plural) route to FL-API
+3. Your `.env` has the correct API URLs for your environment
 
 ### Configuration Status
 
@@ -1312,7 +1342,124 @@ if ($duplicate['exists']) {
 ./bin/iris sdk:call leads.checkDuplicate email="john@acme.com" bloq_id=40
 ```
 
-### 🔌 Integrations (17+ Services)
+### � Profile & Services Management
+
+Create and manage user profiles with service offerings. Profiles live at public URLs (e.g., `oh.heyiris.io/username`) and can showcase multiple services.
+
+#### Create a Profile
+
+```php
+// Create a profile
+$profile = $iris->profiles->create([
+    'username' => 'nsgbillz',
+    'name' => 'NSG Billz',
+    'bio' => 'Credit repair specialist and videographer',
+    'city' => 'Dallas',
+    'state' => 'Texas',
+    'instagram' => 'nsgbillz',
+    'user_id' => 193,
+]);
+
+echo "Profile created: {$profile['id']}\n";
+echo "URL: https://oh.heyiris.io/{$profile['username']}\n";
+```
+
+**CLI:**
+```bash
+# Create profile
+./bin/iris sdk:call profiles.create \
+  username=nsgbillz \
+  name='NSG Billz' \
+  bio='Credit repair specialist and videographer' \
+  city='Dallas' \
+  state='Texas' \
+  instagram=nsgbillz \
+  user_id=193
+```
+
+#### Create Services for a Profile
+
+Services define offerings that appear on the profile page with pricing.
+
+```php
+// Create a service
+$service = $iris->services->create([
+    'profile_id' => 9203684,
+    'title' => 'Credit Repair Services',
+    'description' => 'Professional credit restoration services',
+    'price' => 500,
+    'price_max' => 2500,  // Optional: for price ranges
+    'user_id' => 193,
+]);
+
+echo "Service created: #{$service['id']}\n";
+```
+
+**CLI:**
+```bash
+# Create service with price range
+./bin/iris sdk:call services.create \
+  profile_id=9203684 \
+  title='Credit Repair Services' \
+  description='Professional credit restoration services' \
+  price=500 \
+  price_max=2500 \
+  user_id=193
+
+# Create service with fixed price
+./bin/iris sdk:call services.create \
+  profile_id=9203684 \
+  title='Video Production' \
+  description='Professional video editing and production' \
+  price=1000 \
+  user_id=193
+```
+
+#### List Services for a Profile
+
+```php
+// Get all services for a profile
+$services = $iris->services->list(['profile_id' => 9203684]);
+
+foreach ($services as $service) {
+    $priceDisplay = $service['price_max'] 
+        ? "\${$service['price']}-\${$service['price_max']}"
+        : "\${$service['price']}";
+    
+    echo "{$service['title']}: {$priceDisplay}\n";
+}
+```
+
+**CLI:**
+```bash
+# List services for a profile
+./bin/iris sdk:call services.list profile_id=9203684
+```
+
+**⚠️ Important:** The `profile_id` filter is critical. Without it, `services.list` returns ALL services across the entire platform. Always specify `profile_id` when querying services for a specific profile.
+
+#### Update Profile
+
+```php
+// Update profile fields
+$profile = $iris->profiles->update(9203684, [
+    'bio' => 'Updated bio text',
+    'website_url' => 'https://example.com',
+]);
+```
+
+#### Update Service
+
+```php
+// Update service pricing or details
+$service = $iris->services->update(245, [
+    'price' => 600,
+    'price_max' => 3000,
+    'description' => 'Updated service description',
+]);
+```
+
+### �🔌 Integrations (17+ Services)
 
 Connect your agents to external services with 17+ pre-built integrations. Perfect for users coming from N8N - use our integrations directly or build custom workflows.
 
