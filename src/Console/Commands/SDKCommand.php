@@ -36,7 +36,8 @@ class SDKCommand extends Command
         // Load credentials from store first, then override with CLI options/env vars
         $store = new CredentialStore();
 
-        // Priority: CLI options > env vars > stored credentials
+        // Try to load from .env first, then check other sources
+        // Priority: .env > CLI options > env vars > stored credentials
         $apiKey = $input->getOption('api-key')
             ?: getenv('IRIS_API_KEY')
             ?: $store->get('api_key');
@@ -44,6 +45,22 @@ class SDKCommand extends Command
         $userId = $input->getOption('user-id')
             ?: getenv('IRIS_USER_ID')
             ?: $store->get('user_id');
+        
+        // If still no credentials, try to initialize SDK to let Config load from .env
+        if (!$apiKey || !$userId) {
+            try {
+                // Attempt to load from .env via Config
+                $tempConfig = new \IRIS\SDK\Config([]);
+                if (!$apiKey && isset($tempConfig->apiKey)) {
+                    $apiKey = $tempConfig->apiKey;
+                }
+                if (!$userId && isset($tempConfig->userId)) {
+                    $userId = $tempConfig->userId;
+                }
+            } catch (\Exception $e) {
+                // Config will throw if api_key not found, that's ok
+            }
+        }
         
         if (!$apiKey || !$userId) {
             $io->error('Missing API credentials. Run "iris config setup" to configure credentials.');
@@ -108,21 +125,35 @@ class SDKCommand extends Command
         $target = $iris->{$resource};
         foreach ($parts as $sub) {
             if (method_exists($target, $sub)) {
-                // Check if this sub-resource method needs parameters
-                // Extract positional params (numeric keys) for sub-resource
-                $positionalParams = [];
-                foreach ($params as $key => $value) {
-                    if (is_int($key)) {
-                        $positionalParams[] = $value;
-                        unset($params[$key]);
+                // Use reflection to check if this sub-resource method requires parameters
+                $reflection = new \ReflectionMethod($target, $sub);
+                $requiredParams = 0;
+                foreach ($reflection->getParameters() as $param) {
+                    if (!$param->isOptional()) {
+                        $requiredParams++;
                     }
                 }
                 
-                if (!empty($positionalParams)) {
-                    // Call sub-resource method with positional params
-                    $target = $target->{$sub}(...$positionalParams);
+                // Only extract positional params if the method requires them
+                if ($requiredParams > 0) {
+                    // Extract positional params (numeric keys) for sub-resource
+                    $positionalParams = [];
+                    foreach ($params as $key => $value) {
+                        if (is_int($key) && count($positionalParams) < $requiredParams) {
+                            $positionalParams[] = $value;
+                            unset($params[$key]);
+                        }
+                    }
+                    
+                    if (!empty($positionalParams)) {
+                        // Call sub-resource method with positional params
+                        $target = $target->{$sub}(...$positionalParams);
+                    } else {
+                        // Call without params
+                        $target = $target->{$sub}();
+                    }
                 } else {
-                    // Call without params
+                    // Method doesn't require params, call it directly
                     $target = $target->{$sub}();
                 }
             } else {
@@ -133,6 +164,28 @@ class SDKCommand extends Command
         // Call method with params
         if (!method_exists($target, $method)) {
             throw new \BadMethodCallException("Method '{$method}' not found on resource");
+        }
+        
+        // Special handling for agents.create - use createFromArray for CLI
+        if ($method === 'create' && get_class($target) === 'IRIS\SDK\Resources\Agents\AgentsResource') {
+            if (!empty($params)) {
+                // Extract positional and named params
+                $positionalParams = [];
+                $namedParams = [];
+                
+                foreach ($params as $key => $value) {
+                    if (is_int($key)) {
+                        $positionalParams[] = $value;
+                    } else {
+                        $namedParams[$key] = $value;
+                    }
+                }
+                
+                // If we have named params, use createFromArray
+                if (!empty($namedParams)) {
+                    return $target->createFromArray($namedParams);
+                }
+            }
         }
         
         // For methods that expect a single array argument, pass params as-is
@@ -153,14 +206,52 @@ class SDKCommand extends Command
             }
         }
         
-        // Build arguments list: positional params first, then named params if any
-        if (!empty($positionalParams) && !empty($namedParams)) {
-            // Mixed: positional arguments + named array at the end
-            $args = array_merge($positionalParams, [$namedParams]);
-            return $target->{$method}(...$args);
-        } elseif (!empty($namedParams)) {
-            // Only named parameters - pass as single array argument
-            return $target->{$method}($namedParams);
+        // Use reflection to intelligently map parameters to method signature
+        if (!empty($namedParams)) {
+            try {
+                $reflection = new \ReflectionMethod($target, $method);
+                $methodParams = $reflection->getParameters();
+                $args = $positionalParams;
+                
+                // Start from the position after positional params
+                $startIndex = count($positionalParams);
+                
+                for ($i = $startIndex; $i < count($methodParams); $i++) {
+                    $param = $methodParams[$i];
+                    $paramName = $param->getName();
+                    
+                    if (isset($namedParams[$paramName])) {
+                        // Found matching named parameter
+                        $args[] = $namedParams[$paramName];
+                        unset($namedParams[$paramName]);
+                    } elseif ($param->isOptional()) {
+                        // Skip optional params not provided
+                        break;
+                    } else {
+                        // Required param not provided, pass remaining as array
+                        if (!empty($namedParams)) {
+                            $args[] = $namedParams;
+                            $namedParams = [];
+                        }
+                        break;
+                    }
+                }
+                
+                // If there are leftover named params, append as array
+                if (!empty($namedParams)) {
+                    $args[] = $namedParams;
+                }
+                
+                return $target->{$method}(...$args);
+            } catch (\ReflectionException $e) {
+                // Fallback to old behavior if reflection fails
+                if (!empty($positionalParams)) {
+                    $args = array_merge($positionalParams, [$namedParams]);
+                    return $target->{$method}(...$args);
+                } else {
+                    return $target->{$method}($namedParams);
+                }
+            }
         } else {
             // Only positional parameters - spread as individual arguments
             return $target->{$method}(...$positionalParams);

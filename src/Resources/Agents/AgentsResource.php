@@ -93,6 +93,42 @@ class AgentsResource
     }
 
     /**
+     * Create a new agent from array (simplified API).
+     * 
+     * This method accepts a simple array and handles AgentConfig creation internally.
+     * Perfect for CLI usage and quick agent creation.
+     *
+     * @param array $data Agent data
+     * @return Agent
+     * 
+     * @example Create from simple array
+     * ```php
+     * $agent = $iris->agents->createFromArray([
+     *     'name' => 'News Scout',
+     *     'initial_prompt' => 'You are a helpful assistant',
+     *     'bloq_id' => 40,
+     *     'config' => ['model_id' => 185, 'temperature' => 0.7]
+     * ]);
+     * ```
+     */
+    public function createFromArray(array $data): Agent
+    {
+        $userId = $this->config->requireUserId();
+        
+        // Add type if not provided
+        if (!isset($data['type'])) {
+            $data['type'] = 'ai_bloq';
+        }
+        
+        $response = $this->http->post(
+            "/api/v1/users/{$userId}/bloqs/agents",
+            $data
+        );
+
+        return new Agent($response);
+    }
+
+    /**
      * Update an existing agent (full replacement).
      *
      * @param int|string $agentId Agent ID

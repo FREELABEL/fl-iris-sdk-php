@@ -89,6 +89,7 @@ class LeadsResource
      *
      * @param array{
      *     search?: string,
+     *     query?: string,
      *     bloq_id?: int,
      *     status?: string,
      *     lead_type?: string,
@@ -96,24 +97,25 @@ class LeadsResource
      *     per_page?: int,
      *     sort?: string,
      *     order?: string,
-     *     include_notes?: bool,
-     *     include_events?: bool
+     *     has_tasks?: bool,
+     *     has_incomplete_tasks?: bool,
+     *     user_id?: int
      * } $filters Search and filter options
      * @return array Raw API response with leads and metadata
      *
      * @example
      * ```php
-     * // Search for leads by name
+     * // Search for leads by name, email, phone, or company
      * $results = $iris->leads->search(['search' => 'ayala']);
      *
-     * // Search with bloq filter and pagination
+     * // Search with multiple filters
      * $results = $iris->leads->search([
-     *     'bloq_id' => 40,
-     *     'search' => 'john',
-     *     'status' => 'Won',
-     *     'per_page' => 50,
-     *     'include_notes' => true,
-     *     'include_events' => true
+     *     'query' => 'john',
+     *     'status' => 'Won,Negotiation',
+     *     'has_incomplete_tasks' => true,
+     *     'sort' => 'priority',
+     *     'order' => 'desc',
+     *     'per_page' => 50
      * ]);
      *
      * foreach ($results['data'] as $lead) {
@@ -123,17 +125,8 @@ class LeadsResource
      */
     public function search(array $filters = []): array
     {
-        $userId = $this->config->requireUserId();
-        
-        // Convert boolean values to strings for query parameters
-        if (isset($filters['include_notes'])) {
-            $filters['include_notes'] = $filters['include_notes'] ? 'true' : 'false';
-        }
-        if (isset($filters['include_events'])) {
-            $filters['include_events'] = $filters['include_events'] ? 'true' : 'false';
-        }
-        
-        $response = $this->http->get("/api/v1/users/{$userId}/leads", $filters);
+        // Use the Lead Aggregation API for powerful search and filtering
+        $response = $this->http->get("/api/v1/leads/aggregation", $filters);
         
         return $response;
     }

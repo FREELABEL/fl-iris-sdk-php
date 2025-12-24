@@ -69,7 +69,8 @@ HELP
         // Load credentials from store first, then override with CLI options/env vars
         $store = new CredentialStore();
 
-        // Priority: CLI options > env vars > stored credentials
+        // Try to load from .env first, then check other sources
+        // Priority: .env > CLI options > env vars > stored credentials
         $apiKey = $input->getOption('api-key')
             ?: getenv('IRIS_API_KEY')
             ?: $store->get('api_key');
@@ -81,6 +82,22 @@ HELP
         $irisUrl = $input->getOption('iris-url')
             ?: getenv('IRIS_URL')
             ?: $store->get('iris_url');
+
+        // If still no credentials, try to initialize SDK to let Config load from .env
+        if (!$apiKey || !$userId) {
+            try {
+                // Attempt to load from .env via Config
+                $tempConfig = new \IRIS\SDK\Config([]);
+                if (!$apiKey && isset($tempConfig->apiKey)) {
+                    $apiKey = $tempConfig->apiKey;
+                }
+                if (!$userId && isset($tempConfig->userId)) {
+                    $userId = $tempConfig->userId;
+                }
+            } catch (\Exception $e) {
+                // Config will throw if api_key not found, that's ok
+            }
+        }
 
         if (!$apiKey || !$userId) {
             $io->error([

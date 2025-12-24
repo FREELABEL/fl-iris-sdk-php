@@ -82,7 +82,7 @@ class Config
      * Create a new configuration instance.
      *
      * @param array{
-     *     api_key: string,
+     *     api_key?: string,
      *     base_url?: string,
      *     iris_url?: string,
      *     user_id?: int,
@@ -100,9 +100,15 @@ class Config
      */
     public function __construct(array $options)
     {
+        // Auto-load from .env if exists
+        $envConfig = $this->loadFromEnv();
+        
+        // Merge options with env config (options take precedence)
+        $options = array_merge($envConfig, array_filter($options, fn($v) => $v !== null));
+        
         if (empty($options['api_key'])) {
             throw new \InvalidArgumentException(
-                'api_key is required. Get your API key from https://app.freelabel.net/settings/api'
+                'api_key is required. Set IRIS_API_KEY in .env or pass it in options. Get your API key from https://app.freelabel.net/settings/api'
             );
         }
 
@@ -118,6 +124,83 @@ class Config
         $this->debug = $options['debug'] ?? false;
         $this->pollingInterval = $options['polling_interval'] ?? $this->pollingInterval;
         $this->maxPollingDuration = $options['max_polling_duration'] ?? $this->maxPollingDuration;
+    }
+
+    /**
+     * Load configuration from .env file in SDK directory or current directory.
+     * Supports production/local environment switching.
+     *
+     * @return array<string, mixed>
+     */
+    private function loadFromEnv(): array
+    {
+        $config = [];
+        
+        // Check for .env in SDK directory first, then current directory
+        $envPaths = [
+            __DIR__ . '/../.env',
+            getcwd() . '/.env',
+        ];
+        
+        $envPath = null;
+        foreach ($envPaths as $path) {
+            if (file_exists($path)) {
+                $envPath = $path;
+                break;
+            }
+        }
+        
+        if ($envPath && is_readable($envPath)) {
+            $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $env = [];
+            
+            foreach ($lines as $line) {
+                // Skip comments
+                if (strpos(trim($line), '#') === 0) {
+                    continue;
+                }
+                
+                // Parse KEY=VALUE
+                if (strpos($line, '=') !== false) {
+                    list($key, $value) = explode('=', $line, 2);
+                    $key = trim($key);
+                    $value = trim($value);
+                    $env[$key] = $value;
+                }
+            }
+            
+            // Map .env variables to config
+            if (!empty($env['IRIS_API_KEY'])) {
+                $config['api_key'] = $env['IRIS_API_KEY'];
+            }
+            
+            if (!empty($env['IRIS_USER_ID'])) {
+                $config['user_id'] = (int) $env['IRIS_USER_ID'];
+            }
+            
+            // Determine environment and set URLs accordingly
+            $environment = $env['IRIS_ENV'] ?? 'production';
+            
+            if ($environment === 'local') {
+                $config['base_url'] = $env['IRIS_LOCAL_URL'] ?? 'https://local.raichu.freelabel.net';
+                $config['iris_url'] = 'https://local.iris.freelabel.net';
+            } else {
+                // Default to production
+                $config['base_url'] = $env['IRIS_PRODUCTION_URL'] ?? 'https://apiv2.heyiris.io';
+                $config['iris_url'] = 'https://iris-api.freelabel.net';
+            }
+            
+            // Optional fields
+            if (!empty($env['IRIS_CLIENT_ID'])) {
+                $config['client_id'] = $env['IRIS_CLIENT_ID'];
+            }
+            
+            if (!empty($env['IRIS_CLIENT_SECRET'])) {
+                $config['client_secret'] = $env['IRIS_CLIENT_SECRET'];
+            }
+        }
+        
+        return $config;
     }
 
     /**
