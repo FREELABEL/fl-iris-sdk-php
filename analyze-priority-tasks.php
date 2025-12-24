@@ -23,7 +23,7 @@ echo "   User ID: {$userId}\n\n";
 
 // Initialize SDK
 $apiKey = $_ENV['IRIS_API_KEY'];
-$baseUrl = $env === 'production' ? $_ENV['IRIS_PRODUCTION_URL'] : 'https://local.raichu.freelabel.net';
+$baseUrl = $env === 'production' ? ($_ENV['FL_API_URL'] ?? 'https://apiv2.heyiris.io') : ($_ENV['FL_API_LOCAL_URL'] ?? 'https://local.raichu.freelabel.net');
 
 $iris = new IRIS([
     'api_key' => $apiKey,
@@ -43,20 +43,29 @@ try {
     
     try {
         echo "📊 Fetching lead aggregation data...\n";
-        $stats = $http->get('/api/v1/leads/aggregation/statistics');
-        $aggregationData = $http->get('/api/v1/leads/aggregation', ['per_page' => 50]);
-        
+        $stats = $http->get('/api/v1/leads/aggregation/statistics', ['user_id' => $userId]);
+        $aggregationData = $http->get('/api/v1/leads/aggregation', ['per_page' => 50, 'user_id' => $userId]);
+
+        // Extract data from paginated response
         if (isset($aggregationData['data'])) {
             $leads = $aggregationData['data'];
             $useAggregation = true;
-            echo "✓ Retrieved {$stats['total_leads']} leads with aggregation data\n\n";
+            $totalLeads = $stats['total_leads'] ?? count($leads);
+            echo "✓ Retrieved {$totalLeads} leads with aggregation data\n\n";
+        } elseif (is_array($aggregationData) && !isset($aggregationData['data'])) {
+            // Direct array response (non-paginated)
+            $leads = $aggregationData;
+            $useAggregation = true;
+            $totalLeads = $stats['total_leads'] ?? count($leads);
+            echo "✓ Retrieved {$totalLeads} leads with aggregation data\n\n";
         }
     } catch (IRISException $e) {
         if ($e->getCode() === 404) {
             echo "⚠️  Aggregation endpoint not available, using basic leads...\n";
-            $basicLeadsData = $http->get('/api/v1/leads', ['per_page' => 50]);
-            echo "✓ Retrieved " . count($basicLeadsData) . " basic leads\n\n";
-            $leads = $basicLeadsData;
+            $basicLeadsData = $http->get('/api/v1/leads', ['per_page' => 50, 'user_id' => $userId]);
+            // Extract data from paginated response
+            $leads = $basicLeadsData['data'] ?? $basicLeadsData;
+            echo "✓ Retrieved " . count($leads) . " basic leads\n\n";
         } else {
             throw $e;
         }

@@ -30,10 +30,11 @@ $userId = (int)($_ENV['IRIS_USER_ID'] ?? getenv('IRIS_USER_ID') ?? 193);
 $env = $_ENV['IRIS_ENV'] ?? getenv('IRIS_ENV') ?? 'local';
 
 // Determine base URL based on environment
+// Use FL-API for leads (apiv2.heyiris.io)
 if ($env === 'production') {
-    $baseUrl = $_ENV['IRIS_PRODUCTION_URL'] ?? 'https://apiv2.heyiris.io';
+    $baseUrl = $_ENV['FL_API_URL'] ?? 'https://apiv2.heyiris.io';
 } else {
-    $baseUrl = $_ENV['IRIS_LOCAL_URL'] ?? 'https://local.raichu.freelabel.net';
+    $baseUrl = $_ENV['FL_API_LOCAL_URL'] ?? 'https://local.raichu.freelabel.net';
 }
 
 if (!$apiKey) {

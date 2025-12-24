@@ -175,8 +175,16 @@ class Config
                 }
             }
             
-            // Map .env variables to config
-            if (!empty($env['IRIS_API_KEY'])) {
+            // Determine environment - command line takes precedence over .env file
+            $environment = getenv('IRIS_ENV') ?: ($_ENV['IRIS_ENV'] ?? ($env['IRIS_ENV'] ?? 'production'));
+            
+            // Map .env variables to config - use environment-specific API key
+            if ($environment === 'local' && !empty($env['IRIS_LOCAL_API_KEY'])) {
+                $config['api_key'] = $env['IRIS_LOCAL_API_KEY'];
+            } elseif ($environment === 'production' && !empty($env['IRIS_PROD_API_KEY'])) {
+                $config['api_key'] = $env['IRIS_PROD_API_KEY'];
+            } elseif (!empty($env['IRIS_API_KEY'])) {
+                // Fallback to generic IRIS_API_KEY for backwards compatibility
                 $config['api_key'] = $env['IRIS_API_KEY'];
             }
             
@@ -184,9 +192,7 @@ class Config
                 $config['user_id'] = (int) $env['IRIS_USER_ID'];
             }
             
-            // Determine environment and set URLs accordingly
-            $environment = $env['IRIS_ENV'] ?? 'production';
-            
+            // Set environment-specific URLs
             if ($environment === 'local') {
                 // Local development URLs
                 $config['base_url'] = $env['IRIS_LOCAL_URL'] ?? 'https://local.iris.freelabel.net';
@@ -231,7 +237,7 @@ class Config
             'Authorization' => 'Bearer ' . $this->apiKey,
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'User-Agent' => 'FreeLABEL-PHP-SDK/' . FreeLABEL::VERSION,
+            'User-Agent' => 'IRIS-PHP-SDK/' . IRIS::VERSION,
         ];
     }
 

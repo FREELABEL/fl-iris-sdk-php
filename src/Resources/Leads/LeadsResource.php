@@ -153,8 +153,9 @@ class LeadsResource
     {
         // Use the Lead Aggregation API for powerful search and filtering
         $response = $this->http->get("/api/v1/leads/aggregation", $filters);
-        
-        return $response;
+
+        // Return the data array directly for easier consumption
+        return $response['data'] ?? $response;
     }
 
     /**

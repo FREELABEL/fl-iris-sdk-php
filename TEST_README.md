@@ -30,7 +30,7 @@ The test script reads from `.env` file:
 IRIS_API_KEY=your_api_key
 IRIS_USER_ID=193
 IRIS_ENV=local
-IRIS_LOCAL_URL=https://local.raichu.freelabel.net
+FL_API_LOCAL_URL=https://local.raichu.freelabel.net
 ```
 
 ### Production Testing
@@ -38,7 +38,7 @@ IRIS_LOCAL_URL=https://local.raichu.freelabel.net
 IRIS_API_KEY=your_production_key
 IRIS_USER_ID=193
 IRIS_ENV=production
-IRIS_PRODUCTION_URL=https://apiv2.heyiris.io
+FL_API_URL=https://apiv2.heyiris.io
 ```
 
 ## What It Tests
@@ -63,8 +63,8 @@ Just add your API token to `.env` and run! The test automatically:
 | `IRIS_API_KEY` | Yes | - | Your API authentication key |
 | `IRIS_USER_ID` | No | 193 | User ID for testing |
 | `IRIS_ENV` | No | local | Environment: `local` or `production` |
-| `IRIS_LOCAL_URL` | No | https://local.raichu.freelabel.net | Local API URL |
-| `IRIS_PRODUCTION_URL` | No | https://apiv2.heyiris.io | Production API URL |
+| `FL_API_LOCAL_URL` | No | https://local.raichu.freelabel.net | Local FL-API URL (leads, deliverables) |
+| `FL_API_URL` | No | https://apiv2.heyiris.io | Production FL-API URL |
 
 ## Output Example
 

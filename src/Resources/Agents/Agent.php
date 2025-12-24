@@ -22,6 +22,8 @@ class Agent
     public array $personality;
     public array $capabilities;
     public array $integrations;
+    public array $fileAttachments;
+    public array $settings;
     public ?string $webhookUrl;
     public ?string $createdAt;
     public ?string $updatedAt;
@@ -45,7 +47,17 @@ class Agent
         $this->slug = $data['slug'] ?? null;
         $this->personality = $data['personality'] ?? [];
         $this->capabilities = $data['capabilities'] ?? [];
-        $this->integrations = $data['integrations'] ?? [];
+        
+        // Parse integrations from settings['agentIntegrations'] map
+        $integrations = [];
+        if (isset($data['settings']['agentIntegrations'])) {
+            // Convert map like {'google-gemini': true, 'slack': false} to array of enabled keys
+            $integrations = array_keys(array_filter($data['settings']['agentIntegrations'], fn($v) => $v === true));
+        }
+        $this->integrations = $integrations;
+        $this->fileAttachments = $data['file_attachments'] ?? [];
+        $this->settings = $data['settings'] ?? [];
+
         $this->webhookUrl = $data['webhook_url'] ?? null;
         $this->createdAt = $data['created_at'] ?? null;
         $this->updatedAt = $data['updated_at'] ?? null;

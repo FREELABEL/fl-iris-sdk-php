@@ -84,6 +84,7 @@ class ChatResource
             ],
             'bloqId' => isset($options['bloqId']) ? (string) $options['bloqId'] : null,
             'uploadedFiles' => $options['uploadedFiles'] ?? [],
+            'enableRAG' => $options['enableRAG'] ?? true, // Enable RAG by default for file attachments
             'contextPayload' => $options['contextPayload'] ?? [
                 'source' => 'sdk',
             ],

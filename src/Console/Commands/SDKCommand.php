@@ -60,7 +60,26 @@ class SDKCommand extends Command
             $params = $this->parseParams($input->getArgument('params'));
 
             // Auto-inject user_id if not provided (needed for many API calls)
-            if (!isset($params['user_id']) && $userId) {
+            // BUT skip for global search endpoints that search across all users
+            // 
+            // IMPORTANT: Search endpoints like leads.search and leads.aggregation.list
+            // are designed to search across ALL leads in the system, not just leads
+            // belonging to the current user. Auto-injecting user_id would incorrectly
+            // filter results to only that user's leads, causing search misses.
+            // 
+            // Example: Lead "Lisa Martinez" (ID: 67) has no user_id assignment.
+            // - With user_id injection: search returns 0 results (filtered out)
+            // - Without user_id injection: search correctly finds Lisa
+            // 
+            // See tests: testUserIdNotInjectedForGlobalSearchEndpoints()
+            $globalSearchEndpoints = [
+                'leads.search',
+                'leads.aggregation.list',
+                'leads.aggregation.getRecentLeads',
+                'leads.aggregation.statistics',
+            ];
+            
+            if (!isset($params['user_id']) && $userId && !in_array($endpoint, $globalSearchEndpoints)) {
                 $params['user_id'] = (int)$userId;
             }
 
@@ -224,9 +243,10 @@ class SDKCommand extends Command
             if (!empty($namedParams) && !empty($methodParams)) {
                 $lastParam = $methodParams[count($methodParams) - 1];
                 $lastParamType = $lastParam->getType();
-                
+
                 // If last param is array type, merge remaining named params into it
-                if ($lastParamType && $lastParamType->getName() === 'array') {
+                // Note: ReflectionUnionType (int|string) doesn't have getName(), only ReflectionNamedType does
+                if ($lastParamType instanceof \ReflectionNamedType && $lastParamType->getName() === 'array') {
                     $args[] = $namedParams;
                 }
             }
@@ -310,6 +330,12 @@ class SDKCommand extends Command
     
     private function renderArray(array $data, OutputInterface $output, SymfonyStyle $io): void
     {
+        // Handle empty arrays
+        if (empty($data)) {
+            $io->note('No results found');
+            return;
+        }
+        
         // Check if it's a list of items (numeric keys) or single item (assoc keys)
         if (isset($data[0]) && is_array($data[0])) {
             // List of items - use compact format for large datasets

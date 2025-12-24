@@ -36,6 +36,10 @@
     },
     "scripts": {
         "test": "phpunit",
+        "test:unit": "phpunit tests/Unit",
+        "test:integration": "phpunit tests/Integration --group integration",
+        "test:leads": "phpunit tests/Unit/Resources/LeadsResourceTest.php tests/Integration/LeadsIntegrationTest.php",
+        "test:config": "phpunit tests/Unit/ConfigTest.php",
         "analyse": "phpstan analyse src --level=8",
         "cs-fix": "php-cs-fixer fix src"
     },

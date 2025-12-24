@@ -105,6 +105,11 @@ class CloudFilesResource
      */
     public function upload(string $filePath, array $options = []): array
     {
+        // Ensure user_id is included in the upload (required by FL-API)
+        if (!isset($options['user_id']) && $this->config->userId) {
+            $options['user_id'] = $this->config->userId;
+        }
+
         return $this->http->upload("/api/v1/cloud-files/upload", $filePath, $options);
     }
 

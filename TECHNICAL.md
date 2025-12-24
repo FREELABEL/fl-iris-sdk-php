@@ -1955,13 +1955,13 @@ php test-lead-aggregation-user-193.php
 For **local development** (default):
 ```env
 IRIS_ENV=local
-IRIS_LOCAL_URL=https://local.raichu.freelabel.net
+FL_API_LOCAL_URL=https://local.raichu.freelabel.net
 ```
 
 For **production testing**:
 ```env
 IRIS_ENV=production
-IRIS_PRODUCTION_URL=https://apiv2.heyiris.io
+FL_API_URL=https://apiv2.heyiris.io
 ```
 
 📖 **[Full Testing Documentation →](TEST_README.md)**
