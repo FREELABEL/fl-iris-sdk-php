@@ -13,11 +13,18 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use IRIS\SDK\IRIS;
 use IRIS\SDK\Resources\Agents\AgentConfig;
+use Dotenv\Dotenv;
+
+// Load .env if it exists
+if (file_exists(__DIR__ . '/../.env')) {
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+    $dotenv->load();
+}
 
 // Initialize SDK
 $iris = new IRIS([
-    'api_key' => getenv('IRIS_API_KEY'),
-    'user_id' => (int) getenv('IRIS_USER_ID') ?: 193,
+    'api_key' => $_ENV['IRIS_API_KEY'] ?? null,
+    'user_id' => isset($_ENV['IRIS_USER_ID']) ? (int)$_ENV['IRIS_USER_ID'] : null,
 ]);
 
 echo "🤖 IRIS Agent Management Demo\n";

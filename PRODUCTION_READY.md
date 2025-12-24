@@ -1,112 +1,177 @@
 # IRIS SDK - Setup Summary
 
-## ✅ SDK Changes Complete
+## SDK is Production Ready!
 
-The SDK is now **streamlined and ready for production!**
+The SDK uses **environment-based configuration** via `.env` file for simple, secure credential management.
 
-### What Changed
+### What's Included
 
-1. **✅ Simplified Authentication**
-   - Works with just API token (no OAuth needed for 99% of operations)
-   - OAuth credentials truly optional
+1. **Environment-Based Authentication**
+   - All credentials loaded from `.env` file
+   - Switch between local/production with `IRIS_ENV`
+   - No OAuth needed for 99% of operations
 
-2. **✅ Better Setup Instructions**
-   - Tells users to sign up at https://heyiris.io/
-   - Directs them to Developer section to get their token
-   - Clear, step-by-step guidance
+2. **Simple Setup**
+   - Copy `.env.example` to `.env`
+   - Set your API key and user ID
+   - Run `./bin/iris config` to verify
 
-3. **✅ Auto-loads Credentials**
-   - Reads from `~/.iris/credentials.json`
-   - No more environment variables needed
-   - Works out of the box
+3. **Multi-Environment Support**
+   - `IRIS_ENV=local` → uses local development URLs
+   - `IRIS_ENV=production` → uses production URLs
+   - Override at runtime: `IRIS_ENV=local ./bin/iris chat ...`
 
-## ⚠️ Backend Implementation Needed
+---
 
-The backend needs an API token generation endpoint. See [BACKEND_SETUP.md](BACKEND_SETUP.md) for:
+## Quick Start
 
-- Database migration for `api_tokens` table
-- API endpoints for token generation
-- Developer page UI implementation
-
-### Quick Backend Fix
-
-**Option 1: Laravel Sanctum (Easiest)**
-```php
-// Already have Sanctum? Just add this route:
-Route::post('/api/developer/token', function (Request $request) {
-    $token = $request->user()->createToken('SDK Access');
-    return response()->json([
-        'token' => $token->plainTextToken,
-        'user_id' => $request->user()->id,
-    ]);
-});
+### 1. Copy Environment File
+```bash
+cp .env.example .env
 ```
 
-**Option 2: Custom Implementation**
-See [BACKEND_SETUP.md](BACKEND_SETUP.md) for full guide.
+### 2. Edit `.env` with Your Credentials
+```bash
+# Set environment (local or production)
+IRIS_ENV=production
 
-## User Flow (When Backend Ready)
+# Your user ID
+IRIS_USER_ID=your_user_id
 
-1. User signs up at https://heyiris.io/
-2. Clicks "Developer" in navigation
-3. Clicks "Generate API Token"
-4. Copies token + user ID
-5. Runs `./bin/iris config setup`
-6. Pastes credentials
-7. Done! SDK works immediately
+# Production API key (get from Developer Portal)
+IRIS_API_KEY=your_production_api_key
 
-## What Users Can Do (Token Only)
+# Local development key (optional)
+IRIS_LOCAL_API_KEY=your_local_api_key
+```
 
-✅ **Works with just a token:**
+### 3. Verify Configuration
+```bash
+./bin/iris config
+```
+
+Expected output:
+```
+IRIS SDK Configuration
+======================
+
+ Environment: production
+
+ ---------- -------- -------------------
+  Setting    Status   Description
+ ---------- -------- -------------------
+  API Key    ✓ Set    Required
+  User ID    ✓ Set    Required
+  Base URL   ✓ Set    FL-API endpoint
+  IRIS URL   ✓ Set    IRIS-API endpoint
+ ---------- -------- -------------------
+
+ [OK] SDK is ready to use!
+```
+
+### 4. Test API Connection
+```bash
+./bin/iris config test
+```
+
+### 5. Start Using!
+```bash
+# Chat with an agent
+./bin/iris chat <agent_id> "Hello!"
+
+# List your agents
+./bin/iris sdk:call agents.list
+
+# Search leads
+./bin/iris sdk:call leads.search "email"
+```
+
+---
+
+## Getting Your API Key
+
+### Option 1: From Developer Portal (Recommended)
+1. Sign up at https://heyiris.io/
+2. Go to Developer section
+3. Generate API Token
+4. Copy token + user ID
+
+### Option 2: From Laravel Tinker (Admin)
+```bash
+docker compose exec api php artisan tinker
+>>> $user = User::find(193);
+>>> $token = $user->createToken('SDK Access');
+>>> echo $token->accessToken;
+```
+
+---
+
+## What You Can Do
+
+**With just an API token:**
 - Chat with agents
 - Search/update leads
 - Create tasks & deliverables
 - Execute workflows
-- Upload files
+- Upload files (with RAG indexing)
 - Get analytics
-- Create agents (yes!)
-- Manage bloqs (yes!)
+- Create and manage agents
+- Manage bloqs/projects
 
-❌ **NOT needed:**
-- OAuth client credentials
-- Complex setup
-- Multiple authentication methods
+---
+
+## Environment Variables Reference
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `IRIS_ENV` | Environment: `local` or `production` | Yes |
+| `IRIS_USER_ID` | Your numeric user ID | Yes |
+| `IRIS_API_KEY` | Production API token | For production |
+| `IRIS_LOCAL_API_KEY` | Local development token | For local dev |
+| `FL_API_URL` | Production FL-API URL | Auto-set |
+| `FL_API_LOCAL_URL` | Local FL-API URL | Auto-set |
+| `IRIS_API_URL` | Production IRIS URL | Auto-set |
+| `IRIS_LOCAL_URL` | Local IRIS URL | Auto-set |
+
+---
 
 ## Testing
 
 SDK tested and working with production:
-- ✅ Agent chat
-- ✅ Lead management
-- ✅ RAG integration
-- ✅ Workflow execution
-
-## Next Steps
-
-**Backend Team:**
-1. Choose Sanctum or custom implementation
-2. Add `/api/developer/token` endpoint
-3. Create Developer UI page
-4. Add "Developer" link to navigation
-
-**Documentation:**
-- Update docs to show new signup flow
-- Add Developer page screenshots
-- Simplify authentication examples
-
-**SDK:**
-- ✅ Already ready for production!
-- Just needs backend API token endpoint
+- Agent chat
+- Lead management
+- RAG file attachments
+- Workflow execution
+- CloudFiles upload/download
+- Multi-environment switching
 
 ---
 
-## Quick Start (For Testing Now)
+## Troubleshooting
 
-Use production token directly:
+### "SDK not configured" Error
 ```bash
-./bin/iris config set api_key "production-token-here"
-./bin/iris config set user_id 193
-./bin/iris config set iris_url "https://fl-iris-api-v5-mnmol.ondigitalocean.app"
+# Check configuration
+./bin/iris config
 
-# Test it
-./bin/iris chat 349 "Hello!"
+# Verify .env file exists
+ls -la .env
+```
+
+### "Unauthorized" Errors
+```bash
+# Test API connection
+./bin/iris config test
+
+# Check API key is set correctly
+./bin/iris config
+```
+
+### Switch Environments
+```bash
+# Edit .env
+IRIS_ENV=local
+
+# Or override at runtime
+IRIS_ENV=local ./bin/iris chat 12 "Hello"
 ```

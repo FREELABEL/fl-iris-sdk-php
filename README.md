@@ -320,6 +320,47 @@ $agent = $iris->agents->create(new AgentConfig(
 
 **Best for:** Developers integrating IRIS into applications
 
+### 4. Laravel Integration
+Native Laravel support with Service Provider and Facade:
+
+```bash
+# Install via Composer
+composer require iris-ai/sdk
+
+# Publish the config file
+php artisan vendor:publish --tag=iris-config
+```
+
+```php
+// config/iris.php is auto-published
+return [
+    'api_key' => env('IRIS_API_KEY'),
+    'user_id' => env('IRIS_USER_ID'),
+    'base_url' => env('IRIS_API_URL', 'https://apiv2.heyiris.io'),
+];
+```
+
+```php
+// Use anywhere in your Laravel app
+use IRIS\SDK\Laravel\Facades\IRIS;
+
+// In controllers
+$agents = IRIS::agents()->list();
+
+// Via dependency injection
+public function show(IRIS $iris)
+{
+    $response = $iris->agents->chat(11, [
+        ['role' => 'user', 'content' => 'Hello!']
+    ]);
+}
+
+// Auto-detects authenticated user
+// No need to pass user_id if Auth::check() is true
+```
+
+**Best for:** Laravel applications needing seamless AI integration
+
 ---
 
 ## Everything Stays in Sync
@@ -878,3 +919,48 @@ Every new account gets **7 days of Enterprise access** - all features, unlimited
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## 🛠 Laravel Integration
+
+The SDK comes with a built-in Service Provider and Facade for seamless Laravel integration.
+
+### 1. Installation
+
+If you're using Laravel's auto-discovery, the Service Provider will be registered automatically.
+
+### 2. Configuration
+
+Publish the configuration file (optional if you stick to `.env`):
+
+```bash
+php artisan vendor:publish --provider="IRIS\SDK\Laravel\IRISServiceProvider"
+```
+
+Add your credentials to your `.env` file:
+
+```env
+IRIS_API_KEY=your_api_key
+IRIS_USER_ID=your_user_id
+```
+
+### 3. Usage
+
+You can use the `IRIS` facade anywhere in your application:
+
+```php
+use IRIS;
+
+// Create an Agent
+$agent = IRIS::agents()->create([
+    'name' => 'Support Bot',
+    'prompt' => 'You are a helpful assistant...',
+    'model' => 'gpt-4o'
+]);
+
+// Search Leads
+$leads = IRIS::leads()->search(['status' => 'New']);
+```
+
+---
