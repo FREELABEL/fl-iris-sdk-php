@@ -247,6 +247,44 @@ class AgentsResource
     }
 
     /**
+     * Call an integration directly (Pattern 1 - Manual Execution).
+     *
+     * Execute a specific integration action without LLM planning.
+     * Useful for automation, scripting, and programmatic access.
+     *
+     * @example
+     * ```php
+     * // Send email via Gmail integration
+     * $result = $fl->agents->callIntegration(11, 'gmail', 'send', [
+     *     'to' => 'john@example.com',
+     *     'subject' => 'Meeting Reminder',
+     *     'body' => 'Tomorrow at 2pm'
+     * ]);
+     *
+     * // Post to Slack
+     * $result = $fl->agents->callIntegration(11, 'slack', 'post', [
+     *     'channel' => '#general',
+     *     'message' => 'Deployment complete!'
+     * ]);
+     * ```
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $integration Integration name (gmail, slack, google-calendar, etc.)
+     * @param string $action Action to perform (send, post, create, etc.)
+     * @param array $params Action parameters
+     * @return array Integration execution result
+     */
+    public function callIntegration(int|string $agentId, string $integration, string $action, array $params = []): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->post("/api/v1/users/{$userId}/bloqs/agents/{$agentId}/call-integration", [
+            'integration' => $integration,
+            'action' => $action,
+            'params' => $params,
+        ]);
+    }
+
+    /**
      * Add a file to the agent's memory (knowledge base).
      *
      * @param int|string $agentId Agent ID
