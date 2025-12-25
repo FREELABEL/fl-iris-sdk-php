@@ -26,7 +26,7 @@ class ToolsCommand extends Command
     {
         $this
             ->setName('tools')
-            ->setDescription('Invoke Neuron AI tools (recruitment, candidate scoring, lead enrichment, demand packages)')
+            ->setDescription('Invoke Neuron AI tools (recruitment, candidate scoring, lead enrichment, demand packages, YouTube audio)')
             ->setHelp(<<<'HELP'
 Usage:
   tools                                              List available tools
@@ -34,6 +34,7 @@ Usage:
   tools candidate-score [options]                    Score candidates against requirements
   tools lead-enrich [options]                        Enrich a lead with contact info
   tools demand-package [options]                     Generate legal demand packages
+  tools youtube-audio [options]                      Download YouTube audio as MP3
 
 Examples:
   ./bin/iris tools
@@ -42,9 +43,10 @@ Examples:
   ./bin/iris tools candidate-score --data='[{"name":"Jane",...}]' --requirements='{"must_have_skills":[...]}'
   ./bin/iris tools lead-enrich --lead-id=510 --goal=email
   ./bin/iris tools demand-package --case-id="Richard Ramos" --ai-model=gpt-5-nano
+  ./bin/iris tools youtube-audio --url="https://www.youtube.com/watch?v=abc123" --agent-id=11
 HELP
             )
-            ->addArgument('tool', InputArgument::OPTIONAL, 'Tool name: recruitment, candidate-score, lead-enrich, article, demand-package')
+            ->addArgument('tool', InputArgument::OPTIONAL, 'Tool name: recruitment, candidate-score, lead-enrich, article, demand-package, youtube-audio')
             // Common options
             ->addOption('json', null, InputOption::VALUE_NONE, 'Output as JSON')
             ->addOption('api-key', null, InputOption::VALUE_REQUIRED, 'API key (overrides .env)')
@@ -74,7 +76,10 @@ HELP
             ->addOption('case-id', 'c', InputOption::VALUE_REQUIRED, 'Case ID or patient name (e.g., "Richard Ramos", "CAS12345")')
             ->addOption('ai-model', 'm', InputOption::VALUE_REQUIRED, 'AI model to use: gpt-4o, gpt-5-nano, claude-3-5-sonnet', 'gpt-5-nano')
             ->addOption('upload-to-gcs', null, InputOption::VALUE_NONE, 'Upload to Google Cloud Storage (default: true)')
-            ->addOption('use-cache', null, InputOption::VALUE_NONE, 'Use cached results if available');
+            ->addOption('use-cache', null, InputOption::VALUE_NONE, 'Use cached results if available')
+            // YouTube audio options
+            ->addOption('agent-id', 'a', InputOption::VALUE_REQUIRED, 'Agent ID for YouTube audio download', '11')
+            ->addOption('output-filename', 'o', InputOption::VALUE_REQUIRED, 'Custom output filename (without .mp3 extension)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -106,6 +111,7 @@ HELP
                 'lead-enrich', 'enrich' => $this->runLeadEnrich($iris, $input, $output, $io),
                 'article', 'generate-article' => $this->runArticleGeneration($iris, $input, $output, $io),
                 'demand-package', 'demand' => $this->runDemandPackage($iris, $input, $output, $io),
+                'youtube-audio', 'yt-audio' => $this->runYouTubeAudio($iris, $input, $output, $io),
                 default => $this->unknownTool($toolName, $io),
             };
         } catch (\Exception $e) {
@@ -146,7 +152,10 @@ HELP
                     '<fg=cyan>recruitment</> - Generate search queries from job descriptions',
                     '<fg=cyan>candidate-score</> - Score candidates against requirements',
                     '<fg=cyan>lead-enrich</> - Enrich leads with contact information',
-                    '<fg=cyan>article</> - Generate articles from YouTube videos, topics, or webpages',                '<fg=cyan>demand-package</> - Generate legal demand packages from case data',                ]);
+                    '<fg=cyan>article</> - Generate articles from YouTube videos, topics, or webpages',
+                    '<fg=cyan>demand-package</> - Generate legal demand packages from case data',
+                    '<fg=cyan>youtube-audio</> - Download YouTube audio as MP3 (320kbps)',
+                ]);
             }
 
             $io->section('Quick Examples');
@@ -158,6 +167,7 @@ HELP
                 './bin/iris tools article --url="https://www.youtube.com/watch?v=abc123" --length=medium',
                 './bin/iris tools article --topic="AI trends 2025" --style=analysis',
                 './bin/iris tools demand-package --case-id="Richard Ramos" --ai-model=gpt-5-nano',
+                './bin/iris tools youtube-audio --url="https://www.youtube.com/watch?v=R2ZsTB09kb4" --agent-id=11',
             ]);
 
             return Command::SUCCESS;
@@ -168,6 +178,7 @@ HELP
                 '<fg=cyan>candidate-score</> - Score candidates against requirements',
                 '<fg=cyan>lead-enrich</> - Enrich leads with contact information',
                 '<fg=cyan>demand-package</> - Generate legal demand packages from case data',
+                '<fg=cyan>youtube-audio</> - Download YouTube audio as MP3 (320kbps)',
             ]);
             return Command::SUCCESS;
         }
@@ -628,10 +639,92 @@ HELP
         }
     }
 
+    private function runYouTubeAudio(IRIS $iris, InputInterface $input, OutputInterface $output, SymfonyStyle $io): int
+    {
+        $youtubeUrl = $input->getOption('url');
+        $agentId = $input->getOption('agent-id') ?: 11;
+        $outputFilename = $input->getOption('output-filename');
+
+        // Validate inputs
+        if (!$youtubeUrl) {
+            $io->error('Please provide --url with a YouTube URL');
+            $io->text('Example: ./bin/iris tools youtube-audio --url="https://www.youtube.com/watch?v=abc123"');
+            return Command::FAILURE;
+        }
+
+        if (!preg_match('/youtube\.com|youtu\.be/', $youtubeUrl)) {
+            $io->error('Invalid YouTube URL format');
+            return Command::FAILURE;
+        }
+
+        $io->text("🎵 Downloading YouTube audio...");
+        $io->text("URL: {$youtubeUrl}");
+        $io->text("Agent ID: {$agentId}");
+        $io->newLine();
+
+        try {
+            // Build params
+            $params = [
+                'youtube_url' => $youtubeUrl,
+                'upload_to_gcs' => false, // Default to local storage
+            ];
+
+            if ($outputFilename) {
+                $params['output_filename'] = $outputFilename;
+            }
+
+            // Call agent integration
+            $result = $iris->agents->callIntegration($agentId, 'copycat-ai', 'download_youtube_audio', $params);
+
+            // JSON output
+            if ($input->getOption('json')) {
+                $output->writeln(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                return Command::SUCCESS;
+            }
+
+            // Formatted output
+            if (isset($result['result']) && ($result['result']['success'] ?? false)) {
+                $data = $result['result'];
+                
+                $io->success('YouTube audio downloaded successfully!');
+                $io->newLine();
+                
+                $io->definitionList(
+                    ['Title' => $data['title'] ?? 'N/A'],
+                    ['Download URL' => $data['download_url'] ?? 'N/A'],
+                    ['File Name' => $data['file_name'] ?? 'N/A'],
+                    ['File Size' => ($data['file_size'] ?? 'N/A') . ' MB'],
+                    ['Format' => $data['format'] ?? 'mp3'],
+                    ['Quality' => $data['quality'] ?? '320kbps'],
+                    ['Storage' => $data['storage_provider'] ?? 'local'],
+                );
+
+                $io->newLine();
+                $io->text('🎧 You can access your file at:');
+                $io->text('  • Web: ' . ($data['download_url'] ?? 'N/A'));
+                $io->text('  • Local: fl-api/storage/app/public/' . ($data['file_name'] ?? ''));
+                
+                return Command::SUCCESS;
+            } else {
+                $io->error('YouTube audio download failed');
+                if (isset($result['result']['error'])) {
+                    $io->text('Error: ' . $result['result']['error']);
+                }
+                return Command::FAILURE;
+            }
+        } catch (\Exception $e) {
+            $io->error('Failed to download YouTube audio: ' . $e->getMessage());
+            if ($output->isVerbose()) {
+                $io->text($e->getTraceAsString());
+            }
+            return Command::FAILURE;
+        }
+    }
+
     private function unknownTool(string $toolName, SymfonyStyle $io): int
     {
         $io->error("Unknown tool: {$toolName}");
-        $io->text('Available tools: recruitment, candidate-score, lead-enrich, article, demand-package');
+        $io->text('Available tools: recruitment, candidate-score, lead-enrich, article, demand-package, youtube-audio');
         $io->text('Run "./bin/iris tools" to see all available tools with descriptions.');
         return Command::FAILURE;
     }

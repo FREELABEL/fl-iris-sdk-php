@@ -168,12 +168,13 @@ class OutreachResource
      *
      * echo "Email sent! ID: {$result['email']['id']}";
      *
-     * // Send plain text only (no HTML template)
+     * // Note: plain_text_only defaults to true for personal-looking emails
+     * // To use HTML template styling, set plain_text_only to false:
      * $result = $outreach->sendEmail([
      *     'to_email' => 'john@example.com',
      *     'subject' => 'Quick note',
-     *     'body_html' => 'Just a simple message.',
-     *     'plain_text_only' => true,
+     *     'body_html' => 'Message with template.',
+     *     'plain_text_only' => false, // Use styled HTML template
      * ]);
      * ```
      */

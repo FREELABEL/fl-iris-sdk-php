@@ -1,0 +1,5 @@
+### 🚀 Outreach & SDK Updates
+Integrated several platform improvements to streamline GNiice's workflow:
+1. **SDK CLI Parameter Mapping:** Fixed the sdk:call issue where id wasn't mapping to agentId. Now ./bin/iris sdk:call agents.get id=337 works correctly.
+2. **Email Signature Excellence:** Fixed a bug causing duplicate sign-offs. The system now perfectly appends the professional identity block (Alex Mayo, IRIS AI) after the AI sign-off.
+3. **Agent Persona Calibration:** Agent #337 is now fully calibrated with my founder identity, ensuring all outreach generated for partners like GNiice is brand-accurate and personal.

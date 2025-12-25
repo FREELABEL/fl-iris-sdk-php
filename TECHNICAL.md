@@ -28,6 +28,9 @@ Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execut
 
 # ⚖️ Generate legal demand package
 ./bin/iris tools demand-package --case-id="Richard Ramos" --ai-model=gpt-5-nano
+
+# 🎵 Download YouTube audio as MP3 (320kbps)
+./bin/iris tools youtube-audio --url="https://www.youtube.com/watch?v=abc123" --agent-id=11
 ```
 
 ## Installation
