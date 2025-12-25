@@ -235,6 +235,9 @@ class OutreachResource
         if (isset($options['from_email'])) {
             $sendOptions['from_email'] = $options['from_email'];
         }
+        if (isset($options['plain_text_only'])) {
+            $sendOptions['plain_text_only'] = $options['plain_text_only'];
+        }
 
         $sendResult = $this->sendEmail($sendOptions);
 

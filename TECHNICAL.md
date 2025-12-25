@@ -128,6 +128,20 @@ You can override `.env` values using CLI flags:
 ./bin/iris chat 11 "Hello!" --api-key=sk_xxx --user-id=123
 ```
 
+### Simplified Parameter Mapping
+
+The CLI includes intelligent mapping to make commands more intuitive. You can use generic names like `id` which will automatically map to the specific ID required by the method (e.g., `agentId`, `leadId`, `bloqId`):
+
+```bash
+# Instead of agentId=337
+./bin/iris sdk:call agents.get id=337
+
+# Instead of leadId=53
+./bin/iris sdk:call leads.get id=53
+```
+
+This mapping works for `id`, `agent`, `lead`, `bloq`, and `user`.
+
 ### Environment Switching (Local vs Production)
 
 If your `.env` is set to `IRIS_ENV=local` for development, but you need to run a quick command against the **Production API**, you can override the environment variable directly in your shell command without changing your `.env` file:

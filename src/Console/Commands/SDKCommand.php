@@ -217,25 +217,41 @@ class SDKCommand extends Command
             $reflection = new \ReflectionMethod($target, $method);
             $methodParams = $reflection->getParameters();
             $args = $positionalParams;
-            
+
             // Start from the position after positional params
             $startIndex = count($positionalParams);
-            
+
             // Map named parameters to method signature
             for ($i = $startIndex; $i < count($methodParams); $i++) {
                 $param = $methodParams[$i];
                 $paramName = $param->getName();
-                
+
                 if (isset($namedParams[$paramName])) {
-                    // Found matching named parameter
+                    // Found matching named parameter (exact match)
                     $args[] = $namedParams[$paramName];
                     unset($namedParams[$paramName]);
-                } elseif (!$param->isOptional()) {
-                    // Required param not provided
-                    break;
                 } else {
-                    // Optional param not provided - use default value
-                    break;
+                    // Try to find a short name that maps to this param
+                    $found = false;
+                    foreach ($namedParams as $namedKey => $namedValue) {
+                        $mappedName = $this->mapParamName($namedKey, [$param]);
+                        if ($mappedName === $paramName) {
+                            $args[] = $namedValue;
+                            unset($namedParams[$namedKey]);
+                            $found = true;
+                            break;
+                        }
+                    }
+
+                    if (!$found) {
+                        if (!$param->isOptional()) {
+                            // Required param not provided
+                            break;
+                        } else {
+                            // Optional param not provided - use default value
+                            break;
+                        }
+                    }
                 }
             }
             
@@ -275,6 +291,44 @@ class SDKCommand extends Command
             }
         }
         return $parsed;
+    }
+
+    /**
+     * Map common short parameter names to method parameter names.
+     * This allows CLI users to use intuitive names like 'id' instead of 'agentId'.
+     */
+    private function mapParamName(string $shortName, array $methodParams): ?string
+    {
+        // Common mappings: short name => possible full names
+        $mappings = [
+            'id' => ['agentId', 'leadId', 'bloqId', 'userId', 'noteId', 'taskId', 'id'],
+            'agent' => ['agentId', 'agent_id'],
+            'lead' => ['leadId', 'lead_id'],
+            'bloq' => ['bloqId', 'bloq_id'],
+            'user' => ['userId', 'user_id'],
+        ];
+
+        // Get the list of possible full names for this short name
+        $possibleNames = $mappings[$shortName] ?? [];
+
+        // Also add camelCase and snake_case variants
+        $camelCase = lcfirst(str_replace('_', '', ucwords($shortName, '_')));
+        $snakeCase = strtolower(preg_replace('/([A-Z])/', '_$1', $shortName));
+        $snakeCase = ltrim($snakeCase, '_');
+
+        $possibleNames[] = $camelCase;
+        $possibleNames[] = $snakeCase;
+        $possibleNames[] = $shortName;
+
+        // Check if any method param matches
+        foreach ($methodParams as $methodParam) {
+            $paramName = $methodParam->getName();
+            if (in_array($paramName, $possibleNames, true)) {
+                return $paramName;
+            }
+        }
+
+        return null;
     }
     
     private function castValue(string $value)
