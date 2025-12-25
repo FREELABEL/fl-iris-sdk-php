@@ -25,6 +25,9 @@ Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execut
 
 # 📝 Generate article from YouTube video
 ./bin/iris tools article --url="https://www.youtube.com/watch?v=abc123" --length=medium --style=informative
+
+# ⚖️ Generate legal demand package
+./bin/iris tools demand-package --case-id="Richard Ramos" --ai-model=gpt-5-nano
 ```
 
 ## Installation
@@ -555,6 +558,162 @@ $article = $iris->articles->create([
 ```
 
 **Note:** Article generation is an **async operation**. The job is dispatched to a background queue and typically takes 1-3 minutes to complete. Check your dashboard or use webhooks to receive notifications when the article is ready.
+
+### Legal Demand Package Generation
+
+Generate comprehensive AI-powered legal demand packages for personal injury cases using ServisAI integration. Creates case summaries, medical chronologies, patient details, and settlement demand letters in multiple formats.
+
+#### Generate Demand Package
+
+```bash
+# Generate demand package for a case
+./bin/iris tools demand-package \
+  --case-id="Richard Ramos" \
+  --ai-model=gpt-5-nano
+
+# Use different AI model
+./bin/iris tools demand-package \
+  --case-id="CAS100508" \
+  --ai-model=gpt-4o
+
+# Disable cloud upload (local only)
+./bin/iris tools demand-package \
+  --case-id="John Smith" \
+  --no-publish
+
+# Use cached results if available
+./bin/iris tools demand-package \
+  --case-id="Richard Ramos" \
+  --use-cache
+
+# JSON output for automation
+./bin/iris tools demand-package \
+  --case-id="Richard Ramos" \
+  --json
+```
+
+**Options:**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--case-id`, `-c` | Patient name or case number (e.g., "Richard Ramos", "CAS12345") | **Required** |
+| `--ai-model`, `-m` | AI model: `gpt-4o`, `gpt-5-nano`, `claude-3-5-sonnet` | `gpt-5-nano` |
+| `--upload-to-gcs` | Upload to Google Cloud Storage (enabled by default) | `true` |
+| `--use-cache` | Use cached results if available | `false` |
+| `--json` | Output as JSON for scripting | - |
+
+**Example Output:**
+
+```
+Generating Legal Demand Package
+-------------------------------
+
+ Case ID: Richard Ramos
+ AI Model: gpt-5-nano
+ Upload to GCS: Yes
+ Use Cache: No
+
+ ⏳ Generating demand package via ServisAI...
+
+ [OK] Demand package generated successfully!
+
+Results
+-------
+
+ Case ID ........... 8c0d8d1c-98ba-4596-9239-d0d93b7690ac
+ Output Type ....... demand_package
+ AI Model .......... gpt-5-nano
+ Execution Time .... 56.7s
+ Total Billing ..... $0.00
+
+Download
+--------
+
+ 📄 https://storage.googleapis.com/gs-dev-media-assets/demand-packages/case-8c0d8d1c...
+
+Components Generated
+--------------------
+
+ ✓ Case Summary
+ ✓ Medical Chronology
+ ✓ Patient Details
+ ✓ Medical Services
+
+Preview (First 500 chars)
+--------------------------
+
+ # Demand Package for Settlement
+ 
+ **Case ID:** CAS100508
+ **Patient:** Richard Ramos
+ **Generated:** December 24, 2025
+ 
+ ---
+ 
+ Executive Summary
+ Richard Ramos sustained injuries in an incident on February 17, 2022...
+ 
+ Full length: 24,172 characters
+```
+
+**What Gets Generated:**
+
+The demand package tool creates comprehensive legal documentation including:
+
+1. **Executive Summary**: Overview of the case, injuries, and settlement demand
+2. **Medical Chronology**: Detailed timeline of all medical treatments and services
+3. **Patient Details**: Demographics, contact information, and case metadata
+4. **Medical Services**: Itemized list of all treatments with dates and providers
+5. **Demand Letter**: AI-drafted settlement demand with liability analysis
+6. **Multi-Format Output**: 
+   - PDF (print-ready)
+   - DOCX (editable)
+   - HTML (web-ready)
+   - Markdown (source)
+   - ZIP bundle (all formats)
+
+**Alternative: Docker Direct Execution**
+
+For development and testing, you can also run the demand package tool directly in the Docker container:
+
+```bash
+# Run in fl-iris-api container
+docker exec fl-iris-api php test-demand-package.php "Richard Ramos"
+```
+
+**PHP SDK Usage:**
+
+```php
+// Generate demand package via ServisAI integration
+$result = $iris->integrations->execute('servis-ai', 'create_demand_package', [
+    'case_id' => 'Richard Ramos',
+    'options' => [
+        'ai_model' => 'gpt-5-nano',
+        'upload_to_gcs' => true,
+        'use_cache' => false,
+    ],
+]);
+
+// Access results
+echo "Case ID: {$result['case_id']}\n";
+echo "Download URL: {$result['gcs_url']}\n";
+echo "Components:\n";
+if ($result['components']['summary']) echo "  ✓ Summary\n";
+if ($result['components']['chronology']) echo "  ✓ Chronology\n";
+if ($result['components']['patient_details']) echo "  ✓ Patient Details\n";
+```
+
+**How It Works:**
+
+1. **Case Lookup**: Searches ServisAI system by case ID or patient name (natural language)
+2. **Data Retrieval**: Fetches all medical records, treatments, and case details
+3. **AI Analysis**: Uses GPT-4o/5-nano/Claude to analyze medical records and draft documents
+4. **Document Generation**: Creates comprehensive demand package with all components
+5. **Multi-Format Export**: Generates PDF, DOCX, HTML, and Markdown versions
+6. **Cloud Upload**: Uploads to Google Cloud Storage and returns download URL
+7. **BLOQ Integration**: Creates BLOQ item with all document formats attached
+
+**Note:** Demand package generation is an **async operation** for large cases. It typically takes 30-90 seconds depending on case complexity and number of medical records. The tool runs in the background with real-time progress tracking.
 
 ## Quick Start
 

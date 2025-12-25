@@ -26,13 +26,14 @@ class ToolsCommand extends Command
     {
         $this
             ->setName('tools')
-            ->setDescription('Invoke Neuron AI tools (recruitment, candidate scoring, lead enrichment)')
+            ->setDescription('Invoke Neuron AI tools (recruitment, candidate scoring, lead enrichment, demand packages)')
             ->setHelp(<<<'HELP'
 Usage:
   tools                                              List available tools
   tools recruitment [options]                        Generate recruitment queries
   tools candidate-score [options]                    Score candidates against requirements
   tools lead-enrich [options]                        Enrich a lead with contact info
+  tools demand-package [options]                     Generate legal demand packages
 
 Examples:
   ./bin/iris tools
@@ -40,9 +41,10 @@ Examples:
   ./bin/iris tools recruitment --job-description="Senior Engineer..." --location="Austin, TX"
   ./bin/iris tools candidate-score --data='[{"name":"Jane",...}]' --requirements='{"must_have_skills":[...]}'
   ./bin/iris tools lead-enrich --lead-id=510 --goal=email
+  ./bin/iris tools demand-package --case-id="Richard Ramos" --ai-model=gpt-5-nano
 HELP
             )
-            ->addArgument('tool', InputArgument::OPTIONAL, 'Tool name: recruitment, candidate-score, lead-enrich, article')
+            ->addArgument('tool', InputArgument::OPTIONAL, 'Tool name: recruitment, candidate-score, lead-enrich, article, demand-package')
             // Common options
             ->addOption('json', null, InputOption::VALUE_NONE, 'Output as JSON')
             ->addOption('api-key', null, InputOption::VALUE_REQUIRED, 'API key (overrides .env)')
@@ -67,7 +69,12 @@ HELP
             ->addOption('style', null, InputOption::VALUE_REQUIRED, 'Article style: informative, editorial, newsletter, analysis', 'informative')
             ->addOption('profile-id', null, InputOption::VALUE_REQUIRED, 'Profile ID for publishing')
             ->addOption('publish', null, InputOption::VALUE_NONE, 'Publish to Freelabel')
-            ->addOption('no-publish', null, InputOption::VALUE_NONE, 'Do not publish (dry run)');
+            ->addOption('no-publish', null, InputOption::VALUE_NONE, 'Do not publish (dry run)')
+            // Demand package options
+            ->addOption('case-id', 'c', InputOption::VALUE_REQUIRED, 'Case ID or patient name (e.g., "Richard Ramos", "CAS12345")')
+            ->addOption('ai-model', 'm', InputOption::VALUE_REQUIRED, 'AI model to use: gpt-4o, gpt-5-nano, claude-3-5-sonnet', 'gpt-5-nano')
+            ->addOption('upload-to-gcs', null, InputOption::VALUE_NONE, 'Upload to Google Cloud Storage (default: true)')
+            ->addOption('use-cache', null, InputOption::VALUE_NONE, 'Use cached results if available');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -98,6 +105,7 @@ HELP
                 'candidate-score', 'score' => $this->runCandidateScore($iris, $input, $output, $io),
                 'lead-enrich', 'enrich' => $this->runLeadEnrich($iris, $input, $output, $io),
                 'article', 'generate-article' => $this->runArticleGeneration($iris, $input, $output, $io),
+                'demand-package', 'demand' => $this->runDemandPackage($iris, $input, $output, $io),
                 default => $this->unknownTool($toolName, $io),
             };
         } catch (\Exception $e) {
@@ -138,8 +146,7 @@ HELP
                     '<fg=cyan>recruitment</> - Generate search queries from job descriptions',
                     '<fg=cyan>candidate-score</> - Score candidates against requirements',
                     '<fg=cyan>lead-enrich</> - Enrich leads with contact information',
-                    '<fg=cyan>article</> - Generate articles from YouTube videos, topics, or webpages',
-                ]);
+                    '<fg=cyan>article</> - Generate articles from YouTube videos, topics, or webpages',                '<fg=cyan>demand-package</> - Generate legal demand packages from case data',                ]);
             }
 
             $io->section('Quick Examples');
@@ -150,6 +157,7 @@ HELP
                 './bin/iris tools lead-enrich --lead-id=510 --goal=email',
                 './bin/iris tools article --url="https://www.youtube.com/watch?v=abc123" --length=medium',
                 './bin/iris tools article --topic="AI trends 2025" --style=analysis',
+                './bin/iris tools demand-package --case-id="Richard Ramos" --ai-model=gpt-5-nano',
             ]);
 
             return Command::SUCCESS;
@@ -159,6 +167,7 @@ HELP
                 '<fg=cyan>recruitment</> - Generate search queries from job descriptions',
                 '<fg=cyan>candidate-score</> - Score candidates against requirements',
                 '<fg=cyan>lead-enrich</> - Enrich leads with contact information',
+                '<fg=cyan>demand-package</> - Generate legal demand packages from case data',
             ]);
             return Command::SUCCESS;
         }
@@ -523,10 +532,106 @@ HELP
         }
     }
 
+    private function runDemandPackage(IRIS $iris, InputInterface $input, OutputInterface $output, SymfonyStyle $io): int
+    {
+        $caseId = $input->getOption('case-id');
+        $aiModel = $input->getOption('ai-model') ?: 'gpt-5-nano';
+        $uploadToGcs = !$input->getOption('no-publish'); // Default true unless no-publish
+        $useCache = $input->getOption('use-cache');
+
+        // Validate inputs
+        if (!$caseId) {
+            $io->error('Please provide --case-id (patient name or case number)');
+            $io->text('Example: ./bin/iris tools demand-package --case-id="Richard Ramos"');
+            return Command::FAILURE;
+        }
+
+        $io->section('Generating Legal Demand Package');
+        $io->text([
+            "Case ID: {$caseId}",
+            "AI Model: {$aiModel}",
+            "Upload to GCS: " . ($uploadToGcs ? 'Yes' : 'No'),
+            "Use Cache: " . ($useCache ? 'Yes' : 'No'),
+        ]);
+        $io->newLine();
+        $io->text('⏳ Generating demand package via ServisAI...');
+        $io->newLine();
+
+        $startTime = microtime(true);
+
+        try {
+            // Call ServisAI integration's create_demand_package function
+            $result = $iris->integrations->execute('servis-ai', 'create_demand_package', [
+                'case_id' => $caseId,
+                'options' => [
+                    'ai_model' => $aiModel,
+                    'upload_to_gcs' => $uploadToGcs,
+                    'use_cache' => $useCache,
+                ],
+            ]);
+
+            $elapsedTime = round(microtime(true) - $startTime, 1);
+
+            if ($input->getOption('json')) {
+                $io->writeln(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                return Command::SUCCESS;
+            }
+
+            // Format output
+            if (isset($result['success']) && $result['success']) {
+                $io->success('Demand package generated successfully!');
+                
+                $io->section('Results');
+                $io->definitionList(
+                    ['Case ID' => $result['case_id'] ?? 'N/A'],
+                    ['Output Type' => $result['output_type'] ?? 'demand_package'],
+                    ['AI Model' => $result['ai_model'] ?? $aiModel],
+                    ['Execution Time' => $elapsedTime . 's'],
+                    ['Total Billing' => '$' . ($result['total_billing'] ?? '0.00')],
+                );
+
+                if (isset($result['gcs_url'])) {
+                    $io->section('Download');
+                    $io->writeln("📄 <href={$result['gcs_url']}>{$result['gcs_url']}</>");
+                }
+
+                if (isset($result['components'])) {
+                    $io->section('Components Generated');
+                    $components = [];
+                    if ($result['components']['summary'] ?? false) $components[] = '✓ Case Summary';
+                    if ($result['components']['chronology'] ?? false) $components[] = '✓ Medical Chronology';
+                    if ($result['components']['patient_details'] ?? false) $components[] = '✓ Patient Details';
+                    if ($result['components']['services'] ?? false) $components[] = '✓ Medical Services';
+                    $io->listing($components);
+                }
+
+                if (isset($result['markdown']) && strlen($result['markdown']) > 0) {
+                    $io->section('Preview (First 500 chars)');
+                    $io->text(substr($result['markdown'], 0, 500) . '...');
+                    $io->text("Full length: " . number_format(strlen($result['markdown'])) . ' characters');
+                }
+
+                return Command::SUCCESS;
+            } else {
+                $io->error('Demand package generation failed');
+                if (isset($result['error'])) {
+                    $io->text('Error: ' . $result['error']);
+                }
+                return Command::FAILURE;
+            }
+        } catch (\Exception $e) {
+            $io->error('Failed to generate demand package: ' . $e->getMessage());
+            if ($output->isVerbose()) {
+                $io->text($e->getTraceAsString());
+            }
+            return Command::FAILURE;
+        }
+    }
+
     private function unknownTool(string $toolName, SymfonyStyle $io): int
     {
         $io->error("Unknown tool: {$toolName}");
-        $io->text('Available tools: recruitment, candidate-score, lead-enrich, article');
+        $io->text('Available tools: recruitment, candidate-score, lead-enrich, article, demand-package');
         $io->text('Run "./bin/iris tools" to see all available tools with descriptions.');
         return Command::FAILURE;
     }
