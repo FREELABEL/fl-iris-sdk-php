@@ -1707,6 +1707,106 @@ $iris->leads->activities($lead->id)->create([
 ]);
 ```
 
+#### RAG-Enhanced Email Generation
+
+The SDK uses **Retrieval-Augmented Generation (RAG)** to enhance outreach emails with relevant context from lead notes. This ensures AI-generated emails are personalized and reference actual interactions, not just generic templates.
+
+**How It Works:**
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                     RAG-Enhanced Email Generation                         │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│   📝 Lead Notes                    🔍 Semantic Search                     │
+│   ├── Call notes                       ↓                                 │
+│   ├── Meeting summaries    ──▶   Pinecone Vector DB                     │
+│   ├── Email history               (OpenAI Embeddings)                    │
+│   └── Interaction logs                 ↓                                 │
+│                                   Relevant Context                       │
+│                                        ↓                                 │
+│                               ✉️ Personalized Email                      │
+│                                  (GPT-4o-mini)                           │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+**Index Lead Notes for Search:**
+
+```php
+// Index all notes for a lead (run once or when notes are updated)
+$result = $iris->leads->outreach()->indexNotes($leadId);
+echo "Indexed {$result['indexed_count']} notes\n";
+
+// Notes are vectorized using OpenAI text-embedding-3-small (1024 dimensions)
+// and stored in Pinecone for semantic search
+```
+
+**Search Notes Semantically:**
+
+```php
+// Find relevant notes for a specific topic
+$notes = $iris->leads->outreach()->searchNotes($leadId, [
+    'query' => 'pricing discussion',
+    'limit' => 5,  // Top K results
+]);
+
+foreach ($notes as $note) {
+    echo "Score: {$note['similarity_score']} - {$note['content']}\n";
+}
+```
+
+**Generate Email with RAG Context:**
+
+```php
+// The generateEmail method automatically uses RAG when notes are indexed
+$email = $iris->leads->outreach()->generateEmail($leadId, [
+    'email_type' => 'follow_up',
+    'email_prompt' => 'Reference our last meeting about the AI integration project',
+    'use_rag' => true,  // Default: true when notes exist
+]);
+
+// The email content now includes context from relevant notes:
+// - Recent interactions mentioned
+// - Project details referenced
+// - Previous discussions incorporated
+echo "Subject: {$email['subject']}\n";
+echo "Body: {$email['body']}\n";
+
+// Check what context was used
+echo "RAG notes used: {$email['rag_notes_count']}\n";
+echo "Recent notes used: {$email['recent_notes_count']}\n";
+```
+
+**CLI Usage:**
+
+```bash
+# Index notes for a lead
+./bin/iris sdk:call leads.outreach.indexNotes 518
+
+# Search notes semantically
+./bin/iris sdk:call leads.outreach.searchNotes 518 query="pricing" limit=5
+
+# Generate email (uses RAG automatically)
+./bin/iris sdk:call leads.outreach.generateEmail 518 email_type=follow_up email_prompt="Reference our pricing discussion"
+```
+
+**Why RAG Matters:**
+
+| Without RAG | With RAG |
+|-------------|----------|
+| Generic follow-up email | "Following up on our discussion about the AI agent integration..." |
+| No context from history | "As we discussed in our call last week regarding the $5k budget..." |
+| Template-style content | References actual projects, names, and details from notes |
+
+**Best Practices:**
+- Index notes when they're created or updated for real-time search
+- Use specific prompts to guide what context to retrieve
+- The system uses dynamic score thresholds (0.20-0.40) optimized for `text-embedding-3-small`
+- Notes are automatically filtered by lead_id for data isolation
+
+---
+
 #### Lead Enrichment
 
 Automatically enrich leads with additional data from external sources.

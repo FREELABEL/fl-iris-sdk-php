@@ -170,6 +170,12 @@ IRIS lets you build **AI agents** - intelligent assistants that can answer quest
 - **AI follow-up** - Let your agent draft and send follow-up emails
 - **Lead enrichment** - Automatically research companies and contacts
 
+**RAG-Enhanced Outreach:**
+- **Semantic note search** - Lead notes are indexed using OpenAI embeddings (text-embedding-3-small) and stored in Pinecone for semantic search
+- **Context-aware emails** - AI-generated emails automatically reference relevant notes from your interaction history
+- **Smart retrieval** - The system uses dynamic scoring to find the most relevant context, not just recent notes
+- **Personalized at scale** - Each email is unique, referencing actual projects, discussions, and details from your notes
+
 **Real examples:**
 - Sales team tracks prospects from first contact to closed deal, with AI drafting follow-up emails
 - Recruiting agency manages candidates, with agents scheduling interviews
