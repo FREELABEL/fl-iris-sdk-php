@@ -2567,7 +2567,7 @@ assert($response->content === 'Mocked response');
 | `$iris->leads->deliverables()` | `list`, `create`, `uploadFile`, `update`, `delete`, `previewEmail`, `send`, `generateAndSend` |
 | `$iris->leads->invoices()` | `list`, `get`, `create`, `update`, `delete`, `markPaid`, `send`, `getPaymentLink`, `void` |
 | `$iris->leads->aggregation()` | `statistics`, `list`, `get`, `getRecentLeads`, `requirements` |
-| `$iris->leads->outreach()` | `checkEligibility`, `getInfo`, `recordAttempt`, `setAutoRespond`, `generateEmail`, `sendEmail`, `generateAndSend` |
+| `$iris->leads->outreach()` | `checkEligibility`, `getInfo`, `recordAttempt`, `setAutoRespond`, `generateEmail`, `sendEmail`, `generateAndSend`, `indexNotes`, `searchNotes` |
 | `$iris->leads->outreachSteps()` | `list`, `all`, `create`, `update`, `complete`, `reopen`, `delete`, `reorder`, `initializeDefault`, `clearAll` |
 | `$iris->cloudFiles` | `list`, `get`, `upload`, `update`, `delete`, `downloadUrl`, `status`, `content`, `supportedTypes`, `forBloq`, `forAgent`, `attachToAgent`, `detachFromAgent`, `reindex`, `uploadForAgent`, `uploadMultipleForAgent` |
 | `$iris->usage` | `summary`, `details`, `byAgent`, `byModel`, `billing`, `package`, `quota`, `history`, `workflowStats`, `storage`, `creditStatus`, `creditHistory`, `subscription`, `availablePlans` |
