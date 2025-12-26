@@ -26,15 +26,18 @@ class ToolsCommand extends Command
     {
         $this
             ->setName('tools')
-            ->setDescription('Invoke Neuron AI tools (recruitment, candidate scoring, lead enrichment, demand packages, YouTube audio)')
+            ->setDescription('Invoke Neuron AI tools (recruitment, candidate scoring, lead enrichment, newsletter, demand packages, YouTube audio, clip cutting)')
             ->setHelp(<<<'HELP'
 Usage:
   tools                                              List available tools
   tools recruitment [options]                        Generate recruitment queries
   tools candidate-score [options]                    Score candidates against requirements
   tools lead-enrich [options]                        Enrich a lead with contact info
+  tools newsletter-research [options]                Research topic and generate outline options
+  tools newsletter-write [options]                   Generate newsletter from selected outline
   tools demand-package [options]                     Generate legal demand packages
   tools youtube-audio [options]                      Download YouTube audio as MP3
+  tools clip-cut [options]                           Cut video clip from YouTube video
 
 Examples:
   ./bin/iris tools
@@ -42,11 +45,14 @@ Examples:
   ./bin/iris tools recruitment --job-description="Senior Engineer..." --location="Austin, TX"
   ./bin/iris tools candidate-score --data='[{"name":"Jane",...}]' --requirements='{"must_have_skills":[...]}'
   ./bin/iris tools lead-enrich --lead-id=510 --goal=email
+  ./bin/iris tools newsletter-research --topic="AI trends 2025" --audience="tech professionals"
   ./bin/iris tools demand-package --case-id="Richard Ramos" --ai-model=gpt-5-nano
   ./bin/iris tools youtube-audio --url="https://www.youtube.com/watch?v=abc123" --agent-id=11
+  ./bin/iris tools clip-cut --url="https://www.youtube.com/watch?v=abc123" --start-time="0:10" --duration="90s" --agent-id=11
+  ./bin/iris tools clip-cut --url="https://www.youtube.com/watch?v=abc123" --start-time="0:10" --duration="60s" --publish-social --platforms="instagram,tiktok"
 HELP
             )
-            ->addArgument('tool', InputArgument::OPTIONAL, 'Tool name: recruitment, candidate-score, lead-enrich, article, demand-package, youtube-audio')
+            ->addArgument('tool', InputArgument::OPTIONAL, 'Tool name: recruitment, candidate-score, lead-enrich, newsletter-research, newsletter-write, article, demand-package, youtube-audio, clip-cut')
             // Common options
             ->addOption('json', null, InputOption::VALUE_NONE, 'Output as JSON')
             ->addOption('api-key', null, InputOption::VALUE_REQUIRED, 'API key (overrides .env)')
@@ -79,7 +85,27 @@ HELP
             ->addOption('use-cache', null, InputOption::VALUE_NONE, 'Use cached results if available')
             // YouTube audio options
             ->addOption('agent-id', 'a', InputOption::VALUE_REQUIRED, 'Agent ID for YouTube audio download', '11')
-            ->addOption('output-filename', 'o', InputOption::VALUE_REQUIRED, 'Custom output filename (without .mp3 extension)');
+            ->addOption('output-filename', 'o', InputOption::VALUE_REQUIRED, 'Custom output filename (without .mp3 extension)')
+            // Clip cutting options
+            ->addOption('start-time', null, InputOption::VALUE_REQUIRED, 'Start timestamp (e.g., "0:10", "1:30", "0:00")')
+            ->addOption('duration', null, InputOption::VALUE_REQUIRED, 'Clip duration (e.g., "90s", "60s", "120s")')
+            ->addOption('publish-social', null, InputOption::VALUE_NONE, 'Publish clip to social media (Instagram/TikTok/X)')
+            ->addOption('platforms', null, InputOption::VALUE_REQUIRED, 'Social platforms: instagram,tiktok,x (comma-separated)', 'instagram,tiktok')
+            ->addOption('caption', null, InputOption::VALUE_REQUIRED, 'Custom caption for social media (auto-generated if not provided)')
+            // Newsletter options
+            ->addOption('audience', null, InputOption::VALUE_REQUIRED, 'Target audience for newsletter')
+            ->addOption('tone', null, InputOption::VALUE_REQUIRED, 'Newsletter tone: professional, casual, educational, thought-leadership', 'professional')
+            ->addOption('newsletter-length', null, InputOption::VALUE_REQUIRED, 'Newsletter length: brief, standard, detailed', 'standard')
+            ->addOption('selected-option', null, InputOption::VALUE_REQUIRED, 'Selected outline option (1, 2, or 3) for newsletter-write')
+            ->addOption('outline-json', null, InputOption::VALUE_REQUIRED, 'Outline options JSON from newsletter-research')
+            ->addOption('context-json', null, InputOption::VALUE_REQUIRED, 'Context JSON from newsletter-research')
+            ->addOption('customization', null, InputOption::VALUE_REQUIRED, 'Customization notes for newsletter')
+            ->addOption('recipient-email', null, InputOption::VALUE_REQUIRED, 'Recipient email for newsletter')
+            ->addOption('recipient-name', null, InputOption::VALUE_REQUIRED, 'Recipient name for newsletter')
+            ->addOption('sender-name', null, InputOption::VALUE_REQUIRED, 'Sender name for newsletter')
+            // Multi-modal ingestion options
+            ->addOption('videos', null, InputOption::VALUE_REQUIRED, 'YouTube video URLs for transcript extraction (comma or newline separated)')
+            ->addOption('links', null, InputOption::VALUE_REQUIRED, 'Web URLs to scrape for content (comma or newline separated)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -109,9 +135,12 @@ HELP
                 'recruitment', 'recruit' => $this->runRecruitment($iris, $input, $output, $io),
                 'candidate-score', 'score' => $this->runCandidateScore($iris, $input, $output, $io),
                 'lead-enrich', 'enrich' => $this->runLeadEnrich($iris, $input, $output, $io),
+                'newsletter-research', 'newsletter', 'nl-research' => $this->runNewsletterResearch($iris, $input, $output, $io),
+                'newsletter-write', 'nl-write' => $this->runNewsletterWrite($iris, $input, $output, $io),
                 'article', 'generate-article' => $this->runArticleGeneration($iris, $input, $output, $io),
                 'demand-package', 'demand' => $this->runDemandPackage($iris, $input, $output, $io),
                 'youtube-audio', 'yt-audio' => $this->runYouTubeAudio($iris, $input, $output, $io),
+                'clip-cut', 'cut-clip', 'clip' => $this->runClipCut($iris, $input, $output, $io),
                 default => $this->unknownTool($toolName, $io),
             };
         } catch (\Exception $e) {
@@ -155,6 +184,7 @@ HELP
                     '<fg=cyan>article</> - Generate articles from YouTube videos, topics, or webpages',
                     '<fg=cyan>demand-package</> - Generate legal demand packages from case data',
                     '<fg=cyan>youtube-audio</> - Download YouTube audio as MP3 (320kbps)',
+                    '<fg=cyan>clip-cut</> - Cut video clips from YouTube videos',
                 ]);
             }
 
@@ -168,6 +198,7 @@ HELP
                 './bin/iris tools article --topic="AI trends 2025" --style=analysis',
                 './bin/iris tools demand-package --case-id="Richard Ramos" --ai-model=gpt-5-nano',
                 './bin/iris tools youtube-audio --url="https://www.youtube.com/watch?v=R2ZsTB09kb4" --agent-id=11',
+                './bin/iris tools clip-cut --url="https://www.youtube.com/watch?v=abc123" --start-time="0:10" --duration="90s" --agent-id=11',
             ]);
 
             return Command::SUCCESS;
@@ -721,10 +752,454 @@ HELP
         }
     }
 
+    private function runNewsletterResearch(IRIS $iris, InputInterface $input, OutputInterface $output, SymfonyStyle $io): int
+    {
+        $topic = $input->getOption('topic');
+        $sourceUrl = $input->getOption('url');
+        $audience = $input->getOption('audience');
+        $tone = $input->getOption('tone') ?: 'professional';
+        $length = $input->getOption('newsletter-length') ?: 'standard';
+        $videos = $input->getOption('videos');
+        $links = $input->getOption('links');
+
+        // Validate inputs - need at least topic OR videos OR links
+        if (!$topic && !$sourceUrl && !$videos && !$links) {
+            $io->error('Please provide --topic, --url, --videos, or --links for newsletter research');
+            $io->text([
+                'Examples:',
+                '  ./bin/iris tools newsletter-research --topic="AI trends 2025" --audience="tech professionals"',
+                '',
+                '  # Multi-modal ingestion with videos and links:',
+                '  ./bin/iris tools newsletter-research --topic="graphic design" \\',
+                '    --videos="https://www.youtube.com/watch?v=abc123,https://www.youtube.com/watch?v=xyz789" \\',
+                '    --links="https://example.com/article1,https://example.com/article2"',
+            ]);
+            return Command::FAILURE;
+        }
+
+        // Parse video URLs
+        $videoUrls = $videos ? array_filter(array_map('trim', preg_split('/[\n,]+/', $videos))) : [];
+        $linkUrls = $links ? array_filter(array_map('trim', preg_split('/[\n,]+/', $links))) : [];
+
+        $io->section('Newsletter Research');
+        $io->text([
+            "Topic: " . ($topic ?: 'From provided sources'),
+            "Videos: " . (count($videoUrls) > 0 ? count($videoUrls) . ' video(s)' : 'None'),
+            "Links: " . (count($linkUrls) > 0 ? count($linkUrls) . ' link(s)' : 'None'),
+            "Source URL: " . ($sourceUrl ?: 'None'),
+            "Audience: " . ($audience ?: 'General'),
+            "Tone: {$tone}",
+            "Length: {$length}",
+        ]);
+
+        // Show video URLs if provided
+        if (count($videoUrls) > 0) {
+            $io->newLine();
+            $io->text('Videos for transcript extraction:');
+            foreach ($videoUrls as $i => $url) {
+                $io->text("  " . ($i + 1) . ". {$url}");
+            }
+        }
+
+        // Show link URLs if provided
+        if (count($linkUrls) > 0) {
+            $io->newLine();
+            $io->text('Links for content scraping:');
+            foreach ($linkUrls as $i => $url) {
+                $io->text("  " . ($i + 1) . ". {$url}");
+            }
+        }
+
+        $io->newLine();
+        $io->text('Researching topic and generating outline options...');
+        if (count($videoUrls) > 0) {
+            $io->text('<fg=yellow>Extracting video transcripts (this may take a moment)...</>');
+        }
+        if (count($linkUrls) > 0) {
+            $io->text('<fg=yellow>Scraping web content...</>');
+        }
+        $io->newLine();
+
+        try {
+            $params = [
+                'topic' => $topic ?: 'Content from provided sources',
+                'tone' => $tone,
+                'newsletter_length' => $length,
+            ];
+
+            if ($sourceUrl) {
+                $params['source_url'] = $sourceUrl;
+            }
+            if ($audience) {
+                $params['audience'] = $audience;
+            }
+            if ($videos) {
+                $params['videos'] = $videos;
+            }
+            if ($links) {
+                $params['links'] = $links;
+            }
+
+            $result = $iris->tools->newsletterResearch($params);
+
+            // JSON output
+            if ($input->getOption('json')) {
+                $output->writeln(json_encode($result->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                return Command::SUCCESS;
+            }
+
+            // Formatted output
+            if ($result->success) {
+                $io->success('Research completed!');
+
+                // Show sources used (if available)
+                if (!empty($result->sourcesUsed)) {
+                    $io->section('Sources Used');
+                    $sources = $result->sourcesUsed;
+                    $io->text([
+                        "Video transcripts: " . ($sources['video_transcripts'] ?? 0),
+                        "Web pages scraped: " . ($sources['web_pages_scraped'] ?? 0),
+                        "Web search results: " . ($sources['web_search_results'] ?? 0),
+                        "Total sources: " . ($sources['total_sources'] ?? 0),
+                    ]);
+                }
+
+                // Show themes
+                if (!empty($result->themes)) {
+                    $io->section('Extracted Themes');
+                    foreach ($result->themes as $i => $theme) {
+                        $io->writeln("<fg=cyan>" . ($i + 1) . ". {$theme['name']}</>");
+                        if (isset($theme['description'])) {
+                            $io->writeln("   {$theme['description']}");
+                        }
+                    }
+                }
+
+                // Show outline options
+                $io->section('Newsletter Outline Options');
+                foreach ($result->outlineOptions as $option) {
+                    $num = $option['option_number'] ?? '?';
+                    $title = $option['title'] ?? 'Untitled';
+                    $approach = $option['approach'] ?? '';
+                    $readTime = $option['estimated_reading_time'] ?? '?';
+
+                    $io->writeln("<fg=green>Option {$num}: {$title}</>");
+                    $io->writeln("  Approach: {$approach}");
+                    $io->writeln("  Reading time: {$readTime} min");
+
+                    if (!empty($option['sections'])) {
+                        $io->writeln("  Sections:");
+                        foreach ($option['sections'] as $section) {
+                            $io->writeln("    - {$section['name']}");
+                        }
+                    }
+                    $io->newLine();
+                }
+
+                // Show next steps
+                $io->section('Next Steps');
+                $io->text([
+                    'To generate the newsletter, run:',
+                    '',
+                    '  ./bin/iris tools newsletter-write \\',
+                    '    --selected-option=2 \\',
+                    "    --outline-json='" . json_encode($result->outlineOptions) . "' \\",
+                    "    --context-json='" . json_encode($result->context) . "' \\",
+                    '    --recipient-email="john@example.com"',
+                    '',
+                    'Or use --json flag to get the full data for programmatic use.',
+                ]);
+
+                return Command::SUCCESS;
+            } else {
+                $io->error('Newsletter research failed');
+                if ($result->error) {
+                    $io->text('Error: ' . $result->error);
+                }
+                return Command::FAILURE;
+            }
+        } catch (\Exception $e) {
+            $io->error('Failed to research newsletter: ' . $e->getMessage());
+            if ($output->isVerbose()) {
+                $io->text($e->getTraceAsString());
+            }
+            return Command::FAILURE;
+        }
+    }
+
+    private function runNewsletterWrite(IRIS $iris, InputInterface $input, OutputInterface $output, SymfonyStyle $io): int
+    {
+        $selectedOption = $input->getOption('selected-option');
+        $outlineJson = $input->getOption('outline-json');
+        $contextJson = $input->getOption('context-json');
+        $customization = $input->getOption('customization');
+        $recipientEmail = $input->getOption('recipient-email');
+        $recipientName = $input->getOption('recipient-name');
+        $senderName = $input->getOption('sender-name');
+        $leadId = $input->getOption('lead-id');
+
+        // Validate inputs
+        if (!$selectedOption || !$outlineJson || !$contextJson) {
+            $io->error('Missing required options for newsletter-write');
+            $io->text([
+                'Required options:',
+                '  --selected-option=N    Selected outline option (1, 2, or 3)',
+                '  --outline-json=\'...\'   Outline options JSON from newsletter-research',
+                '  --context-json=\'...\'   Context JSON from newsletter-research',
+                '',
+                'Tip: Run newsletter-research first, then use the JSON output.',
+            ]);
+            return Command::FAILURE;
+        }
+
+        // Parse JSON inputs
+        $outlineOptions = json_decode($outlineJson, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $io->error('Invalid JSON in --outline-json: ' . json_last_error_msg());
+            return Command::FAILURE;
+        }
+
+        $context = json_decode($contextJson, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $io->error('Invalid JSON in --context-json: ' . json_last_error_msg());
+            return Command::FAILURE;
+        }
+
+        $io->section('Newsletter Generation');
+        $io->text([
+            "Selected Option: {$selectedOption}",
+            "Customization: " . ($customization ?: 'None'),
+            "Recipient: " . ($recipientEmail ?: 'No email'),
+        ]);
+        $io->newLine();
+        $io->text('Generating newsletter (this runs as a background job)...');
+        $io->newLine();
+
+        try {
+            $params = [
+                'selected_option' => (int) $selectedOption,
+                'outline_options' => $outlineOptions,
+                'context' => $context,
+            ];
+
+            if ($customization) {
+                $params['customization_notes'] = $customization;
+            }
+            if ($recipientEmail) {
+                $params['recipient_email'] = $recipientEmail;
+            }
+            if ($recipientName) {
+                $params['recipient_name'] = $recipientName;
+            }
+            if ($senderName) {
+                $params['sender_name'] = $senderName;
+            }
+            if ($leadId) {
+                $params['lead_id'] = (int) $leadId;
+            }
+
+            $result = $iris->tools->newsletterWrite($params);
+
+            // JSON output
+            if ($input->getOption('json')) {
+                $output->writeln(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                return Command::SUCCESS;
+            }
+
+            // Formatted output
+            if (isset($result['success']) && $result['success']) {
+                $io->success('Newsletter generation job dispatched!');
+                $io->writeln('<fg=yellow>The newsletter is being generated in the background.</>');
+                $io->newLine();
+
+                if (isset($result['job_id'])) {
+                    $io->writeln("Job ID: {$result['job_id']}");
+                }
+                if (isset($result['message'])) {
+                    $io->writeln("Message: {$result['message']}");
+                }
+
+                $io->newLine();
+                $io->text('The newsletter will be saved to cloud storage and emailed (if recipient provided).');
+
+                return Command::SUCCESS;
+            } else {
+                $io->error('Newsletter generation failed');
+                if (isset($result['error'])) {
+                    $io->text('Error: ' . $result['error']);
+                }
+                return Command::FAILURE;
+            }
+        } catch (\Exception $e) {
+            $io->error('Failed to generate newsletter: ' . $e->getMessage());
+            if ($output->isVerbose()) {
+                $io->text($e->getTraceAsString());
+            }
+            return Command::FAILURE;
+        }
+    }
+
+    private function runClipCut(IRIS $iris, InputInterface $input, OutputInterface $output, SymfonyStyle $io): int
+    {
+        $youtubeUrl = $input->getOption('url');
+        $startTime = $input->getOption('start-time');
+        $duration = $input->getOption('duration');
+        $agentId = (int) $input->getOption('agent-id');
+        $publishSocial = $input->getOption('publish-social');
+        $platforms = $input->getOption('platforms');
+        $caption = $input->getOption('caption');
+
+        // Validate required parameters
+        if (!$youtubeUrl) {
+            $io->error('YouTube URL is required. Use --url="https://www.youtube.com/watch?v=..."');
+            return Command::FAILURE;
+        }
+
+        if (!$startTime) {
+            $io->error('Start time is required. Use --start-time="0:10" (format: M:SS or MM:SS)');
+            return Command::FAILURE;
+        }
+
+        if (!$duration) {
+            $io->error('Duration is required. Use --duration="90s" (e.g., 30s, 60s, 90s)');
+            return Command::FAILURE;
+        }
+
+        // Validate YouTube URL format
+        if (!preg_match('/youtube\.com|youtu\.be/', $youtubeUrl)) {
+            $io->error('Invalid YouTube URL format');
+            return Command::FAILURE;
+        }
+
+        // Require social media publishing target
+        if (!$publishSocial) {
+            $io->error('Delivery target required. You must specify where to publish the clip.');
+            $io->newLine();
+            $io->text([
+                'Add --publish-social with your target platforms:',
+                '',
+                '  ./bin/iris tools clip-cut \\',
+                '    --url="' . $youtubeUrl . '" \\',
+                '    --start-time="' . ($startTime ?: '0:10') . '" \\',
+                '    --duration="' . ($duration ?: '60s') . '" \\',
+                '    --publish-social \\',
+                '    --platforms="instagram,tiktok,x"',
+                '',
+                'Supported platforms: instagram, tiktok, x, threads',
+                '',
+                'Note: Clips are also saved to your Cloud Files for dashboard access.',
+            ]);
+            return Command::FAILURE;
+        }
+
+        // Validate platforms are specified
+        $platformList = array_map('trim', explode(',', $platforms));
+        $validPlatforms = ['instagram', 'tiktok', 'x', 'twitter', 'threads'];
+        $invalidPlatforms = array_diff($platformList, $validPlatforms);
+
+        if (!empty($invalidPlatforms)) {
+            $io->error('Invalid platform(s): ' . implode(', ', $invalidPlatforms));
+            $io->text('Supported platforms: instagram, tiktok, x, threads');
+            return Command::FAILURE;
+        }
+
+        try {
+            $io->section('🎬 Cutting Video Clip');
+            $displayInfo = [
+                "YouTube URL: {$youtubeUrl}",
+                "Start Time: {$startTime}",
+                "Duration: {$duration}",
+                "Agent ID: {$agentId}",
+                "📤 Social Media: {$platforms}",
+            ];
+
+            if ($caption) {
+                $displayInfo[] = "Caption: " . substr($caption, 0, 50) . (strlen($caption) > 50 ? '...' : '');
+            } else {
+                $displayInfo[] = "Caption: (auto-generated FREELABEL marketing caption)";
+            }
+
+            $displayInfo[] = "💾 Cloud Files: (auto-saved to dashboard)";
+
+            $io->text($displayInfo);
+            $io->newLine();
+
+            // Build parameters - social media is now required
+            $params = [
+                'youtube_url' => $youtubeUrl,
+                'start' => $startTime,
+                'duration' => $duration,
+                'publish_to_social' => true,
+                'social_platforms' => $platformList,
+            ];
+
+            if ($caption) {
+                $params['caption'] = $caption;
+            }
+            // If no caption, the API will auto-generate FREELABEL marketing caption
+
+            $io->text('⏳ Calling Agent callIntegration...');
+            $result = $iris->agents->callIntegration($agentId, 'copycat-ai', 'trigger_video_clipper', $params);
+
+            // JSON output
+            if ($input->getOption('json')) {
+                $output->writeln(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                return Command::SUCCESS;
+            }
+
+            // Formatted output
+            if (isset($result['result']) && ($result['result']['success'] ?? false)) {
+                $data = $result['result'];
+                
+                $io->success('Video clip process started successfully!');
+                $io->newLine();
+                
+                // Display job/process information
+                if (isset($data['message'])) {
+                    $io->text('Status: ' . $data['message']);
+                }
+                
+                if (isset($data['job_id'])) {
+                    $io->text('Job ID: ' . $data['job_id']);
+                }
+                
+                if (isset($data['video_url'])) {
+                    $io->newLine();
+                    $io->text('🎥 Once processed, your clip will be available at:');
+                    $io->text('  • URL: ' . $data['video_url']);
+                }
+                
+                if (isset($data['estimated_time'])) {
+                    $io->newLine();
+                    $io->text('⏱️  Estimated processing time: ' . $data['estimated_time']);
+                }
+                
+                $io->newLine();
+                $io->note('The video clipping process runs in the background. Check your CloudFiles for the finished clip.');
+                
+                return Command::SUCCESS;
+            } else {
+                $io->error('Video clip process failed to start');
+                if (isset($result['result']['error'])) {
+                    $io->text('Error: ' . $result['result']['error']);
+                } elseif (isset($result['error'])) {
+                    $io->text('Error: ' . $result['error']);
+                }
+                return Command::FAILURE;
+            }
+        } catch (\Exception $e) {
+            $io->error('Failed to start video clip process: ' . $e->getMessage());
+            if ($output->isVerbose()) {
+                $io->text($e->getTraceAsString());
+            }
+            return Command::FAILURE;
+        }
+    }
+
     private function unknownTool(string $toolName, SymfonyStyle $io): int
     {
         $io->error("Unknown tool: {$toolName}");
-        $io->text('Available tools: recruitment, candidate-score, lead-enrich, article, demand-package, youtube-audio');
+        $io->text('Available tools: recruitment, candidate-score, lead-enrich, newsletter-research, newsletter-write, article, demand-package, youtube-audio, clip-cut');
         $io->text('Run "./bin/iris tools" to see all available tools with descriptions.');
         return Command::FAILURE;
     }

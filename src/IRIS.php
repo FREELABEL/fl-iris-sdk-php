@@ -21,6 +21,7 @@ use IRIS\SDK\Resources\Profiles\ProfilesResource;
 use IRIS\SDK\Resources\Services\ServicesResource;
 use IRIS\SDK\Resources\Tools\ToolsResource;
 use IRIS\SDK\Resources\Articles\ArticlesResource;
+use IRIS\SDK\Resources\Schedules\SchedulesResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -159,6 +160,11 @@ class IRIS
     public ArticlesResource $articles;
 
     /**
+     * Schedules resource for managing agent scheduled tasks.
+     */
+    public SchedulesResource $schedules;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -198,6 +204,7 @@ class IRIS
         $this->services = new ServicesResource($this->http, $this->config);
         $this->tools = new ToolsResource($this->http, $this->config);
         $this->articles = new ArticlesResource($this->http, $this->config);
+        $this->schedules = new SchedulesResource($this->http, $this->config);
     }
 
     /**

@@ -1,0 +1,1277 @@
+[
+    {
+        "id": 24,
+        "nickname": "Rodney Mayo",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "Won",
+        "lead_type": "unknown",
+        "source": "unknown",
+        "contact_info": {
+            "email": "rodney@entropyconsulting.me",
+            "phone": "832-414-5257",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 4,
+            "incomplete": 2,
+            "completed": 2
+        },
+        "has_recent_activity": true,
+        "tags": []
+    },
+    {
+        "id": 53,
+        "nickname": "@gniice_",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "Won",
+        "lead_type": "unknown",
+        "source": "manual_entry",
+        "contact_info": {
+            "email": "info@creativegs.co",
+            "phone": "(404) 435-5254",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 9,
+            "incomplete": 9,
+            "completed": 0
+        },
+        "has_recent_activity": true,
+        "tags": []
+    },
+    {
+        "id": 75,
+        "nickname": "Christiaan Cilliers",
+        "name": null,
+        "email": "info@sgmdigital.com",
+        "phone": null,
+        "company": "SGM Digital",
+        "status": "Won",
+        "lead_type": "unknown",
+        "source": "unknown",
+        "contact_info": {
+            "email": "info@sgmdigital.com",
+            "phone": null,
+            "company": "SGM Digital",
+            "auto_respond": false,
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 4,
+            "incomplete": 2,
+            "completed": 2
+        },
+        "has_recent_activity": true,
+        "tags": []
+    },
+    {
+        "id": 517,
+        "nickname": "Fakhar Zaman Khan",
+        "name": "Fakhar Zaman Khan",
+        "email": "fakhar@softpyramid.com",
+        "phone": null,
+        "company": null,
+        "status": "Proposal",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": "fakhar@softpyramid.com",
+            "phone": null,
+            "company": null,
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 9,
+            "incomplete": 8,
+            "completed": 1
+        },
+        "has_recent_activity": false,
+        "tags": [
+            "Warm Lead",
+            "Networking",
+            "Mid-tier"
+        ]
+    },
+    {
+        "id": 79,
+        "nickname": "Richard Delgado",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "Won",
+        "lead_type": "unknown",
+        "source": "unknown",
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": false,
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 7,
+            "incomplete": 4,
+            "completed": 3
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 110,
+        "nickname": "Dr. John F. Ayala, PE, PMP, LSSMBB",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "Negotiation",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": "jayala@aec-hq.com",
+            "phone": "(210) 885-6552",
+            "company": "Ayala Engineering & Consulting, LLC",
+            "auto_respond": false,
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 4,
+            "incomplete": 3,
+            "completed": 1
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 460,
+        "nickname": "Brew and Brew",
+        "name": "Brew and Brew",
+        "email": null,
+        "phone": "5128279673",
+        "company": null,
+        "status": "Contacted",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5128279673",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 3,
+            "incomplete": 3,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 512,
+        "nickname": "Coffeehouse at Caroline",
+        "name": "Coffeehouse at Caroline",
+        "email": null,
+        "phone": "5129826766",
+        "company": null,
+        "status": "Contacted",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5129826766",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 3,
+            "incomplete": 3,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 511,
+        "nickname": "5th & Brew",
+        "name": "5th & Brew",
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "Contacted",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 3,
+            "incomplete": 3,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 510,
+        "nickname": "Jo's Coffee \u2013 Symphony Square",
+        "name": "Jo's Coffee \u2013 Symphony Square",
+        "email": null,
+        "phone": "5123182247",
+        "company": null,
+        "status": "Contacted",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5123182247",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 3,
+            "incomplete": 3,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 518,
+        "nickname": "Jacob Adberstein",
+        "name": "Jacob Adberstein",
+        "email": "jacob@leadautopilotai.com",
+        "phone": null,
+        "company": "Lead Autopilot AI",
+        "status": "Proposal",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": "jacob@leadautopilotai.com",
+            "phone": null,
+            "company": "Lead Autopilot AI",
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 6,
+            "incomplete": 5,
+            "completed": 1
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 81,
+        "nickname": "Billy Otto",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "On Hold",
+        "lead_type": "unknown",
+        "source": "unknown",
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": false,
+            "social_handle": "@billyotto"
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 68,
+        "nickname": "Ash Money Wellness",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "On Hold",
+        "lead_type": "unknown",
+        "source": "unknown",
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": true
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 74,
+        "nickname": "Dima Semyansky",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "Negotiation",
+        "lead_type": "unknown",
+        "source": "unknown",
+        "contact_info": "{\"email\":\"asldkfjlkj@lkjasd.com\",\"phone\":\"(386) 314-6252\",\"company\":null,\"social_handle\":null,\"auto_respond\":true}",
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 4,
+            "incomplete": 2,
+            "completed": 2
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 519,
+        "nickname": "JJ Bricks (Jay)",
+        "name": "JJ Bricks (Jay)",
+        "email": null,
+        "phone": null,
+        "company": "Test Company 09:15:13",
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": "Test Company 09:15:13",
+            "social_handle": "@bricks"
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": [
+            "Creative"
+        ]
+    },
+    {
+        "id": 67,
+        "nickname": "Lisa Martinez",
+        "name": "Lisa Martinez",
+        "email": "lisamartinez980@gmail.com",
+        "phone": null,
+        "company": null,
+        "status": "Won",
+        "lead_type": "unknown",
+        "source": "manual_entry",
+        "contact_info": {
+            "email": "lisamartinez980@gmail.com",
+            "phone": null,
+            "company": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 3,
+            "incomplete": 2,
+            "completed": 1
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 414,
+        "nickname": "Emily Production Test",
+        "name": "Emily Production Test",
+        "email": null,
+        "phone": "5122471515",
+        "company": "Production Company",
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5122471515",
+            "company": "Production Company",
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": [
+            "New Lead"
+        ]
+    },
+    {
+        "id": 419,
+        "nickname": "Dave",
+        "name": "richard",
+        "email": "someone@SignalPattern.com",
+        "phone": null,
+        "company": "SignalPattern.com",
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": "someone@SignalPattern.com",
+            "phone": null,
+            "company": "Signal Pattern",
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": [
+            "tech",
+            "Warm Lead",
+            "Networking",
+            "Mid-tier"
+        ]
+    },
+    {
+        "id": 65,
+        "nickname": "@nsgbillz",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "Won",
+        "lead_type": "unknown",
+        "source": "manual_entry",
+        "contact_info": {
+            "email": "nsgbillz@instagram.com",
+            "phone": null,
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 2,
+            "incomplete": 2,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 411,
+        "nickname": "Brooke Rizzuto",
+        "name": "Brooke Rizzuto",
+        "email": null,
+        "phone": "8178546161",
+        "company": "B&C Mobile Detailing",
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "(817) 854-6161",
+            "company": "B&C Detailing",
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 1,
+            "incomplete": 1,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": [
+            "ai",
+            "New Lead",
+            "Ready to Start"
+        ]
+    },
+    {
+        "id": 29,
+        "nickname": "austin j howard",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "Proposal",
+        "lead_type": "unknown",
+        "source": "unknown",
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 2,
+            "incomplete": 2,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 105,
+        "nickname": "Jack Sinatra",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "On Hold",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": "thejacksinatra@gmail.com",
+            "phone": "(194) 039-3167",
+            "company": null,
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 104,
+        "nickname": "Tiron Aeronotiqz",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "On Hold",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "(817) 630-1279",
+            "company": "AeroLife Shows",
+            "auto_respond": false,
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 102,
+        "nickname": "Brian Rivera",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "On Hold",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": "info@tradertaxcpa.com",
+            "phone": null,
+            "company": "Brian's CPA firm",
+            "auto_respond": false,
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 412,
+        "nickname": "Tha Juan",
+        "name": "Tha Juan",
+        "email": null,
+        "phone": "2144004503",
+        "company": "Tha Juan Braid N Loc Shop",
+        "status": "Won",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": "Ballstarpmb@gmail.com",
+            "phone": "(214) 400-4503",
+            "company": "Tha Juan Braid N Loc Shop",
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 1,
+            "incomplete": 1,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 76,
+        "nickname": "Maxx Baig",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "On Hold",
+        "lead_type": "unknown",
+        "source": "unknown",
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": false,
+            "social_handle": "mr.classyy"
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 80,
+        "nickname": "Robert Kerr",
+        "name": null,
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "On Hold",
+        "lead_type": "unknown",
+        "source": "unknown",
+        "contact_info": {
+            "email": null,
+            "phone": "(210) 844-5363",
+            "company": null,
+            "auto_respond": false,
+            "social_handle": null
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": [
+            "New Lead",
+            "Ready to Start",
+            "Networking",
+            "Mid-tier",
+            "Tech Savvy"
+        ]
+    },
+    {
+        "id": 515,
+        "nickname": "Union Coffee House",
+        "name": "Union Coffee House",
+        "email": null,
+        "phone": "4695015440",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "4695015440",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 513,
+        "nickname": "La Colombe Coffee Workshop",
+        "name": "La Colombe Coffee Workshop",
+        "email": null,
+        "phone": "7379103780",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "7379103780",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 514,
+        "nickname": "The Coffee Bar",
+        "name": "The Coffee Bar",
+        "email": null,
+        "phone": "7372573046",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "7372573046",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 508,
+        "nickname": "President's House Coffee",
+        "name": "President's House Coffee",
+        "email": null,
+        "phone": "51247637004821",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "51247637004821",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 509,
+        "nickname": "Cafe at the Loren",
+        "name": "Cafe at the Loren",
+        "email": null,
+        "phone": "5125801182",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5125801182",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 507,
+        "nickname": "Alfred Coffee",
+        "name": "Alfred Coffee",
+        "email": null,
+        "phone": "5124789611",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5124789611",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 505,
+        "nickname": "Jo's Coffee \u2013 Red River",
+        "name": "Jo's Coffee \u2013 Red River",
+        "email": null,
+        "phone": "5123835211",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5123835211",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 506,
+        "nickname": "Codependent Cocktails + Coffee",
+        "name": "Codependent Cocktails + Coffee",
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 504,
+        "nickname": "2nd & Roast",
+        "name": "2nd & Roast",
+        "email": null,
+        "phone": "5125423600",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5125423600",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 503,
+        "nickname": "Longhorn Coffee Co",
+        "name": "Longhorn Coffee Co",
+        "email": null,
+        "phone": "5122320818",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5122320818",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 502,
+        "nickname": "Good Things",
+        "name": "Good Things",
+        "email": null,
+        "phone": "5126002000",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5126002000",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 501,
+        "nickname": "La La Land",
+        "name": "La La Land",
+        "email": null,
+        "phone": "5122847939",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5122847939",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 500,
+        "nickname": "Medici Roasting",
+        "name": "Medici Roasting",
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 499,
+        "nickname": "Cuvee Coffee Bar",
+        "name": "Cuvee Coffee Bar",
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 498,
+        "nickname": "Capital One Caf\u00e9",
+        "name": "Capital One Caf\u00e9",
+        "email": null,
+        "phone": "5123627195",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5123627195",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 497,
+        "nickname": "Hillside Farmacy",
+        "name": "Hillside Farmacy",
+        "email": null,
+        "phone": "5126280168",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5126280168",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 496,
+        "nickname": "Halcyon",
+        "name": "Halcyon",
+        "email": null,
+        "phone": "5124729637",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5124729637",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 495,
+        "nickname": "The Hideout Coffee House",
+        "name": "The Hideout Coffee House",
+        "email": null,
+        "phone": "5124761313",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5124761313",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 494,
+        "nickname": "Carpenter Coffee Bar",
+        "name": "Carpenter Coffee Bar",
+        "email": null,
+        "phone": "5126825300",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5126825300",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 493,
+        "nickname": "Jo's Coffee \u2013 South Congress",
+        "name": "Jo's Coffee \u2013 South Congress",
+        "email": null,
+        "phone": "5128522300",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5128522300",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 492,
+        "nickname": "Medici Roasting",
+        "name": "Medici Roasting",
+        "email": null,
+        "phone": null,
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": null,
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 490,
+        "nickname": "Better Half Coffee & Cocktails",
+        "name": "Better Half Coffee & Cocktails",
+        "email": null,
+        "phone": "5126450786",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5126450786",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    },
+    {
+        "id": 491,
+        "nickname": "Galaxy Cafe",
+        "name": "Galaxy Cafe",
+        "email": null,
+        "phone": "5124783434",
+        "company": null,
+        "status": "New",
+        "lead_type": "unknown",
+        "source": null,
+        "contact_info": {
+            "email": null,
+            "phone": "5124783434",
+            "company": null,
+            "auto_respond": false
+        },
+        "priority_score": 0,
+        "tasks_summary": {
+            "total": 0,
+            "incomplete": 0,
+            "completed": 0
+        },
+        "has_recent_activity": false,
+        "tags": []
+    }
+]

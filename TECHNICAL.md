@@ -26,6 +26,10 @@ Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execut
 # 📝 Generate article from YouTube video
 ./bin/iris tools article --url="https://www.youtube.com/watch?v=abc123" --length=medium --style=informative
 
+# 📰 Newsletter with multi-modal ingestion (videos + web links + topic)
+./bin/iris tools newsletter-research --topic="AI trends" --videos="https://youtube.com/watch?v=abc" --links="https://example.com/article"
+./bin/iris tools newsletter-write --selected-option=1 --outline-json="..." --context-json="..."
+
 # ⚖️ Generate legal demand package
 ./bin/iris tools demand-package --case-id="Richard Ramos" --ai-model=gpt-5-nano
 
@@ -575,6 +579,244 @@ $article = $iris->articles->create([
 ```
 
 **Note:** Article generation is an **async operation**. The job is dispatched to a background queue and typically takes 1-3 minutes to complete. Check your dashboard or use webhooks to receive notifications when the article is ready.
+
+### Newsletter Generation (Multi-Modal)
+
+Generate professional newsletters using AI-powered research with **multi-modal ingestion** - combine text topics, YouTube video transcripts, and web content into rich, well-researched newsletters.
+
+This is a **two-step Human-in-the-Loop (HITL)** workflow:
+1. **Research**: Gather content from multiple sources and generate 3 outline options
+2. **Write**: User selects preferred outline, AI generates the full newsletter
+
+#### Multi-Modal Content Sources
+
+The newsletter tool supports three content input types that can be combined:
+
+| Source Type | Parameter | Description |
+|-------------|-----------|-------------|
+| **Topic** | `--topic` | Text description of the newsletter subject |
+| **Videos** | `--videos` | YouTube URLs for transcript extraction (comma or newline separated) |
+| **Links** | `--links` | Web URLs for content scraping (comma or newline separated) |
+
+#### Step 1: Newsletter Research
+
+```bash
+# Basic research with topic only
+./bin/iris tools newsletter-research \
+  --topic="The future of AI in healthcare" \
+  --audience="healthcare professionals" \
+  --tone=professional
+
+# Multi-modal: Topic + YouTube videos + Web links
+./bin/iris tools newsletter-research \
+  --topic="Graphic design trends 2025" \
+  --videos="https://www.youtube.com/watch?v=m_GoB8SFOeM,https://www.youtube.com/watch?v=2Vcn2bAu2FA" \
+  --links="https://designworklife.com/why-texture-matters-in-graphic-design/" \
+  --audience="designers" \
+  --tone=educational
+
+# Research with different newsletter lengths
+./bin/iris tools newsletter-research \
+  --topic="Weekly tech roundup" \
+  --newsletter-length=brief \
+  --json
+```
+
+**Research Options:**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--topic`, `-t` | Newsletter topic/description | Required |
+| `--videos` | YouTube video URLs (comma or newline separated) | - |
+| `--links` | Web URLs to scrape (comma or newline separated) | - |
+| `--audience` | Target audience description | `general audience` |
+| `--tone` | Writing tone: `professional`, `casual`, `educational`, `thought-leadership` | `professional` |
+| `--newsletter-length` | Length: `brief`, `standard`, `detailed` | `standard` |
+| `--json` | Output as JSON for scripting | - |
+
+**Example Output:**
+
+```
+Newsletter Research
+-------------------
+
+ Topic: Graphic design trends 2025
+ Videos: 2 video(s)
+ Links: 1 link(s)
+ Audience: designers
+ Tone: educational
+ Length: standard
+
+ Videos for transcript extraction:
+   1. https://www.youtube.com/watch?v=m_GoB8SFOeM
+   2. https://www.youtube.com/watch?v=2Vcn2bAu2FA
+
+ Links for content scraping:
+   1. https://designworklife.com/why-texture-matters-in-graphic-design/
+
+ Researching topic and generating outline options...
+ Extracting video transcripts (this may take a moment)...
+ Scraping web content...
+
+Research Complete
+=================
+
+Sources Used:
+  Video transcripts: 2
+  Web pages scraped: 1
+  Web search results: 13
+  Total sources: 16
+
+Themes Identified: 7
+  1. The Evolution of Graphic Design
+  2. Core Principles of Visual Communication
+  3. The Strategic Role of Design
+  ...
+
+Outline Options:
+
+ Option 1: "Design Trends That Matter: 2025 Edition"
+   Approach: News-focused overview of current developments
+   Sections: 4 sections covering technology, trends, tools, career outlook
+
+ Option 2: "Mastering Modern Design: A Practical Guide"
+   Approach: Educational deep-dive with actionable insights
+   Sections: 5 sections with step-by-step guidance
+
+ Option 3: "The Design Revolution: What's Next"
+   Approach: Thought leadership perspective on industry shifts
+   Sections: 4 sections analyzing future trajectory
+
+✓ Awaiting human input: Select an outline option (1, 2, or 3)
+```
+
+#### Step 2: Newsletter Write
+
+After reviewing the outline options, select your preferred option and generate the full newsletter:
+
+```bash
+# Generate newsletter from selected outline (option 1)
+./bin/iris tools newsletter-write \
+  --selected-option=1 \
+  --outline-json='[{"option_number":1,"title":"Design Trends","sections":[...]}]' \
+  --context-json='{"topic":"Graphic design","audience":"designers"}'
+
+# With customization notes
+./bin/iris tools newsletter-write \
+  --selected-option=2 \
+  --outline-json='...' \
+  --context-json='...' \
+  --customization="Focus more on practical code examples"
+
+# Send to recipient email
+./bin/iris tools newsletter-write \
+  --selected-option=1 \
+  --outline-json='...' \
+  --context-json='...' \
+  --recipient-email="team@company.com" \
+  --recipient-name="Design Team" \
+  --sender-name="Weekly Digest"
+```
+
+**Write Options:**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--selected-option` | Outline option number (1, 2, or 3) | Required |
+| `--outline-json` | JSON array of outline options from research | Required |
+| `--context-json` | JSON context data from research | Required |
+| `--customization` | Custom instructions for the writer | - |
+| `--recipient-email` | Email to send newsletter to | - |
+| `--recipient-name` | Recipient name for personalization | - |
+| `--sender-name` | Sender name for the email | - |
+| `--lead-id` | Lead ID for CRM tracking | - |
+| `--json` | Output as JSON for scripting | - |
+
+**PHP SDK Usage:**
+
+```php
+use IRIS\SDK\IRIS;
+
+$iris = new IRIS([
+    'api_key' => 'your-api-key',
+    'user_id' => 193,
+]);
+
+// Step 1: Research with multi-modal sources
+$researchResult = $iris->tools->newsletterResearch([
+    'topic' => 'Graphic design trends 2025',
+    'videos' => 'https://www.youtube.com/watch?v=m_GoB8SFOeM,https://www.youtube.com/watch?v=2Vcn2bAu2FA',
+    'links' => 'https://designworklife.com/why-texture-matters-in-graphic-design/',
+    'audience' => 'designers',
+    'tone' => 'educational',
+    'newsletter_length' => 'standard',
+]);
+
+// Check results
+echo "Topic: {$researchResult->topic}\n";
+echo "Themes found: " . count($researchResult->themes) . "\n";
+echo "Outline options: " . count($researchResult->outlineOptions) . "\n";
+echo "Sources used:\n";
+print_r($researchResult->sourcesUsed);
+// Output: ['video_transcripts' => 2, 'web_pages_scraped' => 1, 'web_search_results' => 13, 'total_sources' => 16]
+
+// Display outline titles
+foreach ($researchResult->getOutlineTitles() as $i => $title) {
+    echo ($i + 1) . ". $title\n";
+}
+
+// Step 2: Prepare write params using helper method
+$writeParams = $researchResult->prepareWriteParams(
+    selectedOption: 1,  // User's choice
+    customizationNotes: 'Focus on practical examples',
+    recipientEmail: 'team@company.com',
+    recipientName: 'Design Team',
+    senderName: 'Weekly Digest'
+);
+
+// Step 3: Generate the newsletter
+$writeResult = $iris->tools->newsletterWrite($writeParams);
+```
+
+**NewsletterResearchResult Methods:**
+
+```php
+// Get specific outline by number
+$outline = $researchResult->getOutline(1);  // Returns outline option 1
+
+// Get all outline titles as array
+$titles = $researchResult->getOutlineTitles();  // ['Title 1', 'Title 2', 'Title 3']
+
+// Get theme names
+$themes = $researchResult->getThemeNames();  // ['Theme 1', 'Theme 2', ...]
+
+// Check if awaiting selection
+if ($researchResult->isAwaitingSelection()) {
+    // Show options to user
+}
+
+// Prepare write parameters (helper)
+$params = $researchResult->prepareWriteParams(
+    selectedOption: 2,
+    customizationNotes: 'Make it more casual',
+    recipientEmail: 'user@example.com'
+);
+
+// Convert to array
+$data = $researchResult->toArray();
+```
+
+**How It Works:**
+
+1. **Video Transcripts**: YouTube URLs are processed via Supadata.ai API to extract full transcripts
+2. **Web Scraping**: Links are scraped via Firecrawl API to extract main content
+3. **Web Search**: Tavily API performs additional research on the topic
+4. **Theme Analysis**: AI analyzes all sources to identify key themes
+5. **Outline Generation**: Three distinct newsletter outlines are created
+6. **Human Selection**: User reviews and selects their preferred outline
+7. **Newsletter Writing**: AI writes the full newsletter based on selected outline and context
+
+**Note:** Newsletter generation uses a background queue for the write step. Research is synchronous and returns immediately with outline options.
 
 ### Legal Demand Package Generation
 
@@ -2692,7 +2934,7 @@ assert($response->content === 'Mocked response');
 | `$iris->models` | `list`, `basic`, `popular`, `get`, `byProvider`, `recommended`, `providers`, `sync`, `pricing`, `nano` |
 | `$iris->integrations` | `available`, `connected`, `getOAuthUrl`, `test`, `execute`, `functions` |
 | `$iris->rag` | `query`, `index`, `indexFile`, `searchSimilar`, `delete` |
-| `$iris->tools` | `list`, `invoke`, `recruitment`, `scoreCandidates`, `enrichLead` |
+| `$iris->tools` | `list`, `invoke`, `recruitment`, `scoreCandidates`, `enrichLead`, `newsletterResearch`, `newsletterWrite` |
 | `$iris->articles` | `generate`, `generateFromVideo`, `generateFromTopic`, `generateFromWebpage`, `generateFromRss`, `create` |
 
 ## Troubleshooting
@@ -2807,6 +3049,621 @@ curl https://apiv2.heyiris.io/api/health
 
 # Both should return: {"status":"ok","database":"connected"}
 ```
+
+## � CopyCatAI Integration
+
+Complete content generation and media processing toolkit for articles, videos, and audio.
+
+### Features
+
+- **Article Generation:** AI-powered article writing with custom topics and tone
+- **Newsletter Generation:** Multi-modal newsletter creation with HITL workflow (videos + links + topics)
+- **YouTube Audio Download:** High-quality MP3 extraction (320kbps) with metadata
+- **Video Downloading:** Full video downloads from multiple platforms
+- **Clip Cutting:** Frame-accurate video segment extraction
+
+### Quick Start
+
+```bash
+# Generate article
+./bin/iris tools article --topic="AI in Healthcare" --agent-id=11
+
+# Download YouTube audio
+./bin/iris tools youtube-audio --url="https://www.youtube.com/watch?v=abc123" --agent-id=11
+
+# Download with custom filename
+./bin/iris tools youtube-audio --url="..." --agent-id=11 --output-filename="my_song"
+```
+
+### PHP SDK
+
+```php
+use IRIS\SDK\IRIS;
+
+$iris = new IRIS(['api_key' => 'your_api_key', 'user_id' => 193]);
+
+// Generate article
+$result = $iris->agents->callIntegration(11, 'copycat-ai', 'generate_article', [
+    'topic' => 'Future of AI',
+    'min_words' => 1000,
+]);
+
+// Download YouTube audio
+$result = $iris->agents->callIntegration(11, 'copycat-ai', 'download_youtube_audio', [
+    'youtube_url' => 'https://www.youtube.com/watch?v=abc123',
+    'upload_to_gcs' => false,
+    'output_filename' => 'my_song',
+]);
+
+echo $result['result']['download_url'];  // https://local.raichu.freelabel.net/storage/my_song.mp3
+```
+
+### Available Tools
+
+| Tool | CLI Command | Description |
+|------|-------------|-------------|
+| Article Generation | `./bin/iris tools article` | AI-powered article writing |
+| Newsletter Research | `./bin/iris tools newsletter-research` | Multi-modal research with outline generation |
+| Newsletter Write | `./bin/iris tools newsletter-write` | Generate newsletter from selected outline |
+| YouTube Audio | `./bin/iris tools youtube-audio` | Extract MP3 from YouTube (320kbps) |
+| Video Download | `./bin/iris tools video-download` | Download full videos |
+| Clip Cutting | `./bin/iris tools clip-cut` | Extract video segments |
+
+### Requirements
+
+- yt-dlp and FFmpeg installed in backend
+- CopycatAI integration enabled in agent settings
+- User integration record with status='active'
+
+**📚 For detailed documentation, examples, troubleshooting, and advanced usage, see [COPYCAT_AI_INTEGRATION.md](COPYCAT_AI_INTEGRATION.md)**
+
+## 🔌 Integration Management
+
+Manage third-party integrations directly from the SDK and CLI. Connect services, manage credentials, and test connections without touching the dashboard.
+
+### Overview
+
+The Integration Management system provides unified access to 17+ third-party services:
+
+| Category | Integrations | Auth Type |
+|----------|--------------|-----------|
+| **Google Suite** | Drive, Gmail, Calendar | OAuth |
+| **Communication** | Slack, Discord, GitHub | OAuth |
+| **Email** | Mailjet, Mailchimp, SMTP | API Key / Credentials |
+| **AI Services** | Vapi, Servis.ai, ElevenLabs, Gemini | API Key |
+| **Content** | YouTube, Buffer | API Key / OAuth |
+
+**Key Features:**
+- **OAuth Flow Support** - Automatic browser-based authorization for Google, Slack, GitHub, etc.
+- **Type-Specific Flows** - Specialized prompts for Vapi (phone number), Servis.ai (client credentials), SMTP (server configs)
+- **Status Checking** - Test connectivity and validate credentials
+- **Connection Management** - Connect, disconnect, reconnect integrations seamlessly
+
+### Quick Start
+
+```bash
+# Install dependencies
+cd /path/to/sdk/php && composer install
+
+# List available integration types
+./bin/iris integrations types
+
+# View connected integrations
+./bin/iris integrations list
+
+# Connect an integration (interactive)
+./bin/iris integrations connect vapi
+
+# Check status
+./bin/iris integrations status vapi
+
+# Disconnect
+./bin/iris integrations disconnect vapi
+```
+
+### CLI Commands
+
+#### `iris integrations types`
+
+List all available integrations with their authentication requirements.
+
+```bash
+./bin/iris integrations types
+
+# Output:
+Available Integration Types
+===========================
+
+API Key Integrations (8)
+  • vapi                 - Vapi Voice AI
+  • servis-ai            - Servis.ai
+  • smtp                 - SMTP Email
+  • mailjet              - Mailjet
+  • elevenlabs           - ElevenLabs
+  • youtube              - YouTube
+  • buffer               - Buffer
+  • gemini               - Google Gemini
+
+OAuth Integrations (9)
+  • google-drive         - Google Drive
+  • gmail                - Gmail
+  • google-calendar      - Google Calendar
+  • slack                - Slack
+  • discord              - Discord
+  • github               - GitHub
+  • mailchimp            - Mailchimp
+```
+
+#### `iris integrations list`
+
+View all connected integrations with their status.
+
+```bash
+./bin/iris integrations list
+
+# Output:
+Connected Integrations
+=====================
+
+✓ vapi (Voice AI)
+  Status: active
+  Connected: 2025-01-15
+  Phone: +1-512-555-0100
+
+✓ google-drive (Google Drive)
+  Status: active
+  Connected: 2025-01-10
+  Scopes: drive.readonly, drive.file
+```
+
+#### `iris integrations connect <type>`
+
+Connect a new integration with interactive prompts.
+
+**API Key Example (Vapi):**
+```bash
+./bin/iris integrations connect vapi
+
+# Prompts:
+Enter Vapi API Key: ****************
+Enter Vapi Phone Number ID (optional): dd3905f2-...
+✓ Connected successfully!
+```
+
+**OAuth Example (Google Drive):**
+```bash
+./bin/iris integrations connect google-drive
+
+# Opens browser automatically:
+Opening authorization URL in browser...
+https://accounts.google.com/o/oauth2/auth?client_id=...
+
+Please authorize the application and return here.
+✓ Connected successfully!
+```
+
+**SMTP Example (Custom Server):**
+```bash
+./bin/iris integrations connect smtp
+
+# Prompts:
+SMTP Host: smtp.gmail.com
+SMTP Port [587]: 587
+SMTP Username: user@example.com
+SMTP Password: ****************
+SMTP Encryption (tls/ssl) [tls]: tls
+From Email: noreply@example.com
+From Name: My App
+✓ Connected successfully!
+```
+
+#### `iris integrations disconnect <type>`
+
+Disconnect an integration with confirmation.
+
+```bash
+./bin/iris integrations disconnect vapi
+
+# Prompts:
+⚠️  Are you sure you want to disconnect vapi? (yes/no) [no]: yes
+✓ Disconnected successfully!
+```
+
+#### `iris integrations test <type>`
+
+Test connectivity and validate credentials.
+
+```bash
+./bin/iris integrations test vapi
+
+# Output:
+Testing vapi integration...
+
+✓ Connection successful!
+  API Key: Valid
+  Phone Number: +1-512-555-0100
+  Status: Active
+```
+
+#### `iris integrations status <type>`
+
+Check detailed status and configuration.
+
+```bash
+./bin/iris integrations status vapi
+
+# Output:
+Integration Status: vapi
+========================
+
+Status: ✓ Active
+Type: api_key
+Connected: 2025-01-15 10:30:45
+
+Configuration:
+  API Key: ****...****
+  Phone Number ID: dd3905f2-...
+  Phone Number: +1-512-555-0100
+  
+Last Tested: 2025-01-20 14:22:13
+Test Result: Success
+```
+
+### PHP SDK Usage
+
+```php
+use IRIS\SDK\IRIS;
+
+$iris = new IRIS(['api_key' => 'your-api-key', 'user_id' => 193]);
+
+// List available integration types
+$types = $iris->integrations->types();
+foreach ($types as $type) {
+    echo "{$type['type']} - {$type['name']} ({$type['auth_type']})\n";
+}
+
+// Get connected integrations
+$connected = $iris->integrations->connected();
+foreach ($connected as $integration) {
+    echo "{$integration->type}: {$integration->status}\n";
+}
+
+// Check status of a specific integration
+$status = $iris->integrations->status('vapi');
+if ($status->isConnected()) {
+    echo "Vapi is connected\n";
+}
+
+// Connect with API key (Vapi example)
+$integration = $iris->integrations->connectVapi([
+    'api_key' => 'vapi_key_xxxxx',
+    'phone_number_id' => 'dd3905f2-...',
+]);
+
+// Connect with API key (Servis.ai example)
+$integration = $iris->integrations->connectServisAi([
+    'client_id' => 'client_xxxxx',
+    'client_secret' => 'secret_xxxxx',
+]);
+
+// Connect with credentials (SMTP example)
+$integration = $iris->integrations->connectSmtp([
+    'smtp_host' => 'smtp.gmail.com',
+    'smtp_port' => 587,
+    'smtp_username' => 'user@example.com',
+    'smtp_password' => 'app_password',
+    'smtp_encryption' => 'tls',
+    'smtp_from_email' => 'noreply@example.com',
+    'smtp_from_name' => 'My App',
+]);
+
+// Generic API key connection
+$integration = $iris->integrations->connectWithApiKey('youtube', [
+    'api_key' => 'youtube_key_xxxxx',
+]);
+
+// Start OAuth flow (Google Drive example)
+$authUrl = $iris->integrations->startOAuthFlow('google-drive');
+// Redirect user to $authUrl for authorization
+// User returns with auth code, backend handles token exchange automatically
+
+// Disconnect an integration
+$result = $iris->integrations->disconnect('vapi');
+echo $result['message'];  // "Integration disconnected successfully"
+
+// Helper methods
+$usesOAuth = $iris->integrations->usesOAuth('google-drive');    // true
+$usesApiKey = $iris->integrations->usesApiKey('vapi');          // true
+```
+
+### Integration Collection Helpers
+
+The SDK provides a collection class with helper methods for filtering integrations:
+
+```php
+// Get connected integrations as a collection
+$collection = $iris->integrations->connected();
+
+// Find by type
+$vapi = $collection->findByType('vapi');
+if ($vapi) {
+    echo "Vapi API Key: {$vapi->credentials['api_key']}\n";
+}
+
+// Filter by status
+$active = $collection->filterByStatus('active');
+$inactive = $collection->filterByStatus('error');
+
+// Filter by category
+$oauth = $collection->filterByCategory('oauth');
+$apiKey = $collection->filterByCategory('api_key');
+
+// Count and iterate
+echo "Total connected: " . $collection->count() . "\n";
+foreach ($collection as $integration) {
+    echo "- {$integration->type}\n";
+}
+```
+
+### Type-Specific Connection Flows
+
+#### Vapi (Voice AI)
+
+```php
+// Connect Vapi with phone number
+$vapi = $iris->integrations->connectVapi([
+    'api_key' => 'vapi_key_xxxxx',
+    'phone_number_id' => 'dd3905f2-08d6-4dc2-a50f-f0c937ada251',
+]);
+
+// CLI interactive flow
+./bin/iris integrations connect vapi
+# Prompts for:
+#   - Vapi API Key (required)
+#   - Phone Number ID (optional)
+```
+
+#### Servis.ai (Legal CRM)
+
+```php
+// Connect Servis.ai with OAuth-like credentials
+$servis = $iris->integrations->connectServisAi([
+    'client_id' => 'client_xxxxx',
+    'client_secret' => 'secret_xxxxx',
+]);
+
+// CLI interactive flow
+./bin/iris integrations connect servis-ai
+# Prompts for:
+#   - Client ID (required)
+#   - Client Secret (required)
+```
+
+#### SMTP Email
+
+```php
+// Connect SMTP server
+$smtp = $iris->integrations->connectSmtp([
+    'smtp_host' => 'smtp.gmail.com',
+    'smtp_port' => 587,
+    'smtp_username' => 'user@example.com',
+    'smtp_password' => 'app_password',
+    'smtp_encryption' => 'tls',  // 'tls' or 'ssl'
+    'smtp_from_email' => 'noreply@example.com',
+    'smtp_from_name' => 'My Application',
+]);
+
+// CLI interactive flow
+./bin/iris integrations connect smtp
+# Prompts for all SMTP configuration fields
+# with smart defaults (port 587, encryption tls)
+```
+
+#### OAuth Services (Google, Slack, GitHub)
+
+```php
+// Start OAuth authorization flow
+$authUrl = $iris->integrations->startOAuthFlow('google-drive', [
+    'redirect_uri' => 'https://yourapp.com/oauth/callback',  // Optional
+]);
+
+// User visits $authUrl and authorizes
+// Backend handles callback and stores tokens automatically
+
+// CLI flow (opens browser automatically)
+./bin/iris integrations connect google-drive
+# Opens browser to Google authorization page
+# User approves, CLI detects success and confirms connection
+```
+
+### Error Handling
+
+```php
+use IRIS\SDK\Exceptions\IntegrationException;
+
+try {
+    $integration = $iris->integrations->connectVapi([
+        'api_key' => 'invalid_key',
+    ]);
+} catch (IntegrationException $e) {
+    echo "Connection failed: {$e->getMessage()}\n";
+    
+    // Check error details
+    if ($e->getCode() === 401) {
+        echo "Invalid API key\n";
+    }
+}
+
+// Status checking
+$status = $iris->integrations->status('vapi');
+if ($status->hasError()) {
+    echo "Error: {$status->error}\n";
+    echo "Last tested: {$status->last_tested_at}\n";
+}
+```
+
+### Testing Connections
+
+```php
+// Test a specific integration
+$result = $iris->integrations->test('vapi');
+
+if ($result->success) {
+    echo "✓ Connection successful\n";
+    echo "Details: {$result->message}\n";
+} else {
+    echo "✗ Connection failed: {$result->error}\n";
+}
+
+// CLI testing
+./bin/iris integrations test vapi
+```
+
+### Environment-Specific Configuration
+
+The SDK automatically detects your environment:
+
+```bash
+# .env configuration
+IRIS_ENV=local  # or 'production'
+
+# Local development
+IRIS_LOCAL_API_KEY=your_local_token
+FL_API_LOCAL_URL=https://local.raichu.freelabel.net
+
+# Production
+IRIS_API_KEY=your_production_token
+FL_API_URL=https://apiv2.heyiris.io
+```
+
+### Troubleshooting
+
+#### "Unauthenticated" Errors
+
+**Problem:** CLI commands return 401 errors even with valid `.env` configuration.
+
+**Cause:** JWT tokens expire (typically 24-48 hours) and `.env` files store static tokens.
+
+**Solutions:**
+
+1. **Generate fresh token from browser:**
+   ```bash
+   # 1. Login to https://app.heyiris.io
+   # 2. Open browser DevTools → Application → Local Storage
+   # 3. Copy 'auth_token' value
+   # 4. Update .env:
+   IRIS_API_KEY=<paste_token_here>
+   ```
+
+2. **Use token generation utility** (if available):
+   ```bash
+   ./bin/iris auth generate
+   # Automatically updates .env with fresh token
+   ```
+
+3. **Check environment mismatch:**
+   ```bash
+   # Ensure IRIS_ENV matches your API URL:
+   IRIS_ENV=local  # Must use FL_API_LOCAL_URL
+   IRIS_ENV=production  # Must use FL_API_URL
+   ```
+
+**📚 For complete authentication troubleshooting, see [docs/AUTH_ISSUES_AND_SOLUTIONS.md](docs/AUTH_ISSUES_AND_SOLUTIONS.md)**
+
+#### Integration Not Found
+
+```bash
+./bin/iris integrations connect unknown-service
+# Error: Integration type 'unknown-service' not found
+
+# Solution: List available types
+./bin/iris integrations types
+```
+
+#### OAuth Callback Issues
+
+**Problem:** OAuth flow fails after browser authorization.
+
+**Cause:** Incorrect redirect URI or callback not handled.
+
+**Solution:** Ensure your callback endpoint is registered and the backend has the correct OAuth credentials configured.
+
+### Complete Example: Full Integration Workflow
+
+```php
+use IRIS\SDK\IRIS;
+
+$iris = new IRIS(['api_key' => 'your-api-key', 'user_id' => 193]);
+
+// 1. List available integrations
+echo "Available Integrations:\n";
+$types = $iris->integrations->types();
+foreach ($types as $type) {
+    echo "  - {$type['name']} ({$type['auth_type']})\n";
+}
+
+// 2. Connect Vapi
+echo "\nConnecting Vapi...\n";
+try {
+    $vapi = $iris->integrations->connectVapi([
+        'api_key' => getenv('VAPI_API_KEY'),
+        'phone_number_id' => getenv('VAPI_PHONE_ID'),
+    ]);
+    echo "✓ Vapi connected\n";
+} catch (Exception $e) {
+    echo "✗ Failed: {$e->getMessage()}\n";
+    exit(1);
+}
+
+// 3. Test the connection
+echo "\nTesting connection...\n";
+$test = $iris->integrations->test('vapi');
+if ($test->success) {
+    echo "✓ Test passed\n";
+} else {
+    echo "✗ Test failed: {$test->error}\n";
+}
+
+// 4. List all connected integrations
+echo "\nConnected Integrations:\n";
+$connected = $iris->integrations->connected();
+foreach ($connected as $integration) {
+    $status = $integration->status === 'active' ? '✓' : '✗';
+    echo "  {$status} {$integration->type}\n";
+}
+
+// 5. Use the integration (execute function)
+echo "\nExecuting integration function...\n";
+$result = $iris->integrations->execute('vapi', 'get_phone_numbers');
+echo "Phone numbers: " . count($result) . "\n";
+```
+
+**CLI Equivalent:**
+
+```bash
+#!/bin/bash
+
+# 1. List available integrations
+./bin/iris integrations types
+
+# 2. Connect Vapi (interactive)
+./bin/iris integrations connect vapi
+
+# 3. Test connection
+./bin/iris integrations test vapi
+
+# 4. List connected integrations
+./bin/iris integrations list
+
+# 5. Check status
+./bin/iris integrations status vapi
+```
+
+### Next Steps
+
+- **[Full Integration Management Guide →](docs/INTEGRATION_MANAGEMENT.md)** - Complete documentation with advanced examples
+- **[Authentication Solutions →](docs/AUTH_ISSUES_AND_SOLUTIONS.md)** - Token management and troubleshooting
+- **[Integration Endpoints Reference →](docs/API_REFERENCE.md)** - Complete API documentation
 
 ## License
 

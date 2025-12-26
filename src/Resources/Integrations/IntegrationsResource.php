@@ -296,4 +296,193 @@ class IntegrationsResource
 
         return new TestResult($response);
     }
+
+    // ========================================
+    // MVP: Integration Management Methods
+    // ========================================
+
+    /**
+     * Check connection status for an integration type.
+     *
+     * @param string $type Integration type (e.g., 'vapi', 'servis-ai')
+     * @return array{connected: bool, integration: ?Integration}
+     */
+    public function status(string $type): array
+    {
+        $integrations = $this->list();
+        $integration = $integrations->findByType($type);
+
+        if (!$integration) {
+            return ['connected' => false, 'integration' => null];
+        }
+
+        return [
+            'connected' => $integration->status === 'active',
+            'integration' => $integration,
+        ];
+    }
+
+    /**
+     * Get all connected integrations.
+     *
+     * @return IntegrationCollection
+     */
+    public function connected(): IntegrationCollection
+    {
+        return $this->list()->filterByStatus('active');
+    }
+
+    /**
+     * Disconnect (delete) an integration by type.
+     *
+     * @param string $type Integration type
+     * @return bool
+     */
+    public function disconnect(string $type): bool
+    {
+        $integrations = $this->list();
+        $integration = $integrations->findByType($type);
+
+        if (!$integration) {
+            return false;
+        }
+
+        return $this->delete($integration->id);
+    }
+
+    /**
+     * Connect integration using API key.
+     *
+     * @param string $type Integration type
+     * @param array $credentials Credentials (e.g., ['api_key' => 'xxx'])
+     * @param string|null $name Optional integration name
+     * @return Integration
+     */
+    public function connectWithApiKey(string $type, array $credentials, ?string $name = null): Integration
+    {
+        // Get integration type info to validate
+        $types = $this->types();
+        $typeInfo = $types['data'][$type] ?? null;
+
+        if (!$typeInfo) {
+            throw new \InvalidArgumentException("Unknown integration type: {$type}");
+        }
+
+        // Determine category based on type
+        $category = $typeInfo['category'] ?? 'automation';
+
+        return $this->create([
+            'name' => $name ?? ($typeInfo['name'] ?? ucfirst($type)),
+            'type' => $type,
+            'category' => $category,
+            'credentials' => $credentials,
+        ]);
+    }
+
+    /**
+     * Connect Vapi Voice AI integration.
+     *
+     * @param string $apiKey Vapi API key
+     * @param string|null $phoneNumber Optional phone number
+     * @return Integration
+     */
+    public function connectVapi(string $apiKey, ?string $phoneNumber = null): Integration
+    {
+        $credentials = [
+            'api_key' => $apiKey,
+        ];
+
+        if ($phoneNumber) {
+            $credentials['phone_number'] = $phoneNumber;
+        }
+
+        return $this->connectWithApiKey('vapi', $credentials, 'Vapi Voice AI');
+    }
+
+    /**
+     * Connect Servis.ai integration.
+     *
+     * @param string $clientId Servis.ai client ID
+     * @param string $clientSecret Servis.ai client secret
+     * @return Integration
+     */
+    public function connectServisAi(string $clientId, string $clientSecret): Integration
+    {
+        return $this->connectWithApiKey('servis-ai', [
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret,
+        ], 'Servis.ai');
+    }
+
+    /**
+     * Connect SMTP Email integration.
+     *
+     * @param string $host SMTP host
+     * @param int $port SMTP port
+     * @param string $username SMTP username
+     * @param string $password SMTP password
+     * @param string $fromEmail From email address
+     * @param string $fromName From name
+     * @param string $encryption Encryption type (tls, ssl, or empty)
+     * @return Integration
+     */
+    public function connectSmtp(
+        string $host,
+        int $port,
+        string $username,
+        string $password,
+        string $fromEmail,
+        string $fromName = '',
+        string $encryption = 'tls'
+    ): Integration {
+        return $this->connectWithApiKey('smtp-email', [
+            'smtp_host' => $host,
+            'smtp_port' => $port,
+            'smtp_username' => $username,
+            'smtp_password' => $password,
+            'from_email' => $fromEmail,
+            'from_name' => $fromName,
+            'smtp_encryption' => $encryption,
+        ], 'SMTP Email');
+    }
+
+    /**
+     * Start OAuth flow and return URL to open in browser.
+     *
+     * @param string $type Integration type
+     * @return array{url: string, instructions: string}
+     */
+    public function startOAuthFlow(string $type): array
+    {
+        $url = $this->getOAuthUrl($type);
+
+        return [
+            'url' => $url,
+            'instructions' => "Open this URL in your browser to authorize access:\n{$url}\n\nAfter authorization, the integration will be automatically connected.",
+        ];
+    }
+
+    /**
+     * Check if integration uses OAuth.
+     *
+     * @param string $type Integration type
+     * @return bool
+     */
+    public function usesOAuth(string $type): bool
+    {
+        $oauthTypes = ['google-drive', 'google-calendar', 'gmail', 'slack', 'github', 'mailchimp'];
+        return in_array($type, $oauthTypes);
+    }
+
+    /**
+     * Check if integration uses API key.
+     *
+     * @param string $type Integration type
+     * @return bool
+     */
+    public function usesApiKey(string $type): bool
+    {
+        $apiKeyTypes = ['vapi', 'servis-ai', 'smtp-email', 'mailjet', 'google-gemini', 'savelife-ai'];
+        return in_array($type, $apiKeyTypes);
+    }
 }

@@ -1,0 +1,35 @@
+Hi Rodney,
+
+I wanted to give you a quick update on all the AI tools and deliverables we've built for Entropy Consulting Group. Everything is now live and ready for you to use in your NCMA courses and executive leadership training programs.
+
+Here's what's ready for you:
+
+1. Entropy NCMA Leadership AI Agent
+Your specialized AI assistant trained on all your NCMA course reports. This agent can analyze student feedback, extract testimonials, and provide insights to help you continuously improve your executive leadership training programs. It's configured to prioritize positive testimonials for marketing use while remaining flexible for comprehensive data analysis.
+
+2. Entropy Course Report Analysis Agent
+An enhanced version of your AI agent specifically optimized for extracting authentic student testimonials and analyzing course effectiveness. Perfect for generating marketing materials and understanding student outcomes.
+
+3. Entropy Website - Testimonials Updated
+Your updated website at https://app.heyiris.io/entropy now features 6 authentic NCMA student testimonials that showcase the real impact of your courses. The testimonials highlight your expertise, course management, and the practical value students gain from your training.
+
+4. Testimonials Report
+A comprehensive report with additional student testimonials ready for future marketing materials, presentations, or website updates.
+
+5. Entropy Landing Page
+Your professional landing page at https://alexandermayo.com/entropy showcasing your consulting services.
+
+These tools are designed to help you:
+- Automatically analyze course feedback and extract testimonials
+- Demonstrate the value of your NCMA training programs
+- Build credibility with prospective students and organizations
+- Save time on manual report analysis
+- Support your AI demonstrations in your courses
+
+You can access everything using the links below. All your course reports are already loaded into the AI agents, so they're ready to answer questions and generate insights immediately.
+
+Let me know if you'd like me to show you any specific features or if you need help with anything!
+
+Best,
+Alex Mayo
+alex@freelabel.net

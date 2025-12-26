@@ -184,4 +184,77 @@ class ToolsResource
     {
         return $this->http->post("/api/v1/leads/{$leadId}/enrich-react", $options);
     }
+
+    /**
+     * Research a topic and generate newsletter outline options.
+     *
+     * This tool performs comprehensive research using Tavily and generates
+     * 3 distinct newsletter outline options for the user to choose from.
+     * Returns a HITL (Human-in-the-Loop) response for outline selection.
+     *
+     * @param array{
+     *     topic: string,
+     *     source_url?: string,
+     *     audience?: string,
+     *     tone?: string,
+     *     newsletter_length?: string
+     * } $params Tool parameters
+     * @return NewsletterResearchResult
+     *
+     * @example
+     * ```php
+     * $result = $iris->tools->newsletterResearch([
+     *     'topic' => 'AI trends in healthcare 2025',
+     *     'audience' => 'healthcare professionals',
+     *     'tone' => 'professional',
+     *     'newsletter_length' => 'standard',
+     * ]);
+     *
+     * echo "Choose an outline:\n";
+     * foreach ($result->outlineOptions as $option) {
+     *     echo "  {$option['option_number']}. {$option['title']}\n";
+     * }
+     * ```
+     */
+    public function newsletterResearch(array $params = []): NewsletterResearchResult
+    {
+        $response = $this->http->post('/api/v1/tools/newsletter/research', $params);
+        return new NewsletterResearchResult($response);
+    }
+
+    /**
+     * Generate a complete newsletter from a selected outline.
+     *
+     * Takes the outline selection from newsletterResearch and generates
+     * the full newsletter content as a background job with progress tracking.
+     *
+     * @param array{
+     *     selected_option: int,
+     *     outline_options: array,
+     *     context: array,
+     *     customization_notes?: string,
+     *     recipient_email?: string,
+     *     recipient_name?: string,
+     *     sender_name?: string,
+     *     lead_id?: int
+     * } $params Tool parameters
+     * @return array Background job response
+     *
+     * @example
+     * ```php
+     * // After user selects option 2 from newsletterResearch
+     * $result = $iris->tools->newsletterWrite([
+     *     'selected_option' => 2,
+     *     'outline_options' => $researchResult->outlineOptions,
+     *     'context' => $researchResult->context,
+     *     'customization_notes' => 'Focus more on practical applications',
+     *     'recipient_email' => 'john@example.com',
+     *     'sender_name' => 'Alex',
+     * ]);
+     * ```
+     */
+    public function newsletterWrite(array $params = []): array
+    {
+        return $this->http->post('/api/v1/tools/newsletter/write', $params);
+    }
 }

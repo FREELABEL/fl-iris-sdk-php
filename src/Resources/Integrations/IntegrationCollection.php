@@ -105,4 +105,32 @@ class IntegrationCollection implements IteratorAggregate, Countable
 
         return null;
     }
+
+    /**
+     * Filter integrations by status.
+     *
+     * @param string $status Status to filter by
+     * @return IntegrationCollection
+     */
+    public function filterByStatus(string $status): IntegrationCollection
+    {
+        return new self(
+            array_filter($this->items, fn(Integration $integration) => $integration->status === $status),
+            $this->meta
+        );
+    }
+
+    /**
+     * Filter integrations by category.
+     *
+     * @param string $category Category to filter by
+     * @return IntegrationCollection
+     */
+    public function filterByCategory(string $category): IntegrationCollection
+    {
+        return new self(
+            array_filter($this->items, fn(Integration $integration) => $integration->category === $category),
+            $this->meta
+        );
+    }
 }

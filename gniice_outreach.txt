@@ -1,0 +1,28 @@
+Hi GNiice,
+
+I'm excited to share that your specialized AI recruitment toolkit is now live and ready to use! Based on our conversations about scaling your Kaizen recruitment pipeline and lead generation needs, I've built out a complete system for you.
+
+Here's what's ready for you:
+
+1. AI Recruiter Assistant Agent
+This intelligent agent is specifically designed for recruitment workflows. It can help you generate boolean search queries, craft outreach messages, and qualify candidates for your Kaizen roles.
+
+2. IRIS AI SDK - Complete Setup Script for Recruiter Tools
+A one-click installer that sets up your entire local development environment with all the recruitment automation tools we discussed. This gives you the power to run AI-driven lead generation and candidate sourcing directly from your machine.
+
+3. IRIS AI SDK - One-Click Installer
+The core SDK installer that unlocks access to all our AI capabilities, including the newsletter generation, email marketing automation, and market research tools we talked about for your CreativeGs business.
+
+These tools are designed to help you:
+- Automate candidate sourcing for your recruitment pipeline
+- Generate targeted content for your marketing services
+- Scale your lead generation without manual effort
+- Build the automated marketing funnel you outlined (TypeForm → Email Segmentation → Newsletter → Conversion)
+
+You can access everything using the links below. I'd love to set up a quick demo to show you how to use the Recruiter Assistant and SDK tools to find candidates for your next Kaizen role.
+
+Let me know when you have 15 minutes to connect!
+
+Best,
+Alex Mayo
+alex@freelabel.net

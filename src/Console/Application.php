@@ -7,6 +7,7 @@ use IRIS\SDK\Console\Commands\SDKCommand;
 use IRIS\SDK\Console\Commands\ChatCommand;
 use IRIS\SDK\Console\Commands\ConfigCommand;
 use IRIS\SDK\Console\Commands\ToolsCommand;
+use IRIS\SDK\Console\Commands\IntegrationsCommand;
 
 class Application extends BaseApplication
 {
@@ -19,6 +20,7 @@ class Application extends BaseApplication
             new ChatCommand(),
             new ConfigCommand(),
             new ToolsCommand(),
+            new IntegrationsCommand(),
         ]);
     }
 }

@@ -1,0 +1,28 @@
+Hi Tha Juan,
+
+Great news! Your AI Receptionist for Tha Juan Braid N Loc Shop is now live and ready for you to start testing.
+
+Here's what we've built for you:
+
+**Tha Juan Braid Shop - AI Receptionist**
+Your specialized AI assistant that integrates with your VAGARO booking system. This agent can help answer customer questions, provide information about your services, and assist with appointment scheduling.
+
+The AI Receptionist is currently in beta testing mode. We've built the core functionality and VAGARO integration, and we're deploying some UI enhancements in the morning to make the experience even better.
+
+**Next Steps:**
+I'd love to schedule a quick training session with you (15-20 minutes) where we can:
+- Walk through how to use the AI Receptionist
+- Train it on your specific services, pricing, and scheduling preferences
+- Show you how it integrates with your VAGARO system
+- Answer any questions you have
+
+You can access the AI Receptionist using the link below and start exploring it. Just keep in mind we'll be making some improvements to the interface tomorrow morning.
+
+When would be a good time this week for a quick training call? I'm flexible and can work around your schedule.
+
+Looking forward to getting this fully customized for your business!
+
+Best,
+Alex Mayo
+alex@freelabel.net
+(214) 400-4503

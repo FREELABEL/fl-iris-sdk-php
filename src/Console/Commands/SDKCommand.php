@@ -341,6 +341,21 @@ class SDKCommand extends Command
             $decoded = json_decode($value, true);
             if (json_last_error() === JSON_ERROR_NONE) return $decoded;
         }
+        if (is_string($value) && strpos($value, '@') === 0) {
+            $filePath = substr($value, 1);
+            // Handle both absolute and relative paths
+            if (!file_exists($filePath)) {
+                // Try relative to current working directory
+                $relative = getcwd() . '/' . $filePath;
+                if (file_exists($relative)) {
+                    $filePath = $relative;
+                }
+            }
+            
+            if (file_exists($filePath) && is_readable($filePath)) {
+                return file_get_contents($filePath);
+            }
+        }
         return $value;
     }
     

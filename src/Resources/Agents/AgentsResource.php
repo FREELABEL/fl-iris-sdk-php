@@ -62,6 +62,23 @@ class AgentsResource
     }
 
     /**
+     * Search for agents by name or description.
+     *
+     * @param string $search Search query
+     * @param array $options Additional options
+     * @return AgentCollection
+     * 
+     * @example
+     * ```php
+     * $agents = $iris->agents->search('Polly');
+     * ```
+     */
+    public function search(string $search, array $options = []): AgentCollection
+    {
+        return $this->list(array_merge(['search' => $search], $options));
+    }
+
+    /**
      * Get a specific agent by ID.
      *
      * @param int|string $agentId Agent ID

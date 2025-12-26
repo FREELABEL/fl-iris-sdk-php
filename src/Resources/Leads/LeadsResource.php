@@ -174,6 +174,8 @@ class LeadsResource
     /**
      * Create a new lead.
      *
+     * NOTE: price_bid is in DOLLARS (650 = $650.00), NOT cents like invoice price.
+     *
      * @param array{
      *     name: string,
      *     email?: string,
@@ -184,8 +186,9 @@ class LeadsResource
      *     stage_id?: int,
      *     tags?: array,
      *     custom_fields?: array,
-     *     notes?: string
-     * } $data Lead data
+     *     notes?: string,
+     *     price_bid?: float
+     * } $data Lead data (price_bid in DOLLARS, not cents!)
      * @return Lead
      */
     public function create(array $data): Lead
@@ -198,8 +201,10 @@ class LeadsResource
     /**
      * Update an existing lead.
      *
+     * NOTE: price_bid is in DOLLARS (650 = $650.00), NOT cents like invoice price.
+     *
      * @param int $leadId Lead ID
-     * @param array $data Update data
+     * @param array $data Update data (price_bid in DOLLARS, not cents!)
      * @return Lead
      */
     public function update(int $leadId, array $data): Lead
@@ -722,8 +727,9 @@ class LeadsResource
      * $invoices = $iris->leads->invoices(16)->list();
      *
      * // Create an invoice
+     * // NOTE: Invoice price is in CENTS (25000 = $250.00)
      * $invoice = $iris->leads->invoices(16)->create([
-     *     'price' => 25000,  // $250.00
+     *     'price' => 25000,  // $250.00 (in CENTS!)
      *     'description' => 'AI Agent Development',
      * ]);
      *
