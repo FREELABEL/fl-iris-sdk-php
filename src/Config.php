@@ -27,12 +27,12 @@ class Config
     /**
      * Base URL for the IRIS API (V5 workflows)
      */
-    public string $irisUrl = 'https://iris.freelabel.net';
+    public string $irisUrl = 'https://heyiris.io';
 
     /**
      * Base URL for FL-API (leads, deliverables, etc.)
      */
-    public string $flApiUrl = 'https://raichu.freelabel.net';
+    public string $flApiUrl = 'https://apiv2.heyiris.io';
 
     /**
      * Request timeout in seconds
@@ -200,9 +200,11 @@ class Config
                 $config['fl_api_url'] = $env['FL_API_LOCAL_URL'] ?? 'https://local.raichu.freelabel.net';
             } else {
                 // Production URLs
+                // IRIS API (V5 workflows, chat) runs at heyiris.io
+                // FL-API (leads, deliverables) runs at apiv2.heyiris.io
                 $config['base_url'] = $env['IRIS_API_URL'] ?? 'https://apiv2.heyiris.io';
-                $config['iris_url'] = $env['IRIS_API_URL'] ?? 'https://apiv2.heyiris.io';
-                $config['fl_api_url'] = $env['FL_API_URL'] ?? 'https://raichu.freelabel.net';
+                $config['iris_url'] = $env['IRIS_URL'] ?? 'https://heyiris.io';
+                $config['fl_api_url'] = $env['FL_API_URL'] ?? $env['IRIS_API_URL'] ?? 'https://apiv2.heyiris.io';
             }
             
             // Optional fields

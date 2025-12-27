@@ -80,7 +80,7 @@ IRIS_ENV=production
 # Production API URLs
 # ========================================
 # IRIS API - agents, chat, workflows, bloqs
-IRIS_API_URL=https://iris-api.freelabel.net
+IRIS_API_URL=https://heyiris.io
 
 # FL-API - leads, deliverables, profiles, services
 FL_API_URL=https://apiv2.heyiris.io
