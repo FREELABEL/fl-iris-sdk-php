@@ -15,7 +15,14 @@ composer install
 Run the interactive setup:
 
 ```bash
+# Option 1: Direct execution
+php bin/iris setup
+
+# Option 2: If executable bit is set
 ./iris setup
+
+# Option 3: Via composer (after global install)
+iris setup
 ```
 
 Follow the prompts to:
@@ -30,29 +37,33 @@ That's it! Your `.env` file is now configured.
 ### Chat with an Agent
 
 ```bash
+# Option 1: Direct execution (always works)
+php bin/iris chat
+
+# Option 2: If executable bit is set
 ./iris chat
 ```
 
 ### List Your Agents
 
 ```bash
-./iris agents
+php bin/iris agents
 ```
 
 ### Manage Knowledge Bases
 
 ```bash
 # List knowledge bases
-./iris memory:list
+php bin/iris memory:list
 
 # View details
-./iris memory:show 42
+php bin/iris memory:show 42
 
 # Add content
-./iris memory:add 42 --text="Your content here" --title="Title"
+php bin/iris memory:add 42 --text="Your content here" --title="Title"
 
 # AI-powered setup
-./iris memory:compose
+php bin/iris memory:compose
 ```
 
 ## Manual Setup (Alternative)
@@ -101,12 +112,14 @@ echo $response['message'];
 
 | Command | Description |
 |---------|-------------|
-| `./iris setup` | Interactive authentication setup |
-| `./iris chat` | Start chat session |
-| `./iris agents` | List available agents |
-| `./iris memory:list` | List knowledge bases |
-| `./iris memory:compose` | AI-powered KB creation |
-| `./iris config:show` | View configuration |
+| `php bin/iris setup` | Interactive authentication setup |
+| `php bin/iris chat` | Start chat session |
+| `php bin/iris agents` | List available agents |
+| `php bin/iris memory:list` | List knowledge bases |
+| `php bin/iris memory:compose` | AI-powered KB creation |
+| `php bin/iris config:show` | View configuration |
+
+**Note:** All commands can be run with `php bin/iris <command>` or `./iris <command>` (if executable).
 
 ## Need Help?
 

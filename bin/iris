@@ -23,7 +23,7 @@ if (!file_exists($envPath) && !$runningSetup) {
     echo "⚠️  No .env configuration file found.\n";
     echo "\n";
     echo "To get started, run the interactive setup:\n";
-    echo "  \033[36m./iris setup\033[0m\n";
+    echo "  \033[36mphp bin/iris setup\033[0m\n";
     echo "\n";
     echo "Or manually create a .env file with:\n";
     echo "  IRIS_API_URL=https://apiv2.heyiris.io\n";
