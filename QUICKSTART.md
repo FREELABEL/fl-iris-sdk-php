@@ -15,13 +15,16 @@ composer install
 Run the interactive setup:
 
 ```bash
-# Option 1: Direct execution
+# Option 1: Using npm (recommended - shortest command)
+npm run setup
+
+# Option 2: Direct execution
 php bin/iris setup
 
-# Option 2: If executable bit is set
+# Option 3: If executable bit is set
 ./iris setup
 
-# Option 3: Via composer (after global install)
+# Option 4: Via composer (after global install)
 iris setup
 ```
 
@@ -37,16 +40,23 @@ That's it! Your `.env` file is now configured.
 ### Chat with an Agent
 
 ```bash
-# Option 1: Direct execution (always works)
+# Option 1: Using npm
+npm run chat
+
+# Option 2: Direct execution
 php bin/iris chat
 
-# Option 2: If executable bit is set
+# Option 3: If executable bit is set
 ./iris chat
 ```
 
 ### List Your Agents
 
 ```bash
+# Using npm
+npm run agents
+
+# Or directly
 php bin/iris agents
 ```
 
@@ -54,16 +64,20 @@ php bin/iris agents
 
 ```bash
 # List knowledge bases
-php bin/iris memory:list
+npm run memory:list
+# or: php bin/iris memory:list
 
 # View details
-php bin/iris memory:show 42
+npm run memory:show 42
+# or: php bin/iris memory:show 42
 
 # Add content
-php bin/iris memory:add 42 --text="Your content here" --title="Title"
+npm run memory:add 42 --text="Your content here" --title="Title"
+# or: php bin/iris memory:add 42 --text="Your content here" --title="Title"
 
 # AI-powered setup
-php bin/iris memory:compose
+npm run memory:compose
+# or: php bin/iris memory:compose
 ```
 
 ## Manual Setup (Alternative)
@@ -110,16 +124,16 @@ echo $response['message'];
 
 ## Common Commands
 
-| Command | Description |
-|---------|-------------|
-| `php bin/iris setup` | Interactive authentication setup |
-| `php bin/iris chat` | Start chat session |
-| `php bin/iris agents` | List available agents |
-| `php bin/iris memory:list` | List knowledge bases |
-| `php bin/iris memory:compose` | AI-powered KB creation |
-| `php bin/iris config:show` | View configuration |
+| NPM Command | Direct Command | Description |
+|-------------|----------------|-------------|
+| `npm run setup` | `php bin/iris setup` | Interactive authentication setup |
+| `npm run chat` | `php bin/iris chat` | Start chat session |
+| `npm run agents` | `php bin/iris agents` | List available agents |
+| `npm run memory:list` | `php bin/iris memory:list` | List knowledge bases |
+| `npm run memory:compose` | `php bin/iris memory:compose` | AI-powered KB creation |
+| `npm run config:show` | `php bin/iris config:show` | View configuration |
 
-**Note:** All commands can be run with `php bin/iris <command>` or `./iris <command>` (if executable).
+**Tip:** Use `npm run <command>` for shorter commands, or `php bin/iris <command>` for direct execution.
 
 ## Need Help?
 
@@ -129,7 +143,7 @@ echo $response['message'];
 
 ## What's Next?
 
-1. **Create Knowledge Bases**: Use `./iris memory:compose` to let AI analyze your files
+1. **Create Knowledge Bases**: Use `npm run memory:compose` to let AI analyze your files
 2. **Build Agents**: Visit https://app.heyiris.io to create custom AI agents
 3. **Integrate**: Use the SDK in your PHP applications
 
