@@ -12,6 +12,7 @@ use IRIS\SDK\Console\Commands\MemoryComposeCommand;
 use IRIS\SDK\Console\Commands\MemoryListCommand;
 use IRIS\SDK\Console\Commands\MemoryShowCommand;
 use IRIS\SDK\Console\Commands\MemoryAddCommand;
+use IRIS\SDK\Console\Commands\SetupCommand;
 
 class Application extends BaseApplication
 {
@@ -20,6 +21,7 @@ class Application extends BaseApplication
         parent::__construct('IRIS SDK', '1.0.0');
 
         $this->addCommands([
+            new SetupCommand(),
             new SDKCommand(),
             new ChatCommand(),
             new ConfigCommand(),
