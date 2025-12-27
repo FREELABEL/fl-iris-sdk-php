@@ -135,15 +135,18 @@ class SetupCommand extends Command
             $output->writeln('');
             $output->writeln('<info>Authenticating...</info>');
             
-            // Attempt login
+            // Attempt login with SDK token generation
             try {
                 $client = new Client(['base_uri' => $apiUrl, 'timeout' => 30]);
                 
-                // First, try to login and get OAuth token
+                // Login and request SDK token generation in one call
                 $response = $client->post('/api/v1/auth/login', [
                     'json' => [
                         'email' => $email,
-                        'password' => $password
+                        'password' => $password,
+                        'generate_sdk_token' => true,
+                        'sdk_token_name' => 'SDK Token - ' . date('Y-m-d H:i:s'),
+                        'sdk_token_expires_days' => 365
                     ],
                     'headers' => [
                         'Accept' => 'application/json',
@@ -153,40 +156,25 @@ class SetupCommand extends Command
                 
                 $data = json_decode($response->getBody(), true);
                 
-                if (isset($data['access_token'])) {
-                    // Got OAuth token, now create an API token for SDK use
-                    $accessToken = $data['access_token'];
-                    $userId = $data['user']['id'] ?? null;
+                // Check for success response with SDK token
+                if (isset($data['success']) && $data['success'] === true) {
+                    $userId = $data['data']['user']['id'] ?? null;
                     
                     $output->writeln('<info>✓ Login successful</info>');
-                    $output->writeln('<info>Creating API token for SDK use...</info>');
                     
-                    // Create API token
-                    $tokenResponse = $client->post('/api/v1/user/api-tokens', [
-                        'json' => [
-                            'name' => 'SDK Token - ' . date('Y-m-d H:i:s'),
-                            'expires_at' => date('Y-m-d H:i:s', strtotime('+1 year'))
-                        ],
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Content-Type' => 'application/json',
-                            'Authorization' => 'Bearer ' . $accessToken
-                        ]
-                    ]);
-                    
-                    $tokenData = json_decode($tokenResponse->getBody(), true);
-                    
-                    if (isset($tokenData['token']) || isset($tokenData['data']['token'])) {
-                        $apiKey = $tokenData['token'] ?? $tokenData['data']['token'];
-                        $output->writeln('<info>✓ API token created successfully</info>');
+                    // Check if SDK token was generated
+                    if (isset($data['data']['sdk_token']['key'])) {
+                        $apiKey = $data['data']['sdk_token']['key'];
+                        $output->writeln('<info>✓ API token generated successfully</info>');
                     } else {
-                        // Fallback: use OAuth token
-                        $apiKey = $accessToken;
-                        $output->writeln('<comment>⚠️  Using OAuth token (API token creation unavailable)</comment>');
+                        $output->writeln('<error>✗ SDK token was not generated in response</error>');
+                        $output->writeln('<comment>Response: ' . json_encode($data) . '</comment>');
+                        return Command::FAILURE;
                     }
                     
                 } else {
-                    $output->writeln('<error>✗ Login failed: Invalid response format</error>');
+                    $errorMsg = $data['error'] ?? $data['message'] ?? 'Unknown error';
+                    $output->writeln("<error>✗ Login failed: {$errorMsg}</error>");
                     return Command::FAILURE;
                 }
                 
