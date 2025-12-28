@@ -87,7 +87,7 @@ class CredentialStore
         // IRIS URL - use local or production
         $irisUrl = $isLocal
             ? $this->getEnv('IRIS_LOCAL_URL', 'https://local.iris.freelabel.net')
-            : $this->getEnv('IRIS_API_URL', 'https://iris-api.freelabel.net');
+            : $this->getEnv('IRIS_URL', 'https://heyiris.io');
 
         $this->credentials['iris_url'] = $irisUrl;
 

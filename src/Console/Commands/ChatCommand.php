@@ -221,7 +221,13 @@ HELP
                 $output->write("\r\033[K");
             }
 
-            $io->error($e->getMessage());
+            $io->error([
+                'Chat Error:',
+                $e->getMessage(),
+                '',
+                'Error Type: ' . get_class($e),
+                'Code: ' . $e->getCode(),
+            ]);
 
             if ($output->isVerbose()) {
                 $io->text($e->getTraceAsString());
