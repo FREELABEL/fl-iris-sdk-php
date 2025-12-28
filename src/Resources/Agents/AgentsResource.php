@@ -7,6 +7,7 @@ namespace IRIS\SDK\Resources\Agents;
 use IRIS\SDK\Config;
 use IRIS\SDK\Http\Client;
 use IRIS\SDK\Resources\Workflows\WorkflowRun;
+use IRIS\SDK\Resources\Agents\AgentTemplates;
 
 /**
  * Agents Resource
@@ -110,7 +111,124 @@ class AgentsResource
     }
 
     /**
-     * Create a new agent from array (simplified API).
+     * Create an agent from a template.
+     * 
+     * Use pre-built templates for common agent types. Templates include
+     * prompts, schedules, integrations, and settings optimized for specific use cases.
+     *
+     * @param string $template Template name ('elderly-care', 'customer-support', 'sales-assistant', 'research-agent')
+     * @param array $customizations Override any template values
+     * @return Agent
+     * 
+     * @example Create elderly care agent with custom name
+     * ```php
+     * $agent = $iris->agents->createFromTemplate('elderly-care', [
+     *     'name' => 'Grandma Helper',
+     *     'settings' => [
+     *         'schedule' => [
+     *             'timezone' => 'America/Chicago',
+     *             'recurring_tasks' => [
+     *                 ['name' => 'Morning Meds', 'time' => '07:30'],
+     *                 ['name' => 'Evening Meds', 'time' => '19:00']
+     *             ]
+     *         ]
+     *     ]
+     * ]);
+     * ```
+     */
+    public function createFromTemplate(string $template, array $customizations = []): Agent
+    {
+        // Get template configuration
+        $config = AgentTemplates::get($template);
+        
+        // Deep merge customizations
+        $config = $this->deepMerge($config, $customizations);
+        
+        // Create agent with merged config
+        return $this->createFromConfig($config);
+    }
+
+    /**
+     * List all available templates.
+     *
+     * @return array Template names and descriptions
+     */
+    public function listTemplates(): array
+    {
+        $templates = AgentTemplates::all();
+        $list = [];
+        
+        foreach ($templates as $name => $config) {
+            $list[$name] = [
+                'name' => $config['name'],
+                'description' => $config['description'] ?? '',
+                'icon' => $config['icon'] ?? 'fas fa-robot'
+            ];
+        }
+        
+        return $list;
+    }
+
+    /**
+     * Deep merge arrays recursively.
+     *
+     * @param array $base Base array
+     * @param array $override Override array
+     * @return array Merged array
+     */
+    protected function deepMerge(array $base, array $override): array
+    {
+        foreach ($override as $key => $value) {
+            if (is_array($value) && isset($base[$key]) && is_array($base[$key])) {
+                $base[$key] = $this->deepMerge($base[$key], $value);
+            } else {
+                $base[$key] = $value;
+            }
+        }
+        
+        return $base;
+    }
+
+    /**
+     * Create an agent from a template.
+     * 
+     * Use pre-built templates for common agent types. Templates include
+     * prompts, schedules, integrations, and settings optimized for specific use cases.
+     *
+     * @param string $template Template name ('elderly-care', 'customer-support', 'sales-assistant', 'research-agent')
+     * @param array $customizations Override any template values
+     * @return Agent
+     * 
+     * @example Create elderly care agent with custom name
+     * ```php
+     * $agent = $iris->agents->createFromTemplate('elderly-care', [
+     *     'name' => 'Grandma Helper',
+     *     'settings' => [
+     *         'schedule' => [
+     *             'timezone' => 'America/Chicago',
+     *             'recurring_tasks' => [
+     *                 ['name' => 'Morning Meds', 'time' => '07:30'],
+     * Deep merge arrays recursively.
+     *
+     * @param array $base Base array
+     * @param array $override Override array
+     * @return array Merged array
+     */
+    protected function deepMerge(array $base, array $override): array
+    {
+        foreach ($override as $key => $value) {
+            if (is_array($value) && isset($base[$key]) && is_array($base[$key])) {
+                $base[$key] = $this->deepMerge($base[$key], $value);
+            } else {
+                $base[$key] = $value;
+            }
+        }
+        
+        return $base;
+    }
+
+    /**
+     * Create an agent from array (simplified API).
      * 
      * This method accepts a simple array and handles AgentConfig creation internally.
      * Perfect for CLI usage and quick agent creation.
@@ -422,6 +540,278 @@ class AgentsResource
         ]);
 
         return new ChatResponse($response);
+    }
+
+    /**
+     * Create an agent with full configuration (unified API).
+     * 
+     * This method exposes the complete API configuration including schedules,
+     * integrations, and settings in a single call. Perfect for complex setups.
+     *
+     * @param array $config Full agent configuration
+     * @return Agent
+     * 
+     * @example Create elderly care agent with scheduling
+     * ```php
+     * $agent = $iris->agents->createFromConfig([
+     *     'name' => 'Grandma Helper',
+     *     'initial_prompt' => 'You are a caring assistant...',
+     *     'type' => 'content',
+     *     'config' => [
+     *         'model' => 'gpt-4o-mini',
+     *         'temperature' => 0.7
+     *     ],
+     *     'settings' => [
+     *         'schedule' => [
+     *             'enabled' => true,
+     *             'timezone' => 'America/New_York',
+     *             'recurring_tasks' => [
+     *                 ['name' => 'Morning Medication', 'time' => '08:00', 'message' => 'Time for your morning meds'],
+     *                 ['name' => 'Evening Check-in', 'time' => '21:00', 'message' => 'Good evening! How are you feeling?']
+     *             ]
+     *         ],
+     *         'agentIntegrations' => [
+     *             'gmail' => true,
+     *             'google-calendar' => true,
+     *             'slack' => false
+     *         ],
+     *         'enabledFunctions' => [
+     *             'manageLeads' => true,
+     *             'deepResearch' => false
+     *         ]
+     *     ]
+     * ]);
+     * ```
+     */
+    public function createFromConfig(array $config): Agent
+    {
+        $userId = $this->config->requireUserId();
+        
+        // Ensure type is set
+        if (!isset($config['type'])) {
+            $config['type'] = 'content';
+        }
+        
+        $response = $this->http->post(
+            "/api/v1/users/{$userId}/bloqs/agents",
+            $config
+        );
+
+        return new Agent($response['data'] ?? $response);
+    }
+
+    /**
+     * Update agent with full configuration.
+     * 
+     * Updates an existing agent with complete configuration including
+     * schedules, integrations, and all settings.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $config Full configuration to update
+     * @return Agent
+     */
+    public function updateFullConfig(int|string $agentId, array $config): Agent
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->put(
+            "/api/v1/users/{$userId}/bloqs/agents/{$agentId}",
+            $config
+        );
+
+        return new Agent($response['data'] ?? $response);
+    }
+
+    /**
+     * Get agent schedule configuration.
+     *
+     * @param int|string $agentId Agent ID
+     * @return array Schedule configuration
+     */
+    public function getSchedule(int|string $agentId): array
+    {
+        $agent = $this->get($agentId);
+        return $agent->settings['schedule'] ?? [];
+    }
+
+    /**
+     * Set agent schedule with recurring tasks.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $schedule Schedule configuration
+     * @return Agent Updated agent
+     * 
+     * @example Set medication reminders
+     * ```php
+     * $agent = $iris->agents->setSchedule(335, [
+     *     'enabled' => true,
+     *     'timezone' => 'America/Chicago',
+     *     'recurring_tasks' => [
+     *         ['name' => 'Morning Meds', 'time' => '08:00', 'message' => 'Time for medications'],
+     *         ['name' => 'Lunch Meds', 'time' => '12:00', 'message' => 'Lunch medication reminder'],
+     *         ['name' => 'Evening Meds', 'time' => '18:00', 'message' => 'Evening medications'],
+     *         ['name' => 'Bedtime Meds', 'time' => '21:00', 'message' => 'Bedtime medications']
+     *     ]
+     * ]);
+     * ```
+     */
+    public function setSchedule(int|string $agentId, array $schedule): Agent
+    {
+        $agent = $this->get($agentId);
+        $settings = $agent->settings ?? [];
+        $settings['schedule'] = $schedule;
+        
+        return $this->patch($agentId, ['settings' => $settings]);
+    }
+
+    /**
+     * Add a recurring task to agent schedule.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $task Task configuration
+     * @return Agent Updated agent
+     * 
+     * @example Add single reminder
+     * ```php
+     * $agent = $iris->agents->addScheduledTask(335, [
+     *     'name' => 'Afternoon Water Reminder',
+     *     'time' => '15:00',
+     *     'message' => 'Time to drink some water!'
+     * ]);
+     * ```
+     */
+    public function addScheduledTask(int|string $agentId, array $task): Agent
+    {
+        $schedule = $this->getSchedule($agentId);
+        $tasks = $schedule['recurring_tasks'] ?? [];
+        $tasks[] = $task;
+        
+        $schedule['recurring_tasks'] = $tasks;
+        if (!isset($schedule['enabled'])) {
+            $schedule['enabled'] = true;
+        }
+        
+        return $this->setSchedule($agentId, $schedule);
+    }
+
+    /**
+     * Remove a scheduled task by name.
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $taskName Name of task to remove
+     * @return Agent Updated agent
+     */
+    public function removeScheduledTask(int|string $agentId, string $taskName): Agent
+    {
+        $schedule = $this->getSchedule($agentId);
+        $tasks = $schedule['recurring_tasks'] ?? [];
+        
+        $tasks = array_filter($tasks, fn($task) => ($task['name'] ?? '') !== $taskName);
+        $schedule['recurring_tasks'] = array_values($tasks);
+        
+        return $this->setSchedule($agentId, $schedule);
+    }
+
+    /**
+     * Get agent integrations configuration.
+     *
+     * @param int|string $agentId Agent ID
+     * @return array Integrations status
+     */
+    public function getIntegrations(int|string $agentId): array
+    {
+        $agent = $this->get($agentId);
+        return $agent->settings['agentIntegrations'] ?? [];
+    }
+
+    /**
+     * Enable/disable agent integrations.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $integrations Integrations to enable/disable
+     * @return Agent Updated agent
+     * 
+     * @example Enable Gmail and Google Calendar
+     * ```php
+     * $agent = $iris->agents->setIntegrations(335, [
+     *     'gmail' => true,
+     *     'google-calendar' => true,
+     *     'slack' => false,
+     *     'google-drive' => true
+     * ]);
+     * ```
+     */
+    public function setIntegrations(int|string $agentId, array $integrations): Agent
+    {
+        $agent = $this->get($agentId);
+        $settings = $agent->settings ?? [];
+        $settings['agentIntegrations'] = $integrations;
+        
+        return $this->patch($agentId, ['settings' => $settings]);
+    }
+
+    /**
+     * Enable a single integration.
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $integration Integration name (e.g., 'gmail', 'slack')
+     * @return Agent Updated agent
+     */
+    public function enableIntegration(int|string $agentId, string $integration): Agent
+    {
+        $integrations = $this->getIntegrations($agentId);
+        $integrations[$integration] = true;
+        return $this->setIntegrations($agentId, $integrations);
+    }
+
+    /**
+     * Disable a single integration.
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $integration Integration name
+     * @return Agent Updated agent
+     */
+    public function disableIntegration(int|string $agentId, string $integration): Agent
+    {
+        $integrations = $this->getIntegrations($agentId);
+        $integrations[$integration] = false;
+        return $this->setIntegrations($agentId, $integrations);
+    }
+
+    /**
+     * Get enabled functions for agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @return array Enabled functions
+     */
+    public function getEnabledFunctions(int|string $agentId): array
+    {
+        $agent = $this->get($agentId);
+        return $agent->settings['enabledFunctions'] ?? [];
+    }
+
+    /**
+     * Set enabled functions for agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $functions Functions to enable/disable
+     * @return Agent Updated agent
+     * 
+     * @example Enable lead management
+     * ```php
+     * $agent = $iris->agents->setEnabledFunctions(335, [
+     *     'manageLeads' => true,
+     *     'deepResearch' => false,
+     *     'marketResearch' => true
+     * ]);
+     * ```
+     */
+    public function setEnabledFunctions(int|string $agentId, array $functions): Agent
+    {
+        $agent = $this->get($agentId);
+        $settings = $agent->settings ?? [];
+        $settings['enabledFunctions'] = $functions;
+        
+        return $this->patch($agentId, ['settings' => $settings]);
     }
 
     /**
