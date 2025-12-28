@@ -718,7 +718,51 @@ $response = $iris->agents->chat($agent->id, [
 ]);
 ```
 
-📖 [Full Agent Documentation](TECHNICAL.md#-ai-agents)
+**Quick Start with Templates:**
+
+```php
+// Create a fully-configured agent in seconds using built-in templates
+$agent = $iris->agents->createFromTemplate('elderly-care', [
+    'name' => 'Care Assistant for Mom',
+    'medication_times' => ['08:00', '12:00', '18:00', '22:00'],
+    'timezone' => 'America/New_York',
+]);
+
+// Templates automatically configure:
+// ✓ Personality & communication style
+// ✓ Integrations (gmail, calendar, etc.)
+// ✓ Recurring schedules (medication reminders, check-ins)
+// ✓ Voice settings (optimized speaking rate)
+// ✓ Memory persistence & context window
+
+// Available templates: elderly-care, customer-support, sales-assistant,
+//                      research-agent, educational-tutor, leadership-coach
+
+// Or create with full custom configuration:
+$agent = $iris->agents->createFromConfig([
+    'name' => 'Custom Assistant',
+    'prompt' => 'Your custom instructions...',
+    'settings' => [
+        'agentIntegrations' => ['gmail' => true, 'slack' => true],
+        'enabledFunctions' => ['manageLeads' => true, 'deepResearch' => true],
+        'schedule' => [
+            'enabled' => true,
+            'timezone' => 'UTC',
+            'recurring_tasks' => [
+                [
+                    'time' => '09:00',
+                    'frequency' => 'daily',
+                    'message' => 'Daily briefing',
+                    'channels' => ['sms', 'email'],
+                ],
+            ],
+        ],
+        'voiceSettings' => ['language' => 'en-US', 'speaking_rate' => 1.0],
+    ],
+]);
+```
+
+📖 [Full Agent Documentation](TECHNICAL.md#-ai-agents) | [Agent Configuration Guide](AGENT_CONFIGURATION_GUIDE.md)
 
 ---
 

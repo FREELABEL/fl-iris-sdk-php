@@ -1519,6 +1519,407 @@ $agent = $iris->agents->clearFileAttachments(335);
 ./bin/iris sdk:call agents.clearFileAttachments 335
 ```
 
+#### Advanced Agent Configuration
+
+**⚡ Quick Start with Templates**
+
+Create fully-configured agents in seconds using built-in templates:
+
+```php
+// Elderly Care Assistant (medication reminders, daily check-ins)
+$agent = $iris->agents->createFromTemplate('elderly-care', [
+    'name' => 'Care Assistant for Mom',
+    'medication_times' => ['08:00', '12:00', '18:00', '22:00'],
+    'timezone' => 'America/New_York',
+]);
+
+// Customer Support (helpdesk automation)
+$agent = $iris->agents->createFromTemplate('customer-support', [
+    'name' => 'Support Bot',
+    'knowledge_base_id' => 123,
+]);
+
+// Sales Assistant (lead management, CRM automation)
+$agent = $iris->agents->createFromTemplate('sales-assistant', [
+    'name' => 'Sales AI',
+]);
+
+// Research Agent (deep research, documentation)
+$agent = $iris->agents->createFromTemplate('research-agent', [
+    'name' => 'Research Assistant',
+]);
+
+// Educational Tutor (personalized learning, homework help)
+$agent = $iris->agents->createFromTemplate('educational-tutor', [
+    'name' => 'Math Tutor',
+    'subject' => 'Mathematics',
+    'grade_level' => '8th Grade',
+]);
+
+// Leadership Coach (executive coaching, professional development)
+$agent = $iris->agents->createFromTemplate('leadership-coach', [
+    'name' => 'Executive Coach',
+]);
+```
+
+**List Available Templates:**
+
+```php
+// Get all template names
+$templates = $iris->agents->listTemplates();
+// → ['elderly-care', 'customer-support', 'sales-assistant', 'research-agent', 'educational-tutor', 'leadership-coach']
+
+// Get template details
+$template = $iris->agents->getTemplate('elderly-care');
+echo $template->getName();        // "Elderly Care Assistant"
+echo $template->getDescription(); // "Compassionate AI assistant for elderly care..."
+
+// View default configuration
+$config = $template->getDefaultConfig();
+print_r($config);
+```
+
+**Custom Configuration (Full Control):**
+
+```php
+use IRIS\SDK\Resources\Agents\AgentSettings;
+use IRIS\SDK\Resources\Agents\AgentScheduleConfig;
+
+// Create agent with comprehensive settings
+$agent = $iris->agents->createFromConfig([
+    'name' => 'Custom Assistant',
+    'prompt' => 'You are a helpful assistant...',
+    'model' => 'gpt-4o-mini',
+    'bloq_id' => 40,
+    'settings' => [
+        'agentIntegrations' => [
+            'gmail' => true,
+            'google-calendar' => true,
+            'slack' => true,
+        ],
+        'enabledFunctions' => [
+            'manageLeads' => true,
+            'deepResearch' => true,
+        ],
+        'schedule' => [
+            'enabled' => true,
+            'timezone' => 'America/Los_Angeles',
+            'recurring_tasks' => [
+                [
+                    'time' => '09:00',
+                    'frequency' => 'daily',
+                    'message' => 'Daily morning briefing',
+                    'channels' => ['sms', 'email'],
+                ],
+                [
+                    'time' => '14:00',
+                    'frequency' => 'weekly',
+                    'day_of_week' => 'monday',
+                    'message' => 'Weekly status update',
+                    'channels' => ['email'],
+                ],
+            ],
+        ],
+        'voiceSettings' => [
+            'language' => 'en-US',
+            'speaking_rate' => 1.0,
+            'pitch' => 0.0,
+        ],
+        'responseMode' => 'balanced',
+        'communicationStyle' => 'professional',
+        'memoryPersistence' => true,
+        'contextWindow' => 10,
+    ],
+]);
+```
+
+**⚙️ Settings Management**
+
+Get, update, and reset agent settings:
+
+```php
+// Get current settings
+$settings = $iris->agents->getSettings($agentId);
+
+echo "Integrations: " . implode(', ', array_keys(array_filter($settings->agentIntegrations)));
+echo "Functions: " . implode(', ', array_keys(array_filter($settings->enabledFunctions)));
+echo "Response Mode: " . $settings->responseMode;
+echo "Style: " . $settings->communicationStyle;
+
+// Check if integration is enabled
+if ($settings->hasIntegration('gmail')) {
+    echo "Gmail is enabled";
+}
+
+// Update settings (partial update)
+$iris->agents->updateSettings($agentId, [
+    'responseMode' => 'creative',
+    'communicationStyle' => 'friendly',
+    'memoryPersistence' => true,
+]);
+
+// Reset to defaults
+$iris->agents->resetSettings($agentId);
+```
+
+**🔗 Integration Management**
+
+Enable, disable, and test integrations:
+
+```php
+// Get all integration statuses
+$integrations = $iris->agents->getIntegrations($agentId);
+// → ['gmail' => true, 'slack' => false, 'google-drive' => true, ...]
+
+// Enable a single integration
+$iris->agents->enableIntegration($agentId, 'slack');
+
+// Disable a single integration
+$iris->agents->disableIntegration($agentId, 'gmail');
+
+// Bulk set integrations
+$iris->agents->setIntegrations($agentId, [
+    'gmail' => true,
+    'google-calendar' => true,
+    'slack' => true,
+    'google-drive' => false,  // Disable this one
+]);
+
+// Test integration connectivity
+$result = $iris->agents->testIntegration($agentId, 'gmail');
+if ($result['connected']) {
+    echo "Gmail is connected and working";
+} else {
+    echo "Error: " . $result['error'];
+}
+```
+
+**📅 Schedule Management**
+
+Create and manage recurring tasks:
+
+```php
+// Get current schedule configuration
+$schedule = $iris->agents->getSchedule($agentId);
+
+if ($schedule->enabled) {
+    echo "Timezone: {$schedule->timezone}\n";
+    echo "Tasks: " . count($schedule->recurringTasks) . "\n";
+    
+    foreach ($schedule->recurringTasks as $task) {
+        echo "- {$task['time']} ({$task['frequency']}): {$task['message']}\n";
+    }
+}
+
+// Update schedule
+$iris->agents->updateSchedule($agentId, [
+    'enabled' => true,
+    'timezone' => 'America/New_York',
+    'recurring_tasks' => [
+        [
+            'time' => '08:00',
+            'frequency' => 'daily',
+            'message' => 'Morning medication reminder',
+            'channels' => ['sms', 'voice'],
+        ],
+        [
+            'time' => '20:00',
+            'frequency' => 'daily',
+            'message' => 'Evening check-in',
+            'channels' => ['sms'],
+        ],
+    ],
+]);
+
+// Using helper classes for type safety
+use IRIS\SDK\Resources\Agents\AgentScheduleConfig;
+
+$scheduleConfig = new AgentScheduleConfig([
+    'enabled' => true,
+    'timezone' => 'UTC',
+]);
+
+// Add medication reminders
+$scheduleConfig->addRecurringTask([
+    'time' => '09:00',
+    'frequency' => 'daily',
+    'message' => 'Take morning medication',
+    'channels' => ['sms'],
+]);
+
+// Or use helper methods
+$scheduleConfig->medicationReminders(
+    ['08:00', '14:00', '20:00'],
+    ['sms', 'voice']
+);
+
+$scheduleConfig->dailyCheckIn('21:00', ['sms']);
+
+// Apply to agent
+$iris->agents->updateSchedule($agentId, $scheduleConfig->toArray());
+```
+
+**🎨 Using AgentSettings Helper Class**
+
+The `AgentSettings` class provides a fluent interface for building complex configurations:
+
+```php
+use IRIS\SDK\Resources\Agents\AgentSettings;
+
+$settings = new AgentSettings();
+
+// Configure integrations
+$settings->enableIntegration('gmail')
+         ->enableIntegration('google-calendar')
+         ->enableIntegration('slack');
+
+// Enable functions
+$settings->enableFunction('manageLeads')
+         ->enableFunction('deepResearch');
+
+// Configure voice
+$settings->withVoiceSettings([
+    'language' => 'en-US',
+    'speaking_rate' => 0.9,  // Slower for clarity
+]);
+
+// Add schedule
+$settings->withSchedule([
+    'enabled' => true,
+    'timezone' => 'America/New_York',
+    'recurring_tasks' => [
+        [
+            'time' => '09:00',
+            'frequency' => 'daily',
+            'message' => 'Daily briefing',
+            'channels' => ['email'],
+        ],
+    ],
+]);
+
+// Set communication style
+$settings->communicationStyle = 'warm';
+$settings->responseMode = 'balanced';
+$settings->memoryPersistence = true;
+
+// Create agent with these settings
+$agent = $iris->agents->createFromConfig([
+    'name' => 'My Assistant',
+    'prompt' => 'You are helpful...',
+    'settings' => $settings->toArray(),
+]);
+
+// Or update existing agent
+$iris->agents->updateSettings($agentId, $settings->toArray());
+```
+
+**📋 Complete Configuration Example**
+
+Here's a complete example creating an elderly care assistant:
+
+```php
+use IRIS\SDK\Resources\Agents\AgentSettings;
+use IRIS\SDK\Resources\Agents\AgentScheduleConfig;
+
+// Build schedule
+$schedule = new AgentScheduleConfig([
+    'enabled' => true,
+    'timezone' => 'America/New_York',
+]);
+
+$schedule->medicationReminders(['08:00', '12:00', '18:00', '22:00']);
+$schedule->dailyCheckIn('20:00');
+
+// Build settings
+$settings = new AgentSettings();
+$settings->enableIntegration('gmail')
+         ->enableIntegration('google-calendar')
+         ->withVoiceSettings(['speaking_rate' => 0.9])
+         ->withSchedule($schedule->toArray());
+
+$settings->communicationStyle = 'warm';
+$settings->responseMode = 'balanced';
+$settings->memoryPersistence = true;
+
+// Create agent
+$agent = $iris->agents->createFromConfig([
+    'name' => 'Care Assistant for Mom',
+    'prompt' => 'You are a compassionate care assistant helping with daily reminders...',
+    'model' => 'gpt-4o-mini',
+    'bloq_id' => 40,
+    'settings' => $settings->toArray(),
+]);
+
+echo "Created agent #{$agent->id}: {$agent->name}\n";
+echo "Schedule: " . count($schedule->recurringTasks) . " recurring tasks\n";
+```
+
+**🔧 Custom Templates**
+
+Create your own reusable templates:
+
+```php
+use IRIS\SDK\Resources\Agents\AgentTemplate;
+
+class MyCustomTemplate extends AgentTemplate
+{
+    public function getName(): string
+    {
+        return 'My Custom Template';
+    }
+
+    public function getDescription(): string
+    {
+        return 'Custom agent for specific use case';
+    }
+
+    public function getDefaultConfig(): array
+    {
+        return [
+            'name' => 'Custom Agent',
+            'prompt' => 'Default prompt...',
+            'model' => 'gpt-4o-mini',
+            'settings' => [
+                'agentIntegrations' => ['gmail' => true],
+                'responseMode' => 'balanced',
+            ],
+        ];
+    }
+
+    public function build(array $customization = []): array
+    {
+        $config = $this->getDefaultConfig();
+        
+        // Merge customization
+        if (isset($customization['name'])) {
+            $config['name'] = $customization['name'];
+        }
+        
+        return $config;
+    }
+
+    public function validate(array $customization): array
+    {
+        $errors = [];
+        
+        if (empty($customization['name'])) {
+            $errors[] = 'Name is required';
+        }
+        
+        return $errors;
+    }
+}
+
+// Register and use
+$iris->agents->registerTemplate('my-custom', new MyCustomTemplate());
+
+$agent = $iris->agents->createFromTemplate('my-custom', [
+    'name' => 'My Agent',
+]);
+```
+
+📖 [Complete Agent Configuration Guide](AGENT_CONFIGURATION_GUIDE.md)
+
 #### Get Agent URLs (Embed/Share)
 
 Get shareable URLs for your agents. These URLs allow users to interact with your agent directly at **app.heyiris.io**.
