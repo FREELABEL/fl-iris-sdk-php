@@ -318,6 +318,12 @@ Run commands in your terminal for quick actions:
 ### 3. PHP SDK (Code)
 Full programmatic control for building applications:
 ```php
+// Quick start with templates
+$agent = $iris->agents->createFromTemplate('customer-support', [
+    'name' => 'Support Bot'
+]);
+
+// Or full custom configuration
 $agent = $iris->agents->create(new AgentConfig(
     name: 'Support Bot',
     prompt: 'Help customers with product questions',
@@ -325,6 +331,8 @@ $agent = $iris->agents->create(new AgentConfig(
 ```
 
 **Best for:** Developers integrating IRIS into applications
+
+**NEW:** 4 pre-built agent templates reduce setup from 500+ lines to ~50 lines. See [SETUP_EXAMPLES.md](SETUP_EXAMPLES.md).
 
 ### 4. Laravel Integration
 Native Laravel support with Service Provider and Facade:
@@ -441,6 +449,52 @@ $response = $iris->agents->chat(11, [
     ['role' => 'user', 'content' => 'Hello!']
 ]);
 ```
+
+### Quick Start with Agent Templates
+
+**NEW:** Create fully configured agents in seconds using pre-built templates.
+
+```php
+<?php
+use IRIS\SDK\IRIS;
+
+$iris = new IRIS([
+    'api_key' => $_ENV['IRIS_API_KEY'],
+    'user_id' => $_ENV['IRIS_USER_ID'],
+]);
+
+// Create an agent from a template - just 1 line!
+$agent = $iris->agents->createFromTemplate('elderly-care', [
+    'name' => 'Grandma Helper',
+    'settings' => [
+        'schedule' => [
+            'timezone' => 'America/Chicago',
+            'recurring_tasks' => [
+                ['name' => 'Morning Medication', 'time' => '08:00'],
+                ['name' => 'Evening Check-in', 'time' => '21:00']
+            ]
+        ]
+    ]
+]);
+
+echo "Agent created: {$agent->name} (ID: {$agent->id})\n";
+```
+
+**Available templates:**
+- `elderly-care` - Daily reminders, safety monitoring, medication tracking
+- `customer-support` - Professional support with knowledge base integration
+- `sales-assistant` - Lead qualification, meeting scheduling, CRM updates
+- `research-agent` - Deep research with GPT-4 optimization
+
+Each template includes:
+- ✅ Optimized prompts and settings
+- ✅ Pre-configured schedules and recurring tasks
+- ✅ Recommended integrations (Gmail, Calendar, Slack)
+- ✅ Enabled functions (leads, research, etc.)
+
+**See [SETUP_EXAMPLES.md](SETUP_EXAMPLES.md) for complete documentation and all templates.**
+
+---
 
 ### Building an Integration
 
