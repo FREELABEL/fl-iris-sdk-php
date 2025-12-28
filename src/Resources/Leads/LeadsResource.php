@@ -254,7 +254,7 @@ class LeadsResource
      */
     public function updateNote(int $leadId, int $noteId, string $content, array $metadata = []): array
     {
-        return $this->http->put("/api/v1/leads/{$leadId}/notes/{$noteId}", array_merge(
+        return $this->http->patch("/api/v1/leads/{$leadId}/notes/{$noteId}", array_merge(
             ['message' => $content],
             $metadata
         ));
@@ -422,7 +422,7 @@ class LeadsResource
     public function updateTag(int $tagId, array $data): LeadTag
     {
         $userId = $this->config->requireUserId();
-        $response = $this->http->put("/api/v1/user/{$userId}/lead-tags/{$tagId}", $data);
+        $response = $this->http->patch("/api/v1/user/{$userId}/lead-tags/{$tagId}", $data);
 
         return new LeadTag($response);
     }
@@ -482,7 +482,7 @@ class LeadsResource
     public function updateStage(int $stageId, array $data): LeadStage
     {
         $userId = $this->config->requireUserId();
-        $response = $this->http->put("/api/v1/user/{$userId}/lead-stages/{$stageId}", $data);
+        $response = $this->http->patch("/api/v1/user/{$userId}/lead-stages/{$stageId}", $data);
 
         return new LeadStage($response);
     }
@@ -565,7 +565,7 @@ class LeadsResource
      */
     public function setAutoRespond(int $leadId, bool $enabled): bool
     {
-        $this->http->put("/api/v1/leads/{$leadId}/outreach/auto-respond", [
+        $this->http->patch("/api/v1/leads/{$leadId}/outreach/auto-respond", [
             'enabled' => $enabled,
         ]);
 

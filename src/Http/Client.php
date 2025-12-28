@@ -163,7 +163,23 @@ class Client
      */
     public function patch(string $endpoint, array $data = []): array
     {
-        return $this->request('PATCH', $endpoint, ['json' => $data]);
+        return $this->request('PATCH', $endpoint, [
+            'json' => $data,
+        ]);
+    }
+
+    /**
+     * Make a PUT request.
+     *
+     * @param string $endpoint API endpoint
+     * @param array $data Request body
+     * @return array Response data
+     */
+    public function put(string $endpoint, array $data = []): array
+    {
+        return $this->request('PUT', $endpoint, [
+            'json' => $data,
+        ]);
     }
 
     /**

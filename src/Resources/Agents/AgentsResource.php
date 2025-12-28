@@ -617,4 +617,370 @@ class AgentsResource
         // Add to agent
         return $this->addFileAttachments($agentId, $attachments);
     }
+
+    /**
+     * Get skills resource for managing agent skills.
+     *
+     * @param int|string $agentId Agent ID
+     * @return SkillsResource
+     * 
+     * @example
+     * ```php
+     * // Manage skills for an agent
+     * $skills = $iris->agents->skills(123);
+     *
+     * // List skills
+     * $allSkills = $skills->list();
+     *
+     * // Create a skill
+     * $skill = $skills->create(new SkillConfig(
+     *     skill_name: 'Research',
+     *     description: 'Conducts research',
+     *     instructions: 'Use multiple sources...'
+     * ));
+     * ```
+     */
+    public function skills(int|string $agentId): SkillsResource
+    {
+        return new SkillsResource($this->http, $this->config, (int) $agentId);
+    }
+
+    // ========================================================================
+    // Enhanced Agent Configuration (Phase 1)
+    // ========================================================================
+
+    /**
+     * Create an agent from comprehensive configuration.
+     *
+     * This method supports the full agent configuration including settings,
+     * integrations, schedules, and more - all in a single call.
+     *
+     * @param array{
+     *     name: string,
+     *     initial_prompt: string,
+     *     type?: string,
+     *     bloq_id?: int,
+     *     settings?: array|AgentSettings,
+     *     config?: array
+     * } $config Comprehensive agent configuration
+     * @return Agent
+     *
+     * @example Create agent with full configuration
+     * ```php
+     * $agent = $iris->agents->createFromConfig([
+     *     'name' => 'Grandma Helper',
+     *     'type' => 'content',
+     *     'initial_prompt' => 'You are a caring assistant for elderly care...',
+     *     'settings' => [
+     *         'schedule' => [
+     *             'enabled' => true,
+     *             'timezone' => 'America/New_York',
+     *             'recurring_tasks' => [
+     *                 [
+     *                     'name' => 'Morning Medication',
+     *                     'time' => '08:00',
+     *                     'message' => 'Good morning! Time for your medications',
+     *                     'channels' => ['voice', 'sms']
+     *                 ]
+     *             ]
+     *         ],
+     *         'agentIntegrations' => [
+     *             'gmail' => true,
+     *             'google-calendar' => true,
+     *         ],
+     *         'enabledFunctions' => [
+     *             'manageLeads' => true,
+     *             'deepResearch' => false
+     *         ]
+     *     ]
+     * ]);
+     * ```
+     */
+    public function createFromConfig(array $config): Agent
+    {
+        $userId = $this->config->requireUserId();
+
+        // Handle settings object conversion
+        if (isset($config['settings']) && $config['settings'] instanceof AgentSettings) {
+            $config['settings'] = $config['settings']->toArray();
+        }
+
+        // Add default type if not provided
+        if (!isset($config['type'])) {
+            $config['type'] = 'content';
+        }
+
+        // Create the agent
+        $response = $this->http->post(
+            "/api/v1/users/{$userId}/bloqs/agents",
+            $config
+        );
+
+        return new Agent($response);
+    }
+
+    /**
+     * Get agent settings.
+     *
+     * @param int|string $agentId Agent ID
+     * @return AgentSettings
+     */
+    public function getSettings(int|string $agentId): AgentSettings
+    {
+        $agent = $this->get($agentId);
+        return AgentSettings::fromArray($agent->settings);
+    }
+
+    /**
+     * Update agent settings (bulk update).
+     *
+     * @param int|string $agentId Agent ID
+     * @param array|AgentSettings $settings Settings to update
+     * @return Agent Updated agent
+     *
+     * @example Update multiple settings
+     * ```php
+     * $agent = $iris->agents->updateSettings(11, [
+     *     'responseMode' => 'balanced',
+     *     'contextWindow' => '10',
+     *     'memoryPersistence' => true,
+     *     'communicationStyle' => 'professional'
+     * ]);
+     * ```
+     */
+    public function updateSettings(int|string $agentId, array|AgentSettings $settings): Agent
+    {
+        if ($settings instanceof AgentSettings) {
+            $settings = $settings->toArray();
+        }
+
+        return $this->patch($agentId, [
+            'settings' => $settings,
+        ]);
+    }
+
+    /**
+     * Reset agent settings to defaults.
+     *
+     * @param int|string $agentId Agent ID
+     * @return Agent Updated agent
+     */
+    public function resetSettings(int|string $agentId): Agent
+    {
+        $defaultSettings = new AgentSettings();
+        return $this->updateSettings($agentId, $defaultSettings);
+    }
+
+    /**
+     * Get agent integrations status.
+     *
+     * @param int|string $agentId Agent ID
+     * @return array Map of integration names to enabled status
+     */
+    public function getIntegrations(int|string $agentId): array
+    {
+        $settings = $this->getSettings($agentId);
+        return $settings->agentIntegrations;
+    }
+
+    /**
+     * Set agent integrations (bulk enable/disable).
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $integrations Map of integration names to enabled status
+     * @return Agent Updated agent
+     *
+     * @example Enable/disable integrations
+     * ```php
+     * $agent = $iris->agents->setIntegrations(11, [
+     *     'gmail' => true,
+     *     'google-calendar' => true,
+     *     'slack' => false
+     * ]);
+     * ```
+     */
+    public function setIntegrations(int|string $agentId, array $integrations): Agent
+    {
+        $settings = $this->getSettings($agentId);
+        $settings->agentIntegrations = array_merge($settings->agentIntegrations, $integrations);
+
+        return $this->updateSettings($agentId, $settings);
+    }
+
+    /**
+     * Enable a specific integration.
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $integration Integration name
+     * @return Agent Updated agent
+     */
+    public function enableIntegration(int|string $agentId, string $integration): Agent
+    {
+        return $this->setIntegrations($agentId, [$integration => true]);
+    }
+
+    /**
+     * Disable a specific integration.
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $integration Integration name
+     * @return Agent Updated agent
+     */
+    public function disableIntegration(int|string $agentId, string $integration): Agent
+    {
+        return $this->setIntegrations($agentId, [$integration => false]);
+    }
+
+    /**
+     * Test an integration connection.
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $integration Integration name
+     * @return array Test result
+     */
+    public function testIntegration(int|string $agentId, string $integration): array
+    {
+        $userId = $this->config->requireUserId();
+        return $this->http->post(
+            "/api/v1/users/{$userId}/bloqs/agents/{$agentId}/test-integration",
+            ['integration' => $integration]
+        );
+    }
+
+    /**
+     * Get agent schedule configuration.
+     *
+     * @param int|string $agentId Agent ID
+     * @return AgentScheduleConfig
+     */
+    public function getSchedule(int|string $agentId): AgentScheduleConfig
+    {
+        $settings = $this->getSettings($agentId);
+        return AgentScheduleConfig::fromArray($settings->schedule);
+    }
+
+    /**
+     * Update agent schedule configuration.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array|AgentScheduleConfig $schedule Schedule configuration
+     * @return Agent Updated agent
+     *
+     * @example Add recurring tasks
+     * ```php
+     * $schedule = AgentScheduleConfig::medicationReminders(
+     *     ['08:00', '12:00', '18:00', '21:00']
+     * );
+     * $agent = $iris->agents->updateSchedule(11, $schedule);
+     * ```
+     */
+    public function updateSchedule(int|string $agentId, array|AgentScheduleConfig $schedule): Agent
+    {
+        if ($schedule instanceof AgentScheduleConfig) {
+            $schedule = $schedule->toArray();
+        }
+
+        $settings = $this->getSettings($agentId);
+        $settings->schedule = $schedule;
+
+        return $this->updateSettings($agentId, $settings);
+    }
+
+    // ========================================================================
+    // Agent Templates (Phase 2)
+    // ========================================================================
+
+    /**
+     * @var array<string, AgentTemplate>
+     */
+    protected static array $templates = [];
+
+    /**
+     * Register a custom agent template.
+     *
+     * @param AgentTemplate $template Template instance
+     */
+    public function registerTemplate(AgentTemplate $template): void
+    {
+        self::$templates[$template->getName()] = $template;
+    }
+
+    /**
+     * List available agent templates.
+     *
+     * @return array<string> Template names
+     */
+    public function listTemplates(): array
+    {
+        $this->ensureBuiltInTemplatesLoaded();
+        return array_keys(self::$templates);
+    }
+
+    /**
+     * Get a template by name.
+     *
+     * @param string $name Template name
+     * @return AgentTemplate
+     * @throws \InvalidArgumentException If template not found
+     */
+    public function getTemplate(string $name): AgentTemplate
+    {
+        $this->ensureBuiltInTemplatesLoaded();
+
+        if (!isset(self::$templates[$name])) {
+            throw new \InvalidArgumentException("Template '{$name}' not found. Available: " . implode(', ', $this->listTemplates()));
+        }
+
+        return self::$templates[$name];
+    }
+
+    /**
+     * Create an agent from a template.
+     *
+     * @param string $templateName Template name
+     * @param array $customizations Template customizations
+     * @return Agent
+     *
+     * @example Create elderly care agent
+     * ```php
+     * $agent = $iris->agents->createFromTemplate('elderly-care', [
+     *     'name' => 'Grandma Helper',
+     *     'medication_times' => ['08:00', '12:00', '18:00', '21:00'],
+     *     'timezone' => 'America/New_York',
+     *     'voice_settings' => [
+     *         'language' => 'en-US',
+     *         'speaking_rate' => 0.9
+     *     ]
+     * ]);
+     * ```
+     */
+    public function createFromTemplate(string $templateName, array $customizations = []): Agent
+    {
+        $template = $this->getTemplate($templateName);
+
+        // Validate customizations
+        $template->validate($customizations);
+
+        // Build configuration
+        $config = $template->build($customizations);
+
+        // Create agent
+        return $this->createFromConfig($config);
+    }
+
+    /**
+     * Ensure built-in templates are loaded.
+     */
+    protected function ensureBuiltInTemplatesLoaded(): void
+    {
+        if (empty(self::$templates)) {
+            // Load built-in templates
+            $this->registerTemplate(new Templates\ElderlyCareTemplate());
+            $this->registerTemplate(new Templates\CustomerSupportTemplate());
+            $this->registerTemplate(new Templates\SalesAssistantTemplate());
+            $this->registerTemplate(new Templates\ResearchAgentTemplate());
+            $this->registerTemplate(new Templates\EducationalTutorTemplate());
+            $this->registerTemplate(new Templates\LeadershipCoachTemplate());
+        }
+    }
 }

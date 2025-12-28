@@ -8,6 +8,7 @@ use IRIS\SDK\Console\Commands\ChatCommand;
 use IRIS\SDK\Console\Commands\ConfigCommand;
 use IRIS\SDK\Console\Commands\ToolsCommand;
 use IRIS\SDK\Console\Commands\IntegrationsCommand;
+use IRIS\SDK\Console\Commands\SkillsCommand;
 use IRIS\SDK\Console\Commands\MemoryComposeCommand;
 use IRIS\SDK\Console\Commands\MemoryListCommand;
 use IRIS\SDK\Console\Commands\MemoryShowCommand;
@@ -27,6 +28,7 @@ class Application extends BaseApplication
             new ConfigCommand(),
             new ToolsCommand(),
             new IntegrationsCommand(),
+            new SkillsCommand(),
             new MemoryComposeCommand(),
             new MemoryListCommand(),
             new MemoryShowCommand(),

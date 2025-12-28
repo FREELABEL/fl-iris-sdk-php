@@ -21,8 +21,8 @@ export IRIS_USER_ID=193
 export IRIS_API_KEY="your_token_here"
 
 # Generate and send an email to a lead
-./bin/iris sdk:call leads.outreach 123 generateEmail prompt="Follow up on our meeting"
-./bin/iris sdk:call leads.outreach 123 sendEmail to_email="john@example.com" subject="Quick follow-up" body_html="<p>Hi John...</p>"
+./bin/iris sdk:call leads.outreach.generateEmail 123 prompt="Follow up on our meeting"
+./bin/iris sdk:call leads.outreach.sendEmail 123 to_email="john@example.com" subject="Quick follow-up" body_html="<p>Hi John...</p>"
 
 # Manage outreach checklist
 ./bin/iris sdk:call leads.outreachSteps 123 list
@@ -40,18 +40,18 @@ Use AI to generate a personalized email based on lead context (notes, tags, hist
 
 ```bash
 # Basic email generation
-./bin/iris sdk:call leads.outreach 123 generateEmail \
+./bin/iris sdk:call leads.outreach.generateEmail 123 \
   prompt="Follow up on our meeting about their AI needs"
 
 # With tone and options
-./bin/iris sdk:call leads.outreach 123 generateEmail \
+./bin/iris sdk:call leads.outreach.generateEmail 123 \
   prompt="Initial cold outreach introducing our platform" \
   tone=professional \
   include_cta=true \
   max_length=medium
 
 # With specific agent/profile context
-./bin/iris sdk:call leads.outreach 123 generateEmail \
+./bin/iris sdk:call leads.outreach.generateEmail 123 \
   prompt="Send proposal follow-up" \
   profile_id=456 \
   agent_id=789
@@ -86,7 +86,7 @@ Use AI to generate a personalized email based on lead context (notes, tags, hist
 Refine an AI-generated email with additional instructions:
 
 ```bash
-./bin/iris sdk:call leads.outreach 123 generateEmail \
+./bin/iris sdk:call leads.outreach.generateEmail 123 \
   prompt="Make it more urgent and add a deadline" \
   options='{"revision_mode":true,"current_subject":"Quick follow-up","current_body":"<p>Hi John...</p>"}'
 ```
@@ -96,7 +96,7 @@ Refine an AI-generated email with additional instructions:
 Send the email via Resend API (records in lead history automatically):
 
 ```bash
-./bin/iris sdk:call leads.outreach 123 sendEmail \
+./bin/iris sdk:call leads.outreach.sendEmail 123 \
   to_email="john@example.com" \
   to_name="John Doe" \
   subject="Quick follow-up on our AI discussion" \
@@ -135,8 +135,19 @@ Send the email via Resend API (records in lead history automatically):
 
 ### Generate and Send (Combined)
 
-For automated workflows, generate and send in one step (PHP SDK only):
+For automated workflows, generate and send in one step:
 
+**CLI:**
+```bash
+./bin/iris sdk:call leads.outreach.generateAndSend 123 \
+  john@example.com \
+  "Initial cold outreach introducing our AI platform" \
+  tone=professional \
+  sender_name="Alex Mayo" \
+  to_name="John"
+```
+
+**PHP SDK:**
 ```php
 $result = $iris->leads->outreach(123)->generateAndSend(
     'john@example.com',
@@ -267,7 +278,7 @@ Create a predefined outreach strategy for new leads:
 Verify if a lead is eligible for outreach:
 
 ```bash
-./bin/iris sdk:call leads.outreach 123 checkEligibility
+./bin/iris sdk:call leads.outreach.checkEligibility 123
 ```
 
 ### Get Outreach Info
@@ -275,7 +286,7 @@ Verify if a lead is eligible for outreach:
 Get comprehensive outreach information:
 
 ```bash
-./bin/iris sdk:call leads.outreach 123 getInfo
+./bin/iris sdk:call leads.outreach.getInfo 123
 ```
 
 **Response includes:**
@@ -289,7 +300,7 @@ Get comprehensive outreach information:
 Manually record an outreach attempt:
 
 ```bash
-./bin/iris sdk:call leads.outreach 123 recordAttempt \
+./bin/iris sdk:call leads.outreach.recordAttempt 123 \
   content="Called and left voicemail about pricing" \
   metadata='{"channel":"phone","outcome":"voicemail"}'
 ```
@@ -300,10 +311,10 @@ Enable/disable automatic responses for a lead:
 
 ```bash
 # Enable
-./bin/iris sdk:call leads.outreach 123 setAutoRespond enabled=true
+./bin/iris sdk:call leads.outreach.setAutoRespond 123 enabled=true
 
 # Disable
-./bin/iris sdk:call leads.outreach 123 setAutoRespond enabled=false
+./bin/iris sdk:call leads.outreach.setAutoRespond 123 enabled=false
 ```
 
 ---
