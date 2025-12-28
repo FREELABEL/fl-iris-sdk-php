@@ -181,20 +181,6 @@ class Client
     }
 
     /**
-     * Make a PUT request.
-     *
-     * @param string $endpoint API endpoint
-     * @param array $data Request body
-     * @return array Response data
-     */
-    public function put(string $endpoint, array $data = []): array
-    {
-        return $this->request('PUT', $endpoint, [
-            'json' => $data,
-        ]);
-    }
-
-    /**
      * Make a DELETE request.
      *
      * @param string $endpoint API endpoint
