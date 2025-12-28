@@ -416,6 +416,113 @@ class AgentsResource
     }
 
     /**
+     * Attach knowledge content to an agent for RAG (Retrieval-Augmented Generation).
+     *
+     * This method indexes content to the vector store and updates the agent's
+     * file_attachments field to enable RAG in chat. This is the recommended
+     * way to add knowledge to an agent without creating a separate bloq.
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $content Text content to index
+     * @param array{
+     *     title?: string,
+     *     type?: string,
+     *     description?: string
+     * } $metadata Content metadata
+     * @return array{agent: Agent, vector_id: string} Updated agent and vector ID
+     *
+     * @example
+     * ```php
+     * $result = $iris->agents->attachKnowledge(387, $medicalInfo, [
+     *     'title' => 'Medical Information',
+     *     'type' => 'medical_record'
+     * ]);
+     * echo "Vector ID: {$result['vector_id']}\n";
+     * echo "Agent now has " . count($result['agent']->fileAttachments) . " attachments\n";
+     * ```
+     */
+    public function attachKnowledge(int|string $agentId, string $content, array $metadata = []): array
+    {
+        // 1. Index content to vector store with agent_id
+        $vectorData = array_merge(
+            [
+                'content' => $content,
+                'agent_id' => (int) $agentId,
+            ],
+            $metadata
+        );
+        
+        $indexResponse = $this->http->post("/api/v1/vector/store", $vectorData);
+        $vectorId = $indexResponse['vector_id'] ?? $indexResponse['id'] ?? null;
+
+        if (!$vectorId) {
+            throw new \RuntimeException('Failed to index content: no vector_id returned');
+        }
+
+        // 2. Get current agent to retrieve existing file_attachments
+        $agent = $this->get($agentId);
+        $fileAttachments = $agent->fileAttachments ?? [];
+
+        // 3. Add new attachment
+        $newAttachment = [
+            'title' => $metadata['title'] ?? 'Knowledge Document',
+            'type' => $metadata['type'] ?? 'document',
+            'vector_ids' => [$vectorId],
+        ];
+
+        if (isset($metadata['description'])) {
+            $newAttachment['description'] = $metadata['description'];
+        }
+
+        $fileAttachments[] = $newAttachment;
+
+        // 4. Update agent with new file_attachments
+        $updatedAgent = $this->update($agentId, [
+            'file_attachments' => $fileAttachments,
+        ]);
+
+        return [
+            'agent' => $updatedAgent,
+            'vector_id' => $vectorId,
+        ];
+    }
+
+    /**
+     * Attach knowledge from a file to an agent for RAG.
+     *
+     * Reads file content, indexes it to vector store, and updates the agent's
+     * file_attachments field. Supports text files, markdown, JSON, etc.
+     *
+     * @param int|string $agentId Agent ID
+     * @param string $filePath Path to file
+     * @param array{
+     *     title?: string,
+     *     type?: string,
+     *     description?: string
+     * } $metadata File metadata
+     * @return array{agent: Agent, vector_id: string} Updated agent and vector ID
+     * @throws \InvalidArgumentException if file cannot be read
+     */
+    public function attachKnowledgeFile(int|string $agentId, string $filePath, array $metadata = []): array
+    {
+        if (!file_exists($filePath)) {
+            throw new \InvalidArgumentException("File not found: {$filePath}");
+        }
+
+        $content = file_get_contents($filePath);
+        if ($content === false) {
+            throw new \InvalidArgumentException("Failed to read file: {$filePath}");
+        }
+
+        // Use filename as title if not provided
+        if (!isset($metadata['title'])) {
+            $metadata['title'] = basename($filePath);
+        }
+
+        return $this->attachKnowledge($agentId, $content, $metadata);
+    }
+
+    /**
      * Toggle public access for an agent.
      *
      * @param int|string $agentId Agent ID
