@@ -397,6 +397,15 @@ class AgentsResource
      */
     public function addMemory(int|string $agentId, string $filePath, array $metadata = []): bool
     {
+        // Read file content and add to metadata
+        if (!isset($metadata['content'])) {
+            $content = file_get_contents($filePath);
+            if ($content === false) {
+                throw new \InvalidArgumentException("Failed to read file: {$filePath}");
+            }
+            $metadata['content'] = $content;
+        }
+        
         $this->http->upload(
             "/api/v1/bloqs/agents/{$agentId}/add-memory",
             $filePath,

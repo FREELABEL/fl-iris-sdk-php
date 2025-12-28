@@ -312,6 +312,12 @@ class Client
         $body = json_decode((string) $response->getBody(), true) ?? [];
 
         $message = $body['message'] ?? $body['error'] ?? $e->getMessage();
+        
+        // Ensure message is a string
+        if (is_array($message)) {
+            $message = json_encode($message);
+        }
+        
         $errors = $body['errors'] ?? null;
 
         return match ($statusCode) {
