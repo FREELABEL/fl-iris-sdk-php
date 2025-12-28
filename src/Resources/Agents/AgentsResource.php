@@ -189,43 +189,7 @@ class AgentsResource
         return $base;
     }
 
-    /**
-     * Create an agent from a template.
-     * 
-     * Use pre-built templates for common agent types. Templates include
-     * prompts, schedules, integrations, and settings optimized for specific use cases.
-     *
-     * @param string $template Template name ('elderly-care', 'customer-support', 'sales-assistant', 'research-agent')
-     * @param array $customizations Override any template values
-     * @return Agent
-     * 
-     * @example Create elderly care agent with custom name
-     * ```php
-     * $agent = $iris->agents->createFromTemplate('elderly-care', [
-     *     'name' => 'Grandma Helper',
-     *     'settings' => [
-     *         'schedule' => [
-     *             'timezone' => 'America/Chicago',
-     *             'recurring_tasks' => [
-     *                 ['name' => 'Morning Meds', 'time' => '07:30'],
-     * Deep merge arrays recursively.
-     *
-     * @param array $base Base array
-     * @param array $override Override array
-     * @return array Merged array
-     */
-    protected function deepMerge(array $base, array $override): array
-    {
-        foreach ($override as $key => $value) {
-            if (is_array($value) && isset($base[$key]) && is_array($base[$key])) {
-                $base[$key] = $this->deepMerge($base[$key], $value);
-            } else {
-                $base[$key] = $value;
-            }
-        }
-        
-        return $base;
-    }
+
 
     /**
      * Create an agent from array (simplified API).
