@@ -1,7 +1,40 @@
 # RAG Bug Fix - Complete Documentation
-**Date:** 2025-12-28  
-**Status:** ✅ FIXED  
+**Date:** 2025-12-28 (Updated 2025-12-29)
+**Status:** ✅ FIXED & DEPLOYED
 **Agent ID:** 387 (Grandma's Helper)
+
+---
+
+## Recent Updates (2025-12-29)
+
+### Content Field Compatibility Fix
+
+**Problem:** SDK-indexed vectors stored content in `text` metadata field, but `FlApiPineconeVectorStore` only checked for `content` field, causing RAG to fail for SDK-attached knowledge.
+
+**Solution:** Updated `FlApiPineconeVectorStore.php` to check both fields:
+
+```php
+// Before (broken for SDK vectors):
+if (! empty($metadata['content'])) {
+    return $metadata['content'];
+}
+
+// After (works for both SDK and IRIS vectors):
+$directContent = $metadata['content'] ?? $metadata['text'] ?? null;
+if (! empty($directContent)) {
+    return $directContent;
+}
+```
+
+**Deployed:** Commit `663c638` pushed to production on 2025-12-29.
+
+### Metadata Field Reference
+
+| Indexer | Content Field | Status |
+|---------|--------------|--------|
+| SDK `attachKnowledge()` | `text` | Now supported |
+| IRIS internal indexer | `content` | Always supported |
+| FL-API indexer | Database lookup via `source_id` | Always supported |
 
 ---
 
@@ -463,9 +496,133 @@ $iris->rag->delete($vectorId);
 
 ---
 
-**Status:** ✅ **COMPLETE AND READY FOR TESTING**
+**Status:** ✅ **COMPLETE AND DEPLOYED TO PRODUCTION**
 
 Run the test script to verify everything works:
 ```bash
-php test-agent-attach-knowledge.php 387
+# Local testing
+IRIS_ENV=local php test-agent-attach-knowledge.php 387
+
+# Production testing
+IRIS_ENV=production php test-agent-rag.php
+```
+
+---
+
+## Technical Deep Dive: Content Extraction
+
+### FlApiPineconeVectorStore Flow
+
+```
+Pinecone Query Response
+    ↓
+similaritySearch() receives matches
+    ↓
+For each match → fetchContentFromMetadata()
+    ↓
+Check 1: metadata['content'] (IRIS-indexed)
+Check 2: metadata['text'] (SDK-indexed)
+    ↓ Found?
+    ↓ YES → Return content directly
+    ↓ NO → Check source_type and source_id
+    ↓
+Fallback: Database lookup (CloudFile, BloqItem)
+    ↓
+Return content to RAG pipeline
+```
+
+### Key File: `fl-iris-api/app/Neuron/FlApiPineconeVectorStore.php`
+
+```php
+private function fetchContentFromMetadata(array $metadata): string
+{
+    // FIRST: Check if content is already in metadata
+    // IRIS indexes as 'content', SDK indexes as 'text'
+    $directContent = $metadata['content'] ?? $metadata['text'] ?? null;
+    if (! empty($directContent)) {
+        \Log::debug('FlApiPineconeVectorStore: Using content from Pinecone metadata', [
+            'content_length' => strlen($directContent),
+            'indexed_by' => $metadata['indexed_by'] ?? 'unknown',
+            'source_id' => $metadata['source_id'] ?? null,
+            'field_used' => isset($metadata['content']) ? 'content' : 'text',
+        ]);
+        return $directContent;
+    }
+
+    // FALLBACK: Database lookup for FL-API indexed documents
+    $sourceType = $metadata['source_type'] ?? null;
+    $sourceId = $metadata['source_id'] ?? null;
+
+    if ($sourceType === 'App\\Models\\User\\CloudFile') {
+        $file = \App\Models\FlApi\CloudFile::find($sourceId);
+        return $file?->content ?? '';
+    }
+    // ... other source types
+}
+```
+
+### SDK Vector Metadata Structure
+
+When `attachKnowledge()` indexes content:
+
+```json
+{
+  "id": "d265c56b-de76-48a4-8fc0-11c1f5ad93a7",
+  "values": [0.123, -0.456, ...],
+  "metadata": {
+    "agent_id": 387,
+    "user_id": 193,
+    "title": "Medical Information",
+    "description": "Dorothy's medications and allergies",
+    "source_type": "medical_record",
+    "text": "# Dorothy's Medical Information\n\n## Medications...",
+    "created_at": "2025-12-29T01:13:56.199809Z"
+  }
+}
+```
+
+**Note:** The content is stored in `text` field, NOT `content`. This is because the SDK uses a different naming convention than the IRIS internal indexer.
+
+### Debug Logging
+
+To debug RAG issues, check these logs:
+
+```bash
+# Local - view worker logs
+docker compose logs iris-worker | grep -E "Pinecone|content_length|text_key"
+
+# Production - view worker logs
+doctl apps logs 68ad4e37-3502-4681-8f28-9c5725044dce fl-iris-worker --follow
+```
+
+Key log messages to look for:
+
+```
+✅ "FlApiPineconeVectorStore: Retrieved matches from Pinecone" count > 0
+✅ "FlApiPineconeVectorStore: Using content from Pinecone metadata" content_length > 0
+✅ "BloqRAG: Adding document #0 to context" content_length > 0
+
+❌ "FlApiPineconeVectorStore: Missing source_type or source_id" - SDK vector without source_id (fixed now)
+❌ "BloqRAG: Adding document #0 to context" content_length: 0 - Content not extracted
+```
+
+---
+
+## Production Verification
+
+After the 2025-12-29 deployment, production RAG was verified working:
+
+```bash
+$ IRIS_ENV=production php test-production-rag.php
+
+✅ SUCCESS! RAG is working!
+
+Response:
+Certainly! Here's a summary of **Dr. Norma S. Guerra**:
+- **Professional Background**: Dr. Guerra is a **Professor** in the
+  Department of Educational Psychology at UTSA...
+- **Education**: Ph.D. in Educational Psychology from Texas A&M...
+- **Research Focus**: Known for creating the **LIBRE Model**...
+
+✅ RAG VERIFIED: Response contains specific information from documents!
 ```
