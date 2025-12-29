@@ -22,6 +22,7 @@ use IRIS\SDK\Resources\Services\ServicesResource;
 use IRIS\SDK\Resources\Tools\ToolsResource;
 use IRIS\SDK\Resources\Articles\ArticlesResource;
 use IRIS\SDK\Resources\Schedules\SchedulesResource;
+use IRIS\SDK\Resources\ServisAi\ServisAiResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -165,6 +166,11 @@ class IRIS
     public SchedulesResource $schedules;
 
     /**
+     * Servis.ai resource for healthcare/service business workflows.
+     */
+    public ServisAiResource $servisAi;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -205,6 +211,7 @@ class IRIS
         $this->tools = new ToolsResource($this->http, $this->config);
         $this->articles = new ArticlesResource($this->http, $this->config);
         $this->schedules = new SchedulesResource($this->http, $this->config);
+        $this->servisAi = new ServisAiResource($this->http, $this->config);
     }
 
     /**

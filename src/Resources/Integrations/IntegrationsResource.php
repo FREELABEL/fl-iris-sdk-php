@@ -62,13 +62,25 @@ class IntegrationsResource
     }
 
     /**
+     * Get the base path for user-scoped integration routes.
+     *
+     * Uses the same pattern as agents: /users/{userId}/integrations
+     *
+     * @return string
+     */
+    protected function getBasePath(): string
+    {
+        return "/api/v1/users/{$this->config->userId}/integrations";
+    }
+
+    /**
      * List all integrations.
      *
      * @return IntegrationCollection
      */
     public function list(): IntegrationCollection
     {
-        $response = $this->http->get("/api/v1/integrations");
+        $response = $this->http->get($this->getBasePath());
 
         return new IntegrationCollection(
             array_map(fn($data) => new Integration($data), $response['data'] ?? $response),
@@ -88,7 +100,7 @@ class IntegrationsResource
      */
     public function create(array $data): Integration
     {
-        $response = $this->http->post("/api/v1/integrations", $data);
+        $response = $this->http->post($this->getBasePath(), $data);
 
         return new Integration($response);
     }
@@ -101,9 +113,9 @@ class IntegrationsResource
      */
     public function get(int $integrationId): Integration
     {
-        $response = $this->http->get("/api/v1/integrations/{$integrationId}");
+        $response = $this->http->get("{$this->getBasePath()}/{$integrationId}");
 
-        return new Integration($response);
+        return new Integration($response['data'] ?? $response);
     }
 
     /**
@@ -115,7 +127,7 @@ class IntegrationsResource
      */
     public function update(int $integrationId, array $data): Integration
     {
-        $response = $this->http->put("/api/v1/integrations/{$integrationId}", $data);
+        $response = $this->http->put("{$this->getBasePath()}/{$integrationId}", $data);
 
         return new Integration($response);
     }
@@ -128,7 +140,7 @@ class IntegrationsResource
      */
     public function delete(int $integrationId): bool
     {
-        $this->http->delete("/api/v1/integrations/{$integrationId}");
+        $this->http->delete("{$this->getBasePath()}/{$integrationId}");
 
         return true;
     }
@@ -141,13 +153,15 @@ class IntegrationsResource
      */
     public function test(int $integrationId): TestResult
     {
-        $response = $this->http->post("/api/v1/integrations/{$integrationId}/test");
+        $response = $this->http->post("{$this->getBasePath()}/{$integrationId}/test");
 
         return new TestResult($response);
     }
 
     /**
      * Get available integration types.
+     *
+     * This endpoint is public and doesn't require authentication.
      *
      * @return array
      */
@@ -166,7 +180,7 @@ class IntegrationsResource
      */
     public function getOAuthUrl(string $type): string
     {
-        $response = $this->http->get("/api/v1/integrations/oauth-url/{$type}");
+        $response = $this->http->get("{$this->getBasePath()}/oauth-url/{$type}");
 
         return $response['url'] ?? '';
     }
@@ -184,7 +198,7 @@ class IntegrationsResource
      */
     public function handleCallback(string $type, array $params): Integration
     {
-        $response = $this->http->get("/api/v1/integrations/oauth-callback/{$type}", $params);
+        $response = $this->http->get("{$this->getBasePath()}/oauth-callback/{$type}", $params);
 
         return new Integration($response);
     }
@@ -196,7 +210,7 @@ class IntegrationsResource
      */
     public function getMetadata(): array
     {
-        return $this->http->get("/api/v1/integrations/metadata");
+        return $this->http->get("{$this->getBasePath()}/metadata");
     }
 
     /**
@@ -206,7 +220,7 @@ class IntegrationsResource
      */
     public function enabled(): IntegrationCollection
     {
-        $response = $this->http->get("/api/v1/integrations/enabled");
+        $response = $this->http->get("{$this->getBasePath()}/enabled");
 
         return new IntegrationCollection(
             array_map(fn($data) => new Integration($data), $response['data'] ?? $response),
@@ -224,7 +238,7 @@ class IntegrationsResource
      */
     public function execute(string $type, string $function, array $params = []): array
     {
-        return $this->http->post("/api/v1/integrations/execute", [
+        return $this->http->post("{$this->getBasePath()}/execute", [
             'type' => $type,
             'function' => $function,
             'params' => $params,
@@ -238,7 +252,7 @@ class IntegrationsResource
      */
     public function getAiContext(): array
     {
-        return $this->http->get("/api/v1/integrations/ai-context");
+        return $this->http->get("{$this->getBasePath()}/ai-context");
     }
 
     /**
@@ -264,7 +278,7 @@ class IntegrationsResource
         $response = $this->http->get("/api/v1/mcp/{$type}/functions");
 
         $functions = $response['functions'] ?? $response;
-        
+
         return array_map(fn($data) => new IntegrationFunction($data), $functions);
     }
 
@@ -408,10 +422,17 @@ class IntegrationsResource
      */
     public function connectServisAi(string $clientId, string $clientSecret): Integration
     {
-        return $this->connectWithApiKey('servis-ai', [
-            'client_id' => $clientId,
-            'client_secret' => $clientSecret,
-        ], 'Servis.ai');
+        // Bypass types() validation - we know servis-ai is a valid type
+        // This avoids potential auth issues with the types endpoint
+        return $this->create([
+            'name' => 'Servis.ai',
+            'type' => 'servis-ai',
+            'category' => 'workflow',
+            'credentials' => [
+                'client_id' => $clientId,
+                'client_secret' => $clientSecret,
+            ],
+        ]);
     }
 
     /**
