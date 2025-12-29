@@ -801,6 +801,87 @@ $response = $iris->agents->chat($agent->id, [
 // Agent answers using your uploaded documents
 ```
 
+#### Advanced RAG Example: Secret Keeper Agent
+
+This example demonstrates RAG functionality by creating an agent that can only answer questions using information stored in its knowledge base.
+
+```php
+<?php
+use IRIS\SDK\IRIS;
+
+$iris = new IRIS([
+    'api_key' => $_ENV['IRIS_API_KEY'],
+    'user_id' => $_ENV['IRIS_USER_ID'],
+]);
+
+// 1. Create a specialized agent
+$agent = $iris->agents->createFromArray([
+    'name' => 'Secret Keeper',
+    'type' => 'chat',
+    'bloq_id' => 40,
+    'config' => ['model' => 'gpt-4o-mini'],
+    'initial_prompt' => <<<PROMPT
+You are a Secret Keeper - a guardian of classified information.
+
+When users ask about secret codes or classified information:
+1. Search your knowledge base for the relevant information
+2. Provide the information if found
+3. Do not make up information - only use what's in your knowledge base
+
+Always search your knowledge base before responding.
+PROMPT
+]);
+
+// 2. Store secret information in RAG
+$secretCode = 'ALPHA-' . strtoupper(bin2hex(random_bytes(4))) . '-OMEGA';
+
+$classifiedDoc = <<<DOC
+CLASSIFIED INFORMATION - TOP SECRET
+====================================
+
+Project Codename: NIGHTINGALE
+Master Access Code: $secretCode
+
+This code grants full system access to authorized personnel only.
+Valid until: 2026-12-31
+DOC;
+
+$iris->rag->index($classifiedDoc, [
+    'agent_id' => $agent->id,
+    'bloq_id' => 40,
+    'title' => 'Project Nightingale - Access Code',
+    'metadata' => [
+        'classification' => 'TOP_SECRET',
+        'code' => $secretCode,
+    ]
+]);
+
+// 3. Wait for indexing (vector DB propagation)
+sleep(5);
+
+// 4. Query the agent - it retrieves from RAG
+$response = $iris->agents->chat($agent->id, [
+    ['role' => 'user', 'content' => 'What is the master access code for Project Nightingale?']
+], [
+    'bloq_id' => 40,
+    'use_rag' => true,  // Enable RAG retrieval
+]);
+
+echo $response->content;
+// Output: "The master access code for Project Nightingale is: ALPHA-[HEX]-OMEGA..."
+
+// The agent retrieved the code from RAG - it never "knew" this information!
+// This proves RAG is working correctly.
+```
+
+**Why this example is powerful:**
+- The secret code is randomly generated - the AI never saw it in training
+- The agent can ONLY answer by searching its knowledge base
+- Proves RAG retrieval, vector embeddings, and semantic search all work
+- Demonstrates real-world use case: knowledge-based assistants
+
+📖 [Full RAG Test Script](../../../test-secret-code-rag.php) | [Test Results](../../../SECRET_CODE_RAG_TEST_RESULTS.md)
+
 📖 [Full Memory & RAG Documentation](TECHNICAL.md#-persistent-memory--knowledge-base-bloqs)
 
 ---

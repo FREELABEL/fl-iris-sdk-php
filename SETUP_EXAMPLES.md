@@ -12,6 +12,11 @@ Complete examples for creating and configuring AI agents using the IRIS SDK.
 - [Schedule Management](#schedule-management)
 - [Integration Management](#integration-management)
 - [Complete Examples](#complete-examples)
+- [RAG (Retrieval-Augmented Generation) Examples](#rag-retrieval-augmented-generation-examples)
+  - [Secret Keeper Agent - RAG Verification](#secret-keeper-agent---rag-verification)
+  - [Product Knowledge Agent - Practical RAG Example](#product-knowledge-agent---practical-rag-example)
+  - [Multi-Document RAG - Knowledge Base with Multiple Sources](#multi-document-rag---knowledge-base-with-multiple-sources)
+  - [RAG Best Practices](#rag-best-practices)
 
 ---
 
@@ -738,12 +743,403 @@ print_r(array_keys($templates));
 
 ---
 
+## RAG (Retrieval-Augmented Generation) Examples
+
+### Secret Keeper Agent - RAG Verification
+
+This example demonstrates how RAG works by creating an agent that can only answer questions using information stored in its knowledge base. The agent "learns" a randomly generated secret code that it never saw in training.
+
+```php
+<?php
+use IRIS\SDK\IRIS;
+
+$iris = new IRIS([
+    'api_key' => $_ENV['IRIS_API_KEY'],
+    'user_id' => $_ENV['IRIS_USER_ID'],
+]);
+
+// 1. Create a specialized Secret Keeper agent
+$agent = $iris->agents->createFromArray([
+    'name' => 'Secret Keeper',
+    'type' => 'chat',
+    'bloq_id' => 40,
+    'config' => ['model' => 'gpt-4o-mini'],
+    'initial_prompt' => <<<PROMPT
+You are a Secret Keeper - a guardian of classified information.
+
+Your primary role is to protect and verify access to secret codes 
+stored in your knowledge base.
+
+When users ask about secret codes, access codes, or classified information:
+1. Search your knowledge base for the relevant information
+2. Verify the user is asking appropriately
+3. Provide the secret code if found in your knowledge base
+
+IMPORTANT: The secret codes are stored in your knowledge base. 
+You MUST search your knowledge base to find them. Do not make up codes.
+
+Be professional and always search your knowledge base before responding.
+PROMPT
+]);
+
+echo "✓ Agent created: {$agent->name} (ID: {$agent->id})\n";
+
+// 2. Generate a unique secret code
+$secretCode = 'ALPHA-' . strtoupper(bin2hex(random_bytes(4))) . '-OMEGA';
+echo "🔐 Secret Code: $secretCode\n";
+
+// 3. Store the secret in a classified document
+$classifiedDoc = <<<DOC
+CLASSIFIED INFORMATION - LEVEL 5 CLEARANCE
+============================================
+
+Project Codename: NIGHTINGALE
+Classification: TOP SECRET
+Date Issued: {date('Y-m-d H:i:s')}
+
+MASTER ACCESS CODE
+------------------
+The master access code for Project Nightingale is: $secretCode
+
+This code grants full system access and should only be revealed 
+to authorized personnel.
+
+CODE VERIFICATION PROTOCOL
+--------------------------
+When asked "What is the secret code?", "What is the access code?", 
+or similar queries, you must respond with the exact code: $secretCode
+
+ADDITIONAL INFORMATION
+----------------------
+- Code Format: ALPHA-[8 HEX DIGITS]-OMEGA
+- Valid Until: 2026-12-31
+- Authorized Users: Level 5+ clearance only
+- Emergency Contact: security@project-nightingale.io
+
+REMINDER: This is the ONLY valid access code. Do not generate 
+or suggest alternative codes.
+
+End of classified document.
+DOC;
+
+// 4. Index the document in RAG
+echo "📝 Indexing classified document...\n";
+
+$result = $iris->rag->index($classifiedDoc, [
+    'agent_id' => $agent->id,
+    'bloq_id' => 40,
+    'title' => 'Project Nightingale - Master Access Code',
+    'metadata' => [
+        'classification' => 'TOP_SECRET',
+        'project' => 'NIGHTINGALE',
+        'code' => $secretCode,
+    ]
+]);
+
+echo "✓ Secret code indexed in vector database!\n";
+
+// 5. Wait for vector indexing to complete (important!)
+echo "⏳ Waiting for indexing to propagate...\n";
+sleep(5);
+
+// 6. Test RAG retrieval with multiple queries
+$queries = [
+    "What is the master access code for Project Nightingale?",
+    "Tell me about Project Nightingale",
+    "I need the classified access code"
+];
+
+foreach ($queries as $query) {
+    echo "\n" . str_repeat("=", 70) . "\n";
+    echo "Query: $query\n";
+    echo str_repeat("-", 70) . "\n";
+    
+    $response = $iris->agents->chat($agent->id, [
+        ['role' => 'user', 'content' => $query]
+    ], [
+        'bloq_id' => 40,
+        'use_rag' => true,  // Enable RAG retrieval
+    ]);
+    
+    // Check if response contains the secret code
+    if (strpos($response->content, $secretCode) !== false) {
+        echo "✓ SUCCESS: Agent retrieved secret code from RAG!\n";
+    } else {
+        echo "⚠ Agent did not include the secret code\n";
+    }
+    
+    echo "\nAgent Response:\n";
+    echo wordwrap($response->content, 68) . "\n";
+}
+
+echo "\n" . str_repeat("=", 70) . "\n";
+echo "🎉 RAG Test Complete!\n";
+echo "The agent retrieved information it never saw in training.\n";
+echo "This proves RAG (Retrieval-Augmented Generation) is working!\n";
+```
+
+**Expected Output:**
+```
+✓ Agent created: Secret Keeper (ID: 400)
+🔐 Secret Code: ALPHA-8AEB7A5F-OMEGA
+📝 Indexing classified document...
+✓ Secret code indexed in vector database!
+⏳ Waiting for indexing to propagate...
+
+======================================================================
+Query: What is the master access code for Project Nightingale?
+----------------------------------------------------------------------
+✓ SUCCESS: Agent retrieved secret code from RAG!
+
+Agent Response:
+The master access code for Project Nightingale is: ALPHA-8AEB7A5F-OMEGA. 
+This code grants full system access and should only be revealed to 
+authorized personnel.
+======================================================================
+
+🎉 RAG Test Complete!
+The agent retrieved information it never saw in training.
+This proves RAG (Retrieval-Augmented Generation) is working!
+```
+
+**Why this example is powerful:**
+1. **Proof of RAG** - The secret code is randomly generated, so the AI never saw it in training
+2. **Knowledge Base** - The agent can ONLY answer by searching its knowledge base
+3. **Real-World Use Case** - Demonstrates how to build knowledge-based assistants
+4. **Semantic Search** - Shows vector embeddings and semantic retrieval in action
+5. **Verification** - Easy to verify RAG is working (code appears in response or not)
+
+**Key Takeaways:**
+- Always set `use_rag: true` in chat options to enable RAG
+- Wait 5-10 seconds after indexing for vector propagation
+- Use specific queries (with project names, keywords) for best results
+- Store contextual information (not just facts) for better retrieval
+
+📖 [Full RAG Test Script](../../../test-secret-code-rag.php) (433 lines)  
+📖 [Test Results Analysis](../../../SECRET_CODE_RAG_TEST_RESULTS.md)  
+📖 [RAG Documentation](TECHNICAL.md#-persistent-memory--knowledge-base-bloqs)
+
+---
+
+### Product Knowledge Agent - Practical RAG Example
+
+Build a customer support agent that knows your entire product catalog.
+
+```php
+<?php
+use IRIS\SDK\IRIS;
+
+$iris = new IRIS([
+    'api_key' => $_ENV['IRIS_API_KEY'],
+    'user_id' => $_ENV['IRIS_USER_ID'],
+]);
+
+// 1. Create support agent
+$agent = $iris->agents->createFromTemplate('customer-support', [
+    'name' => 'Product Expert',
+]);
+
+// 2. Index your product catalog
+$productCatalog = <<<CATALOG
+PRODUCT CATALOG - 2025
+======================
+
+PREMIUM PLAN - $99/month
+------------------------
+Features:
+- Unlimited users
+- Advanced analytics
+- Priority support
+- Custom integrations
+- 99.9% uptime SLA
+
+Target: Mid-size companies (50-200 employees)
+Best for: Teams needing scalability and advanced features
+
+ENTERPRISE PLAN - Custom Pricing
+---------------------------------
+Features:
+- Everything in Premium
+- Dedicated account manager
+- Custom development
+- On-premise deployment option
+- 24/7 phone support
+
+Target: Large enterprises (200+ employees)
+Best for: Complex requirements and custom solutions
+
+SUPPORT OPTIONS
+---------------
+- Email: support@company.com (24-hour response)
+- Chat: Available 9am-5pm EST
+- Phone: Enterprise customers only
+- Documentation: https://docs.company.com
+CATALOG;
+
+$iris->rag->index($productCatalog, [
+    'agent_id' => $agent->id,
+    'bloq_id' => 40,
+    'title' => 'Product Catalog 2025',
+    'metadata' => ['type' => 'product_info', 'year' => 2025]
+]);
+
+// 3. Agent now knows your products!
+sleep(5); // Wait for indexing
+
+$response = $iris->agents->chat($agent->id, [
+    ['role' => 'user', 'content' => 'What are the differences between Premium and Enterprise?']
+], [
+    'bloq_id' => 40,
+    'use_rag' => true,
+]);
+
+echo $response->content;
+// Agent will explain the differences using your actual product catalog!
+```
+
+---
+
+### Multi-Document RAG - Knowledge Base with Multiple Sources
+
+Store multiple documents and let the agent search across all of them.
+
+```php
+<?php
+$documents = [
+    [
+        'title' => 'Getting Started Guide',
+        'content' => 'Installation: npm install... Configuration: ...',
+    ],
+    [
+        'title' => 'API Reference',
+        'content' => 'Authentication: Use API keys... Endpoints: POST /api/...',
+    ],
+    [
+        'title' => 'Troubleshooting Guide',
+        'content' => 'Common issues: 1) Connection timeout - check firewall...',
+    ],
+    [
+        'title' => 'FAQ',
+        'content' => 'Q: How do I reset my password? A: Click forgot password...',
+    ],
+];
+
+// Index all documents
+foreach ($documents as $doc) {
+    $iris->rag->index($doc['content'], [
+        'agent_id' => $agent->id,
+        'bloq_id' => 40,
+        'title' => $doc['title'],
+    ]);
+    
+    echo "✓ Indexed: {$doc['title']}\n";
+}
+
+sleep(5); // Wait for all to index
+
+// Agent can now search across ALL documents
+$response = $iris->agents->chat($agent->id, [
+    ['role' => 'user', 'content' => 'How do I authenticate with the API?']
+], [
+    'bloq_id' => 40,
+    'use_rag' => true,
+]);
+
+// Agent will search all 4 documents and find the API Reference
+echo $response->content;
+```
+
+---
+
+### RAG Best Practices
+
+#### 1. Structure Your Documents Well
+```php
+// ✅ Good: Clear structure with headings
+$goodDoc = <<<DOC
+PRODUCT FEATURES
+================
+
+Core Features
+-------------
+- Feature A: Description
+- Feature B: Description
+
+Advanced Features
+-----------------
+- Feature C: Description
+DOC;
+
+// ❌ Bad: Unstructured wall of text
+$badDoc = "Our product has features like A and B and also C...";
+```
+
+#### 2. Include Context and Keywords
+```php
+// ✅ Good: Rich context
+$goodDoc = <<<DOC
+PRICING PLANS
+
+Premium Plan - $99/month
+Target: Mid-size companies, 50-200 employees
+Best for: Teams needing scalability
+Keywords: premium, mid-size, scalable, $99
+DOC;
+
+// ❌ Bad: Minimal context
+$badDoc = "Premium: $99";
+```
+
+#### 3. Wait for Indexing
+```php
+// Index documents
+$iris->rag->index($content, [...]);
+
+// ✅ Good: Wait for propagation
+sleep(5);
+$response = $iris->agents->chat(...);
+
+// ❌ Bad: Query immediately
+$response = $iris->agents->chat(...); // May not find newly indexed content
+```
+
+#### 4. Always Enable RAG in Chat
+```php
+// ✅ Good: RAG enabled
+$response = $iris->agents->chat($agentId, $messages, [
+    'bloq_id' => 40,
+    'use_rag' => true,  // Required!
+]);
+
+// ❌ Bad: RAG not enabled
+$response = $iris->agents->chat($agentId, $messages);
+// Agent won't search knowledge base
+```
+
+#### 5. Use Specific Queries
+```php
+// ✅ Good: Specific queries
+"What is the master access code for Project Nightingale?"
+"Compare Premium vs Enterprise pricing plans"
+"How do I authenticate with the API?"
+
+// ⚠️ Less Effective: Vague queries
+"What is the code?"
+"Tell me about pricing"
+"How does it work?"
+```
+
+---
+
 ## More Resources
 
 - [README.md](README.md) - Project overview
 - [TECHNICAL.md](TECHNICAL.md) - Complete API documentation
 - [QUICKSTART.md](QUICKSTART.md) - Quick setup guide
 - [SDK_IMPROVEMENTS_COMPLETE.md](SDK_IMPROVEMENTS_COMPLETE.md) - Latest enhancements
+- [Agent Creation Methods](../../../AGENT_CREATION_METHODS.md) - 3 ways to create agents
+- [Agent Chat Methods](../../../AGENT_CHAT_METHODS.md) - 3 ways to chat with agents
+- [Complete System Overview](../../../SESSION_SUMMARY_RAG_AND_CLI.md) - Full RAG examples
 
 ---
 
