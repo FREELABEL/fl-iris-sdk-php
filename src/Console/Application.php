@@ -15,6 +15,8 @@ use IRIS\SDK\Console\Commands\MemoryShowCommand;
 use IRIS\SDK\Console\Commands\MemoryAddCommand;
 use IRIS\SDK\Console\Commands\SetupCommand;
 use IRIS\SDK\Console\Commands\AgentCreateCommand;
+use IRIS\SDK\Console\Commands\ServisAiCommand;
+use IRIS\SDK\Console\Commands\EvalCommand;
 
 class Application extends BaseApplication
 {
@@ -35,6 +37,8 @@ class Application extends BaseApplication
             new MemoryShowCommand(),
             new MemoryAddCommand(),
             new AgentCreateCommand(),
+            new ServisAiCommand(),
+            new EvalCommand(),
         ]);
     }
 }
