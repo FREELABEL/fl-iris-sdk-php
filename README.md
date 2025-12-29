@@ -998,6 +998,115 @@ The SDK includes a powerful CLI that mirrors all SDK functionality:
 
 ---
 
+## 🧪 Agent Evaluation Harness
+
+Test and validate your agents with the built-in evaluation framework. Run comprehensive tests to ensure your agents perform as expected before deploying to production.
+
+### Quick Start
+
+```bash
+# List available core tests
+./bin/iris eval --list
+
+# Run all 7 core tests against an agent
+./bin/iris eval 387
+
+# Run custom tests
+./bin/iris eval 387 --type=custom
+
+# Compare agent performance with/without web search
+./bin/iris eval 387 --type=comparison
+
+# Save results to JSON
+./bin/iris eval 387 --save
+
+# Output as JSON (for CI/CD)
+./bin/iris eval 387 --json
+```
+
+### Core Tests (7 Built-in Scenarios)
+
+| Test | Description |
+|------|-------------|
+| `basic_conversation` | Tests introduction and capabilities description |
+| `web_search_capability` | Tests web search functionality |
+| `market_research` | Tests market research and analysis |
+| `personalization` | Tests personalization and memory |
+| `complex_reasoning` | Tests complex planning abilities |
+| `tool_integration` | Tests external API/tool usage |
+| `error_handling` | Tests graceful failure handling |
+
+### PHP API Usage
+
+```php
+use IRIS\SDK\IRIS;
+use IRIS\SDK\Evaluation\AgentEvaluator;
+use IRIS\SDK\Evaluation\EvaluationTest;
+
+$iris = new IRIS([
+    'api_key' => $_ENV['IRIS_API_KEY'],
+    'user_id' => $_ENV['IRIS_USER_ID'],
+]);
+
+$evaluator = new AgentEvaluator($iris);
+
+// Run all core tests
+$results = $evaluator->runCoreTests(387);
+
+// Generate human-readable report
+echo $evaluator->generateReport($results);
+
+// Create custom tests
+$customTest = new EvaluationTest(
+    'product_knowledge',
+    'What are the main features of our enterprise plan?',
+    [
+        'keywords' => ['enterprise', 'features', 'support'],
+        'min_response_length' => 100,
+        'max_response_time_ms' => 15000,
+    ]
+);
+
+$result = $evaluator->runTest(387, $customTest);
+```
+
+### Sample Output
+
+```
+============================================================
+📊 AGENT EVALUATION REPORT
+============================================================
+
+✅ basic_conversation
+   Score: 100% (3/3 checks passed)
+   Response Time: 5674ms
+   Response Length: 361 chars
+
+❌ web_search_capability
+   Score: 33% (1/3 checks passed)
+   Response Time: 6388ms
+   Failed checks:
+     - min_response_length: expected >= 100, got 0
+
+✅ complex_reasoning
+   Score: 100% (4/4 checks passed)
+   Response Time: 9911ms
+   Response Length: 2157 chars
+
+------------------------------------------------------------
+📈 SUMMARY
+------------------------------------------------------------
+Tests Run: 7
+Tests Passed: 4/7 (57%)
+Average Score: 70%
+Status: 🟡 GOOD
+============================================================
+```
+
+📖 [Full Evaluation Documentation](TECHNICAL.md#-agent-evaluation-harness)
+
+---
+
 ## N8N & Workflow Tool Compatibility
 
 **Already using N8N?** IRIS works seamlessly alongside your existing workflows:
@@ -1026,6 +1135,7 @@ Your agents live at **app.heyiris.io** and can be accessed from any workflow too
 | [Integrations](TECHNICAL.md#-integrations-17-services) | 17+ service connections |
 | [Workflows](TECHNICAL.md#-v5-multi-step-workflows) | Multi-step automation |
 | [Testing](TECHNICAL.md#testing) | Mocking and test utilities |
+| [Agent Evaluation](TECHNICAL.md#-agent-evaluation-harness) | Test and validate agent performance |
 
 ### 🚀 Getting Started Guides
 
@@ -1047,6 +1157,7 @@ Your agents live at **app.heyiris.io** and can be accessed from any workflow too
 | `$iris->workflows` | `execute`, `getStatus`, `approve`, `templates` |
 | `$iris->chat` | `start`, `execute`, `resume`, `history` |
 | `$iris->integrations` | `list`, `get`, `enable`, `execute` |
+| `AgentEvaluator` | `runCoreTests`, `runTest`, `generateReport`, `addCoreTest` |
 
 📖 [Full API Reference](TECHNICAL.md#api-reference)
 

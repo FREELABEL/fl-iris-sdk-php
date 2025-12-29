@@ -3314,6 +3314,267 @@ $response = $iris->agents->chat('agent_123', $messages);
 assert($response->content === 'Mocked response');
 ```
 
+## 🧪 Agent Evaluation Harness
+
+The SDK includes a comprehensive evaluation framework for testing agent performance, capabilities, and configuration effectiveness. Use it to validate agents before production deployment or to compare different configurations.
+
+### Overview
+
+The evaluation harness consists of two main classes:
+
+- **`EvaluationTest`** - Defines individual test scenarios with prompts and expectations
+- **`AgentEvaluator`** - Runs tests and generates reports
+
+### CLI Usage
+
+The fastest way to evaluate an agent is via the CLI:
+
+```bash
+# List all available core tests
+./bin/iris eval --list
+
+# Run all 7 core tests against agent 387
+./bin/iris eval 387
+
+# Run custom test scenarios
+./bin/iris eval 387 --type=custom
+
+# Compare with/without web search enabled
+./bin/iris eval 387 --type=comparison
+
+# Save results to JSON file
+./bin/iris eval 387 --save
+./bin/iris eval 387 --save=my-results.json
+
+# Output as JSON (useful for CI/CD pipelines)
+./bin/iris eval 387 --json
+```
+
+### Core Tests
+
+The evaluator includes 7 built-in test scenarios:
+
+| Test Name | Description | Key Checks |
+|-----------|-------------|------------|
+| `basic_conversation` | Tests introduction and capabilities | Response length, self-introduction |
+| `web_search_capability` | Tests real-time information retrieval | Web search usage, keywords, timing |
+| `market_research` | Tests analysis and research capabilities | Structure, keywords, length |
+| `personalization` | Tests memory and personalization | User interest reference |
+| `complex_reasoning` | Tests complex planning abilities | Multi-part response, structure |
+| `tool_integration` | Tests external API/tool usage | Tool invocation, results |
+| `error_handling` | Tests graceful failure handling | No error keywords, proper response |
+
+### PHP API Usage
+
+#### Basic Usage
+
+```php
+use IRIS\SDK\IRIS;
+use IRIS\SDK\Evaluation\AgentEvaluator;
+use IRIS\SDK\Evaluation\EvaluationTest;
+
+$iris = new IRIS([
+    'api_key' => $_ENV['IRIS_API_KEY'],
+    'user_id' => $_ENV['IRIS_USER_ID'],
+]);
+
+$evaluator = new AgentEvaluator($iris);
+
+// Run all core tests
+$results = $evaluator->runCoreTests(387);
+
+// Generate and display report
+echo $evaluator->generateReport($results);
+```
+
+#### Custom Test Scenarios
+
+Create custom tests tailored to your agent's specific use case:
+
+```php
+use IRIS\SDK\Evaluation\EvaluationTest;
+
+// Test product knowledge
+$productTest = new EvaluationTest(
+    'product_knowledge',                              // Test name
+    'What are the key features of our enterprise plan?', // Prompt
+    [                                                  // Expectations
+        'keywords' => ['enterprise', 'features', 'unlimited', 'support'],
+        'min_response_length' => 150,
+        'max_response_time_ms' => 15000,
+        'should_be_structured' => true,
+    ],
+    'Tests agent knowledge of enterprise plan features' // Description
+);
+
+// Test customer support scenario
+$supportTest = new EvaluationTest(
+    'refund_handling',
+    'I want to request a refund for my subscription. How do I do that?',
+    [
+        'keywords' => ['refund', 'process', 'email', 'days'],
+        'min_response_length' => 100,
+        'forbidden_keywords' => ['error', 'cannot', 'impossible'],
+        'should_personalize' => false,
+    ],
+    'Tests proper refund request handling'
+);
+
+// Run custom tests
+$result1 = $evaluator->runTest(387, $productTest);
+$result2 = $evaluator->runTest(387, $supportTest);
+```
+
+#### Available Expectation Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `keywords` | `array<string>` | Required keywords (50%+ must be present) |
+| `forbidden_keywords` | `array<string>` | Keywords that should NOT appear |
+| `min_response_length` | `int` | Minimum character count |
+| `max_response_length` | `int` | Maximum character count |
+| `max_response_time_ms` | `int` | Maximum response time in milliseconds |
+| `requires_web_search` | `bool` | Expects web search to be used |
+| `requires_tool_use` | `bool` | Expects tool/integration usage |
+| `should_personalize` | `bool` | Should reference user context |
+| `should_reference_interests` | `bool` | Should mention user interests |
+| `should_break_down_complex` | `bool` | Should break down complex topics |
+| `should_be_structured` | `bool` | Should use bullets/numbers/headers |
+| `should_introduce_self` | `bool` | Should include self-introduction |
+
+#### Comparison Testing
+
+Compare agent performance with different configurations:
+
+```php
+// The comparison test automatically:
+// 1. Enables web search
+// 2. Runs test
+// 3. Disables web search
+// 4. Runs same test
+// 5. Restores original settings
+
+$results = []; // Use CLI: ./bin/iris eval 387 --type=comparison
+
+// Or manually compare configurations:
+$evaluator = new AgentEvaluator($iris);
+
+// Test with current settings
+$result1 = $evaluator->runTest($agentId, $myTest);
+
+// Modify agent settings
+$iris->agents->patch($agentId, [
+    'settings' => ['enabledFunctions' => ['deepResearch' => true]]
+]);
+
+// Test with new settings
+$result2 = $evaluator->runTest($agentId, $myTest);
+
+// Compare scores
+echo "Without web search: {$result1['evaluation']['score']}%\n";
+echo "With web search: {$result2['evaluation']['score']}%\n";
+```
+
+#### Adding Custom Core Tests
+
+Extend the evaluator with your own core tests:
+
+```php
+$evaluator = new AgentEvaluator($iris);
+
+// Add a custom core test
+$evaluator->addCoreTest('brand_voice', new EvaluationTest(
+    'brand_voice',
+    'Tell me about your company and what makes you different.',
+    [
+        'keywords' => ['innovative', 'customer-focused', 'reliable'],
+        'min_response_length' => 200,
+        'should_introduce_self' => true,
+    ],
+    'Tests consistent brand voice and messaging'
+));
+
+// Now runCoreTests() includes your custom test
+$results = $evaluator->runCoreTests($agentId);
+```
+
+### Result Structure
+
+Each test returns a structured result:
+
+```php
+[
+    'test_name' => 'basic_conversation',
+    'description' => 'Tests introduction and capabilities description',
+    'prompt' => 'Hello! Please introduce yourself...',
+    'success' => true,                    // Pass/fail based on 50% threshold
+    'response' => 'Hello! I am...',       // Full agent response
+    'response_time_ms' => 5674,           // Time to respond
+    'response_length' => 361,             // Character count
+    'evaluation' => [
+        'score' => 100,                   // 0-100 percentage
+        'checks_passed' => 3,             // Number passed
+        'checks_total' => 3,              // Total checks
+        'details' => [                    // Per-check results
+            'min_response_length' => [
+                'passed' => true,
+                'expected' => '>= 50',
+                'actual' => 361,
+            ],
+            'response_time' => [
+                'passed' => true,
+                'expected' => '<= 15000ms',
+                'actual' => '5674ms',
+            ],
+            // ...
+        ],
+    ],
+    'error' => null,                      // Error message if failed
+]
+```
+
+### CI/CD Integration
+
+Use the JSON output for automated testing:
+
+```bash
+# Run tests and capture JSON output
+./bin/iris eval 387 --json > eval-results.json
+
+# Check pass rate in CI script
+PASS_RATE=$(cat eval-results.json | jq '[.[] | select(.success == true)] | length')
+TOTAL=$(cat eval-results.json | jq 'length')
+
+if [ $PASS_RATE -lt $((TOTAL / 2)) ]; then
+    echo "Agent evaluation failed: $PASS_RATE/$TOTAL tests passed"
+    exit 1
+fi
+```
+
+### Standalone Script
+
+A standalone CLI script is also available for quick testing:
+
+```bash
+# Run core tests
+php test-agent-cli-eval.php 387 core
+
+# Run custom tests
+php test-agent-cli-eval.php 387 custom
+
+# Run comparison tests
+php test-agent-cli-eval.php 387 comparison
+```
+
+### Best Practices
+
+1. **Run evaluations before deployment** - Always test agents before pushing to production
+2. **Create domain-specific tests** - Add custom tests for your specific use case
+3. **Monitor over time** - Save results to track performance changes
+4. **Test after configuration changes** - Re-evaluate after modifying agent settings
+5. **Use comparison mode** - Understand the impact of enabling/disabling features
+6. **Set realistic thresholds** - Adjust expectations based on your agent's purpose
+
 ## API Reference
 
 | Resource | Methods |
