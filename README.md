@@ -946,6 +946,14 @@ Your agents live at **app.heyiris.io** and can be accessed from any workflow too
 | [Workflows](TECHNICAL.md#-v5-multi-step-workflows) | Multi-step automation |
 | [Testing](TECHNICAL.md#testing) | Mocking and test utilities |
 
+### 🚀 Getting Started Guides
+
+| Guide | Description |
+|-------|-------------|
+| [📖 Agent Creation Methods](../../../AGENT_CREATION_METHODS.md) | Compare 3 ways to create agents (PHP, Bash, CLI) |
+| [💬 Agent Chat Methods](../../../AGENT_CHAT_METHODS.md) | Compare 3 ways to chat with agents (CLI, PHP, Bash) |
+| [🎉 Complete System Overview](../../../SESSION_SUMMARY_RAG_AND_CLI.md) | Full system summary with RAG examples |
+
 ---
 
 ## API Reference (Quick)

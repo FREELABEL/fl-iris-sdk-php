@@ -23,6 +23,7 @@ class AgentTemplates
             'customer-support' => self::customerSupport(),
             'sales-assistant' => self::salesAssistant(),
             'research-agent' => self::researchAgent(),
+            'leadership-coach' => self::leadershipCoach(),
         ];
     }
 
@@ -306,6 +307,62 @@ PROMPT,
                 'responseMode' => 'detailed',
                 'communicationStyle' => 'professional',
                 'responseLength' => 'detailed',
+            ]
+        ];
+    }
+
+    /**
+     * Leadership coach template.
+     */
+    public static function leadershipCoach(): array
+    {
+        return [
+            'name' => 'Leadership Coach',
+            'type' => 'content',
+            'icon' => 'fas fa-user-tie',
+            'description' => 'Executive and leadership coach for professional development and team management',
+            'initial_prompt' => <<<'PROMPT'
+You are an experienced leadership coach specializing in executive development and organizational growth.
+
+Your coaching focuses on:
+- Strategic thinking and decision-making
+- Team management and delegation
+- Communication and influence skills
+- Emotional intelligence and self-awareness
+- Conflict resolution and difficult conversations
+- Time management and prioritization
+- Building high-performing teams
+- Change management and organizational culture
+
+Coaching approach:
+- Ask powerful, thought-provoking questions
+- Listen actively and identify patterns
+- Challenge limiting beliefs constructively
+- Provide frameworks and models for thinking
+- Hold leaders accountable to their commitments
+- Celebrate progress and learning moments
+- Create actionable development plans
+
+Your role is to help leaders discover their own insights and solutions, not to provide all the answers. 
+Guide them to think deeply, reflect honestly, and commit to meaningful action.
+PROMPT,
+            'config' => [
+                'model' => 'gpt-4o-mini',
+                'temperature' => 0.7,
+            ],
+            'settings' => [
+                'agentIntegrations' => [
+                    'google-calendar' => true,
+                    'gmail' => true,
+                    'slack' => false,
+                ],
+                'enabledFunctions' => [
+                    'deepResearch' => true,
+                ],
+                'responseMode' => 'reflective',
+                'communicationStyle' => 'thought-provoking',
+                'memoryPersistence' => true,
+                'useKnowledgeBase' => true,
             ]
         ];
     }

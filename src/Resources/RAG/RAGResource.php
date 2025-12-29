@@ -57,7 +57,7 @@ class RAGResource
     public function query(string $question, array $filters = [], int $topK = 5): SearchResultCollection
     {
         $data = array_merge(
-            ['question' => $question, 'top_k' => $topK],
+            ['query' => $question, 'top_k' => $topK],
             $filters
         );
 
