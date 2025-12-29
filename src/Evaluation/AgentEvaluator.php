@@ -413,7 +413,9 @@ class AgentEvaluator
                 if (!empty($failedChecks)) {
                     $report .= "   Failed checks:\n";
                     foreach ($failedChecks as $checkName => $check) {
-                        $report .= "     - {$checkName}: expected {$check['expected']}, got {$check['actual']}\n";
+                        $expected = $check['expected'] ?? 'N/A';
+                        $actual = $check['actual'] ?? ($check['found'] ?? 'N/A');
+                        $report .= "     - {$checkName}: expected {$expected}, got {$actual}\n";
                     }
                 }
             }
