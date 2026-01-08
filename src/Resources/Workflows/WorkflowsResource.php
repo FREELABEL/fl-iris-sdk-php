@@ -321,4 +321,272 @@ class WorkflowsResource
     {
         return $this->http->post("/api/v1/bloqs/workflow/{$workflowId}/webhook-url");
     }
+
+    /**
+     * Execute a callable workflow and deliver the result to a lead.
+     *
+     * This is the unified delivery method that chains:
+     * 1. Execute the callable workflow
+     * 2. Wait for completion
+     * 3. Create a deliverable from the result
+     * 4. Send a beautiful email notification using AI-powered templates
+     *
+     * This solves the "last mile" delivery problem by combining all steps
+     * into a single, atomic operation.
+     *
+     * @param int $leadId The lead ID to deliver to
+     * @param string $callableName The callable workflow name (e.g., 'newsletter-generator')
+     * @param array $input Input data for the workflow
+     * @param array{
+     *     send_email?: bool,
+     *     email_subject?: string,
+     *     recipient_emails?: array<string>,
+     *     message_mode?: string,
+     *     custom_context?: string,
+     *     include_project_context?: bool,
+     *     deliverable_title?: string
+     * } $options Delivery options
+     * @return DeliveryResult
+     *
+     * @example
+     * ```php
+     * // Execute workflow and deliver to lead in one call
+     * $result = $iris->workflows->deliverToLead(
+     *     522,                        // Lead ID
+     *     'newsletter-generator',     // Callable workflow name
+     *     ['topic' => 'AI for Law Firms', 'tone' => 'professional'],
+     *     [
+     *         'send_email' => true,
+     *         'email_subject' => 'Your Newsletter is Ready!',
+     *         'message_mode' => 'ai',  // AI-generated email content
+     *     ]
+     * );
+     *
+     * echo "Workflow: {$result->workflowName}\n";
+     * echo "Deliverable ID: {$result->deliverableId}\n";
+     * echo "Email sent to: " . implode(', ', $result->emailSentTo) . "\n";
+     * echo "Time to value: {$result->timeToValueSeconds}s\n";
+     * ```
+     *
+     * @example CLI usage:
+     * ```bash
+     * iris sdk:call workflows.deliverToLead 522 newsletter-generator \
+     *   input='{"topic":"AI for Law Firms"}' \
+     *   send_email=true \
+     *   message_mode=ai
+     * ```
+     */
+    public function deliverToLead(
+        int $leadId,
+        string $callableName,
+        array $input = [],
+        array $options = []
+    ): DeliveryResult {
+        $startTime = microtime(true);
+        $userId = $this->config->requireUserId();
+
+        // Step 1: Execute the callable workflow
+        $executeResponse = $this->http->post('/api/v1/workflows/execute-callable', [
+            'callable_name' => $callableName,
+            'user_id' => $userId,
+            'input' => $input,
+            'context' => [
+                'lead_id' => $leadId,
+                'delivery_mode' => true,
+            ],
+        ]);
+
+        if (!($executeResponse['success'] ?? false)) {
+            throw new \IRIS\SDK\Exceptions\WorkflowException(
+                $executeResponse['error'] ?? 'Workflow execution failed'
+            );
+        }
+
+        $workflowResult = $executeResponse['output'] ?? null;
+        $workflowInfo = $executeResponse['workflow'] ?? [];
+        $executionId = $executeResponse['execution_id'] ?? null;
+
+        // Step 2: Create a deliverable from the result
+        // Determine what to deliver - could be a URL, content, or file
+        $deliverableTitle = $options['deliverable_title']
+            ?? $workflowInfo['name'] ?? $callableName;
+
+        // Build the deliverable URL (pointing to the workflow result page)
+        $deliverableUrl = $this->buildDeliverableUrl($executionId, $workflowInfo);
+
+        $deliverableResponse = $this->http->post("/api/v1/leads/{$leadId}/deliverables", [
+            'type' => 'link',
+            'title' => $deliverableTitle . ' - ' . date('M j, Y g:i A'),
+            'external_url' => $deliverableUrl,
+        ]);
+
+        $deliverable = $deliverableResponse['data']['deliverable'] ?? $deliverableResponse;
+        $deliverableId = $deliverable['id'] ?? null;
+
+        // Step 3: Send email notification (if enabled)
+        $sendEmail = $options['send_email'] ?? true;
+        $emailSentTo = [];
+        $emailResult = null;
+
+        if ($sendEmail && $deliverableId) {
+            $emailOptions = [
+                'deliverable_ids' => [$deliverableId],
+                'message_mode' => $options['message_mode'] ?? 'ai',
+                'include_project_context' => $options['include_project_context'] ?? true,
+            ];
+
+            if (isset($options['email_subject'])) {
+                $emailOptions['subject'] = $options['email_subject'];
+            }
+
+            if (isset($options['recipient_emails'])) {
+                $emailOptions['recipient_emails'] = $options['recipient_emails'];
+            }
+
+            if (isset($options['custom_context'])) {
+                $emailOptions['custom_context'] = $options['custom_context'];
+            }
+
+            // Use generateAndSend pattern - preview then send
+            try {
+                // First generate the preview
+                $preview = $this->http->post(
+                    "/api/v1/leads/{$leadId}/deliverables/preview-email",
+                    $emailOptions
+                );
+
+                // Then send with the generated content
+                $emailResult = $this->http->post(
+                    "/api/v1/leads/{$leadId}/deliverables/send",
+                    array_merge($emailOptions, [
+                        'email_content' => $preview['data']['body'] ?? $preview['body'] ?? '',
+                        'subject' => $emailOptions['subject']
+                            ?? $preview['data']['subject']
+                            ?? $preview['subject']
+                            ?? "Your {$deliverableTitle} is Ready!",
+                    ])
+                );
+
+                $emailSentTo = $emailResult['data']['sent_to']
+                    ?? $emailResult['sent_to']
+                    ?? [];
+            } catch (\Exception $e) {
+                // Email failure shouldn't fail the whole delivery
+                $emailResult = ['error' => $e->getMessage()];
+            }
+        }
+
+        // Calculate time to value
+        $timeToValue = round(microtime(true) - $startTime, 2);
+
+        return new DeliveryResult([
+            'success' => true,
+            'lead_id' => $leadId,
+            'callable_name' => $callableName,
+            'workflow_id' => $workflowInfo['id'] ?? null,
+            'workflow_name' => $workflowInfo['name'] ?? $callableName,
+            'execution_id' => $executionId,
+            'deliverable_id' => $deliverableId,
+            'deliverable_url' => $deliverableUrl,
+            'deliverable_title' => $deliverableTitle,
+            'workflow_output' => $workflowResult,
+            'email_sent' => !empty($emailSentTo),
+            'email_sent_to' => $emailSentTo,
+            'email_result' => $emailResult,
+            'time_to_value_seconds' => $timeToValue,
+        ]);
+    }
+
+    /**
+     * Build the deliverable URL for a workflow execution result.
+     *
+     * @param string|null $executionId
+     * @param array $workflowInfo
+     * @return string
+     */
+    protected function buildDeliverableUrl(?string $executionId, array $workflowInfo): string
+    {
+        $baseUrl = $this->config->irisUrl ?? 'https://app.heyiris.io';
+
+        // If we have a workflow slug, use the template landing page
+        if (!empty($workflowInfo['slug'])) {
+            return "{$baseUrl}/iris/templates/{$workflowInfo['slug']}";
+        }
+
+        // Otherwise link to the workflow run result
+        if ($executionId) {
+            return "{$baseUrl}/workflow-runs/{$executionId}";
+        }
+
+        // Fallback
+        return "{$baseUrl}/workflows";
+    }
+
+    /**
+     * List all callable workflows available for delivery.
+     *
+     * @param array{
+     *     public?: bool,
+     *     category?: string
+     * } $filters Filter options
+     * @return array List of callable workflows
+     *
+     * @example
+     * ```php
+     * $workflows = $iris->workflows->listCallable();
+     * foreach ($workflows as $workflow) {
+     *     echo "{$workflow['callable_name']}: {$workflow['description']}\n";
+     * }
+     * ```
+     */
+    public function listCallable(array $filters = []): array
+    {
+        $userId = $this->config->userId;
+
+        $params = [
+            'public' => $filters['public'] ?? true,
+        ];
+
+        if ($userId) {
+            $params['user_id'] = $userId;
+        }
+
+        if (isset($filters['category'])) {
+            $params['category'] = $filters['category'];
+        }
+
+        $response = $this->http->get('/api/v1/workflows/callable', $params);
+
+        return $response['data'] ?? $response ?? [];
+    }
+
+    /**
+     * Execute a callable workflow by name.
+     *
+     * @param string $callableName The callable workflow name
+     * @param array $input Input data for the workflow
+     * @param array $context Additional context
+     * @return array Execution result
+     *
+     * @example
+     * ```php
+     * $result = $iris->workflows->executeCallable('newsletter-generator', [
+     *     'topic' => 'AI for Law Firms',
+     *     'tone' => 'professional',
+     * ]);
+     * ```
+     */
+    public function executeCallable(string $callableName, array $input = [], array $context = []): array
+    {
+        $userId = $this->config->requireUserId();
+
+        $response = $this->http->post('/api/v1/workflows/execute-callable', [
+            'callable_name' => $callableName,
+            'user_id' => $userId,
+            'input' => $input,
+            'context' => $context,
+        ]);
+
+        return $response;
+    }
 }

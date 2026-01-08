@@ -1,0 +1,271 @@
+{
+  "template_id": "newsletter-generator-v1",
+  "name": "AI-Powered Newsletter Generator",
+  "version": "1.0.0",
+  "category": "content_generation",
+  "description": "Automated newsletter research, generation, and email delivery system. Generates professional newsletters from topics with AI-powered research and multi-format output.",
+  
+  "dependencies": [
+    {
+      "tool_id": "integration_resend_email",
+      "name": "Resend Email API",
+      "required": true,
+      "purpose": "Email delivery for newsletter distribution",
+      "config_schema": {
+        "api_key": "string (required)",
+        "from_email": "string (required)",
+        "from_name": "string (optional)"
+      },
+      "validation": {
+        "test_endpoint": "/api/v1/integrations/resend/test",
+        "required_scopes": ["email.send"]
+      },
+      "setup_url": "https://resend.com/api-keys"
+    },
+    {
+      "tool_id": "integration_openai",
+      "name": "OpenAI API",
+      "required": true,
+      "purpose": "AI-powered content generation and research",
+      "config_schema": {
+        "api_key": "string (required)",
+        "default_model": "string (default: gpt-4o-mini)"
+      },
+      "validation": {
+        "test_endpoint": "/api/v1/integrations/openai/test",
+        "required_models": ["gpt-4o-mini", "gpt-4o"]
+      },
+      "setup_url": "https://platform.openai.com/api-keys"
+    },
+    {
+      "tool_id": "integration_google_cloud_storage",
+      "name": "Google Cloud Storage",
+      "required": true,
+      "purpose": "Newsletter file storage (PDF, HTML, DOCX, Markdown, ZIP)",
+      "config_schema": {
+        "credentials_json": "string (required)",
+        "bucket_name": "string (required)",
+        "project_id": "string (required)"
+      },
+      "validation": {
+        "test_endpoint": "/api/v1/integrations/gcs/test",
+        "required_permissions": ["storage.objects.create", "storage.objects.get"]
+      },
+      "setup_url": "https://console.cloud.google.com/storage"
+    },
+    {
+      "tool_id": "integration_serper_search",
+      "name": "Serper Web Search API",
+      "required": false,
+      "purpose": "Enhanced web research for newsletter content",
+      "config_schema": {
+        "api_key": "string (required)"
+      },
+      "validation": {
+        "test_endpoint": "/api/v1/integrations/serper/test"
+      },
+      "setup_url": "https://serper.dev/api-key",
+      "fallback": "Uses basic web scraping if not configured"
+    }
+  ],
+
+  "workflow_steps": [
+    {
+      "step_id": "research",
+      "name": "Newsletter Research",
+      "tool": "newsletter-research",
+      "required_dependencies": ["integration_openai", "integration_serper_search"],
+      "inputs": {
+        "topic": "string (required)",
+        "audience": "string (required)",
+        "tone": "string (default: professional)",
+        "newsletter_length": "string (default: standard)"
+      },
+      "outputs": {
+        "outline_options": "array (3 options)",
+        "research_sources": "array",
+        "extracted_themes": "array"
+      },
+      "estimated_cost": "$0.05-0.15 per research request"
+    },
+    {
+      "step_id": "generate",
+      "name": "Newsletter Generation",
+      "tool": "newsletter-write",
+      "required_dependencies": ["integration_openai", "integration_google_cloud_storage", "integration_resend_email"],
+      "inputs": {
+        "selected_option": "integer (1-3)",
+        "outline_json": "string (from research step)",
+        "context_json": "string",
+        "recipient_email": "string (optional)",
+        "recipient_name": "string (optional)",
+        "lead_id": "integer (optional)",
+        "customization": "string (optional)"
+      },
+      "outputs": {
+        "newsletter_markdown": "string (cloud URL)",
+        "newsletter_html": "string (cloud URL)",
+        "newsletter_pdf": "string (cloud URL)",
+        "newsletter_docx": "string (cloud URL)",
+        "newsletter_zip": "string (cloud URL)",
+        "email_sent": "boolean"
+      },
+      "estimated_cost": "$0.10-0.30 per newsletter generation"
+    }
+  ],
+
+  "use_cases": [
+    {
+      "client_type": "Professional Services (Educational Leadership)",
+      "example": "Dr. John F. Ayala - AI in Educational Leadership",
+      "customization": "Focus on government contracts, educational institutions, strategic consulting",
+      "frequency": "Monthly or quarterly thought leadership",
+      "value_proposition": "Establish authority, generate leads, nurture prospects"
+    },
+    {
+      "client_type": "Recruiters & Talent Acquisition",
+      "example": "@gniice_ - AI-Powered Recruitment",
+      "customization": "Focus on high-volume candidate pipelines, automation, performance improvement",
+      "frequency": "Weekly or bi-weekly candidate engagement",
+      "value_proposition": "Warm candidate pipelines, demonstrate expertise, improve placement rates"
+    },
+    {
+      "client_type": "Content Creators & Marketers",
+      "example": "Rodney Mayo - NCMA Fort Worth Chapter",
+      "customization": "Membership management, event promotion, community engagement",
+      "frequency": "Weekly content distribution",
+      "value_proposition": "Consistent content output, audience growth, brand building"
+    }
+  ],
+
+  "pricing_model": {
+    "setup_fee": "$500 (one-time integration setup)",
+    "monthly_subscription": "$200-500/month (includes 4-8 newsletters)",
+    "per_newsletter": "$50-100 per additional newsletter",
+    "enterprise_unlimited": "$1000/month (unlimited newsletters)"
+  },
+
+  "onboarding_checklist": [
+    {
+      "step": 1,
+      "task": "Connect Resend Email API",
+      "status": "required",
+      "estimated_time": "5 minutes",
+      "instructions": "Sign up at resend.com, create API key, add to IRIS"
+    },
+    {
+      "step": 2,
+      "task": "Connect OpenAI API",
+      "status": "required",
+      "estimated_time": "5 minutes",
+      "instructions": "Sign up at platform.openai.com, create API key, add to IRIS"
+    },
+    {
+      "step": 3,
+      "task": "Connect Google Cloud Storage",
+      "status": "required",
+      "estimated_time": "15 minutes",
+      "instructions": "Create GCS bucket, generate service account credentials, add to IRIS"
+    },
+    {
+      "step": 4,
+      "task": "Connect Serper Search API (Optional)",
+      "status": "optional",
+      "estimated_time": "5 minutes",
+      "instructions": "Sign up at serper.dev, create API key, add to IRIS"
+    },
+    {
+      "step": 5,
+      "task": "Test Newsletter Generation",
+      "status": "required",
+      "estimated_time": "10 minutes",
+      "instructions": "Run test newsletter to verify all integrations working"
+    },
+    {
+      "step": 6,
+      "task": "Create First Newsletter",
+      "status": "required",
+      "estimated_time": "30 minutes",
+      "instructions": "Research topic, select outline, generate and review newsletter"
+    }
+  ],
+
+  "success_metrics": {
+    "technical": {
+      "generation_success_rate": "95%+ (newsletters generated without errors)",
+      "email_delivery_rate": "98%+ (emails successfully delivered)",
+      "average_generation_time": "<60 seconds per newsletter",
+      "file_upload_success_rate": "99%+ (all formats uploaded to cloud)"
+    },
+    "business": {
+      "client_satisfaction": "4.5/5+ rating",
+      "newsletter_open_rate": "25%+ (industry standard: 20-25%)",
+      "click_through_rate": "3%+ (industry standard: 2-3%)",
+      "lead_generation": "10+ qualified leads per newsletter"
+    }
+  },
+
+  "troubleshooting": {
+    "common_issues": [
+      {
+        "issue": "Email not delivered",
+        "cause": "Missing or invalid Resend API key",
+        "solution": "Check MAIL_MAILER=resend and RESEND_API_KEY in .env file",
+        "prevention": "Run dependency check before enabling template"
+      },
+      {
+        "issue": "Newsletter generation fails",
+        "cause": "Missing 'approach' field in outline JSON",
+        "solution": "Ensure outline JSON includes 'approach' field with fallback",
+        "prevention": "Validate JSON schema before generation"
+      },
+      {
+        "issue": "Files not uploaded to cloud storage",
+        "cause": "Invalid GCS credentials or bucket permissions",
+        "solution": "Verify service account has storage.objects.create permission",
+        "prevention": "Test GCS connection during onboarding"
+      },
+      {
+        "issue": "Research returns no results",
+        "cause": "Serper API key expired or invalid",
+        "solution": "Regenerate Serper API key or use fallback web scraping",
+        "prevention": "Monitor API key expiration dates"
+      }
+    ]
+  },
+
+  "real_world_example": {
+    "client": "Rodney Mayo (Lead #24)",
+    "use_case": "NCMA Fort Worth Chapter Newsletter",
+    "topic": "AI-Powered Membership Management",
+    "result": {
+      "newsletter_generated": true,
+      "files_created": ["PDF", "HTML", "DOCX", "Markdown", "ZIP"],
+      "cloud_url": "https://storage.googleapis.com/gs-dev-media-assets/newsletters/ai-powered-membership-management-and-automated-com_2026-01-07_081702.zip",
+      "email_sent": true,
+      "deliverable_added": true,
+      "deliverable_id": 435
+    },
+    "lessons_learned": [
+      "Email delivery required Laravel Mail integration (Resend API)",
+      "Mailjet was disabled, causing initial delivery failure",
+      "Template dependency checking would have caught this before client impact"
+    ]
+  },
+
+  "deployment_status": {
+    "current_version": "1.0.0",
+    "production_ready": true,
+    "known_issues": [
+      "Newsletter generation CLI command has dispatch issues (investigating)",
+      "Worker queue requires restart after code updates to load latest fixes"
+    ],
+    "next_version_features": [
+      "Scheduled newsletter automation",
+      "A/B testing for newsletter variants",
+      "Analytics dashboard (open rates, click rates)",
+      "Newsletter template library (pre-built designs)",
+      "Multi-language support"
+    ]
+  }
+}

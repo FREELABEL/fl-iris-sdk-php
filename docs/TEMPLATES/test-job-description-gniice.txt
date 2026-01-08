@@ -1,0 +1,23 @@
+Senior Full-Stack Engineer - Austin, TX (Hybrid)
+
+Our client, a fast-growing fintech startup in Austin, is seeking a Senior Full-Stack Engineer to join their engineering team. This role is critical to building scalable web applications that process millions of transactions daily.
+
+Requirements:
+- 5+ years of professional software development experience
+- Strong proficiency in React and Node.js
+- Experience with TypeScript, PostgreSQL, and AWS
+- Previous work with payment systems or financial applications preferred
+- Excellent problem-solving and communication skills
+- Bachelor's degree in Computer Science or equivalent experience
+
+Nice to Have:
+- Experience with GraphQL APIs
+- Knowledge of microservices architecture
+- Familiarity with Docker and Kubernetes
+- Previous startup experience
+
+Location: Austin, TX (Hybrid - 3 days in office, 2 remote)
+Salary: $140,000 - $180,000 + equity
+Benefits: Health, dental, vision, 401k matching, unlimited PTO
+
+The ideal candidate will be a self-starter who thrives in a fast-paced environment and is passionate about building products that impact millions of users.

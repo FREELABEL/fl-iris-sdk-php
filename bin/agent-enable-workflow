@@ -1,0 +1,67 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Enable a workflow template for an agent
+ * 
+ * Usage: ./bin/agent-enable-workflow <agent_id> <workflow_callable_name>
+ * Example: ./bin/agent-enable-workflow 164 find_candidates
+ */
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use IRIS\SDK\IRIS;
+
+// Parse arguments
+if ($argc < 3) {
+    echo "Usage: {$argv[0]} <agent_id> <workflow_callable_name>\n";
+    echo "Example: {$argv[0]} 164 find_candidates\n";
+    exit(1);
+}
+
+$agentId = $argv[1];
+$workflowName = $argv[2];
+
+// Initialize SDK
+$iris = new IRIS(getenv('IRIS_API_KEY') ?: '');
+
+try {
+    // Get current agent settings
+    echo "📡 Fetching agent #{$agentId}...\n";
+    $agent = $iris->agents()->get($agentId);
+    
+    if (!$agent) {
+        echo "❌ Agent not found\n";
+        exit(1);
+    }
+    
+    echo "✅ Found agent: {$agent['name']}\n\n";
+    
+    // Get current settings
+    $settings = $agent['settings'] ?? [];
+    $enabledWorkflows = $settings['enabledWorkflows'] ?? [];
+    
+    echo "Current workflows: " . (empty($enabledWorkflows) ? '(none)' : implode(', ', $enabledWorkflows)) . "\n";
+    
+    // Add workflow if not already enabled
+    if (in_array($workflowName, $enabledWorkflows)) {
+        echo "⚠️  Workflow '{$workflowName}' already enabled\n";
+        exit(0);
+    }
+    
+    $enabledWorkflows[] = $workflowName;
+    $settings['enabledWorkflows'] = $enabledWorkflows;
+    
+    // Update agent
+    echo "\n🔄 Updating agent settings...\n";
+    $result = $iris->agents()->update($agentId, [
+        'settings' => $settings
+    ]);
+    
+    echo "✅ Workflow '{$workflowName}' enabled for agent #{$agentId}\n";
+    echo "Enabled workflows: " . implode(', ', $enabledWorkflows) . "\n";
+    
+} catch (Exception $e) {
+    echo "❌ Error: " . $e->getMessage() . "\n";
+    exit(1);
+}
