@@ -9,7 +9,8 @@ Complete workflow documentation for managing leads, deliverables, notes, and tas
 3. [Adding Deliverables](#adding-deliverables)
 4. [Managing Notes](#managing-notes)
 5. [Managing Tasks](#managing-tasks)
-6. [Real-World Examples](#real-world-examples)
+6. [Managing Agent Workflows](#managing-agent-workflows)
+7. [Real-World Examples](#real-world-examples)
 
 ---
 
@@ -420,6 +421,207 @@ $iris->leads->tasks(412)->delete(11);
 
 ---
 
+## Managing Agent Workflows
+
+Agents can execute multi-step workflows to automate complex tasks. Workflows must be attached to agents before they can be used. This is managed through the agent-workflow relational system.
+
+### Understanding Workflows
+
+Workflows are reusable templates that define multi-step processes:
+- **find_candidates** (ID: 8) - LinkedIn candidate search and analysis
+- **generate_newsletter** (ID: 1) - Newsletter research and writing
+- **generate_article** - Article generation from sources
+- And more custom workflows...
+
+Each workflow attachment has settings:
+- **is_enabled**: Whether the workflow is active (true/false)
+- **priority**: Execution priority (0-100, higher = more priority)
+- **config**: Custom JSON configuration for the workflow
+
+### List Agent Workflows
+
+```bash
+# List all workflows attached to an agent
+./bin/iris sdk:call agents.listWorkflows 164
+
+# Example output:
+# [
+#   {
+#     "id": 8,
+#     "name": "Find Candidates",
+#     "callable_name": "find_candidates",
+#     "is_enabled": true,
+#     "priority": 10,
+#     "config": {"max_results": 50},
+#     "enabled_at": "2026-01-08 12:00:00"
+#   }
+# ]
+```
+
+```php
+// List workflows
+$workflows = $iris->agents->listWorkflows(164);
+
+foreach ($workflows as $workflow) {
+    echo "{$workflow['name']} - Priority: {$workflow['priority']}\n";
+    echo "  Enabled: " . ($workflow['is_enabled'] ? 'Yes' : 'No') . "\n";
+    echo "  Callable: {$workflow['callable_name']}\n";
+}
+```
+
+### Attach Workflow to Agent
+
+```bash
+# Attach workflow with default settings
+./bin/iris sdk:call agents.attachWorkflow 164 8
+
+# Attach workflow with custom settings
+./bin/iris sdk:call agents.attachWorkflow 164 8 \
+  priority=10 \
+  is_enabled=true \
+  config='{"max_results":50,"include_linkedin":true}'
+
+# Attach newsletter workflow
+./bin/iris sdk:call agents.attachWorkflow 356 1 \
+  priority=20 \
+  config='{"tone":"professional","length":"medium"}'
+```
+
+```php
+// Attach workflow
+$result = $iris->agents->attachWorkflow(164, 8, [
+    'priority' => 10,
+    'is_enabled' => true,
+    'config' => [
+        'max_results' => 50,
+        'include_linkedin' => true,
+    ],
+]);
+
+echo "Attached: {$result['workflow_name']} ({$result['callable_name']})\n";
+```
+
+### Update Workflow Settings
+
+```bash
+# Update priority
+./bin/iris sdk:call agents.updateWorkflowSettings 164 8 priority=20
+
+# Disable workflow (keeps it attached but inactive)
+./bin/iris sdk:call agents.updateWorkflowSettings 164 8 is_enabled=false
+
+# Update configuration
+./bin/iris sdk:call agents.updateWorkflowSettings 164 8 \
+  config='{"max_results":100,"advanced_search":true}'
+
+# Update multiple settings at once
+./bin/iris sdk:call agents.updateWorkflowSettings 164 8 \
+  priority=25 \
+  is_enabled=true \
+  config='{"max_results":75}'
+```
+
+```php
+// Update priority
+$iris->agents->updateWorkflowSettings(164, 8, [
+    'priority' => 20,
+]);
+
+// Disable workflow
+$iris->agents->updateWorkflowSettings(164, 8, [
+    'is_enabled' => false,
+]);
+
+// Update configuration
+$iris->agents->updateWorkflowSettings(164, 8, [
+    'config' => [
+        'max_results' => 100,
+        'advanced_search' => true,
+    ],
+]);
+```
+
+### Detach Workflow from Agent
+
+```bash
+# Remove workflow from agent
+./bin/iris sdk:call agents.detachWorkflow 164 8
+
+# This completely removes the workflow attachment
+# The agent can no longer execute this workflow
+```
+
+```php
+// Detach workflow
+$iris->agents->detachWorkflow(164, 8);
+echo "Workflow detached successfully\n";
+```
+
+### Sync Multiple Workflows
+
+Replace all workflow attachments at once:
+
+```bash
+# Sync workflows (replaces all existing attachments)
+./bin/iris sdk:call agents.syncWorkflows 164 \
+  workflows='[
+    {"workflow_id":8,"priority":10,"is_enabled":true,"config":{"max_results":50}},
+    {"workflow_id":1,"priority":5,"is_enabled":true}
+  ]'
+
+# This will:
+# 1. Detach any workflows not in the list
+# 2. Attach new workflows
+# 3. Update existing workflows
+```
+
+```php
+// Sync workflows
+$result = $iris->agents->syncWorkflows(164, [
+    [
+        'workflow_id' => 8,
+        'priority' => 10,
+        'is_enabled' => true,
+        'config' => ['max_results' => 50],
+    ],
+    [
+        'workflow_id' => 1,
+        'priority' => 5,
+        'is_enabled' => true,
+    ],
+]);
+
+echo "Synced {$result['synced_count']} workflows\n";
+```
+
+### Legacy Script (Backward Compatibility)
+
+The older `agent-enable-workflow` script still works:
+
+```bash
+# Enable workflow by ID
+./bin/agent-enable-workflow 164 8
+
+# Enable workflow by name (limited mapping)
+./bin/agent-enable-workflow 164 find_candidates
+```
+
+**Note:** This script uses the new API endpoints internally but has limited workflow name mappings. Use `sdk:call` for full control.
+
+### Common Workflow IDs
+
+For reference, here are common workflow template IDs:
+
+| ID | Callable Name | Description |
+|----|---------------|-------------|
+| 1  | generate_newsletter | Multi-modal newsletter research and writing |
+| 8  | find_candidates | LinkedIn candidate search with Boolean queries |
+| ... | ... | (Check your database for more) |
+
+To find workflow IDs, query the `workflow_templates` table or use the API.
+
+---
+
 ## Real-World Examples
 
 ### Example 1: Complete Client Onboarding - Rodney Mayo
@@ -602,6 +804,139 @@ curl -X PUT "https://apiv2.heyiris.io/api/v1/leads/76" \
 # Priority: 90 (Won + task + recent activity)
 ```
 
+### Example 6: AI Recruiter Agent with Workflow Automation for @gniice_
+
+**Scenario:** Built a recruiter AI agent with automated workflow for resume analysis and candidate search. Configure the agent with the find_candidates workflow.
+
+```bash
+# 1. Create the agent (already done)
+# Agent ID: 358
+
+# 2. Attach the find_candidates workflow
+./bin/iris sdk:call agents.attachWorkflow 358 8 \
+  priority=10 \
+  is_enabled=true \
+  config='{"max_results":50,"platforms":["linkedin","github"],"experience_filter":"mid,senior"}'
+
+# 3. Verify workflow is attached
+./bin/iris sdk:call agents.listWorkflows 358
+
+# Output shows:
+# {
+#   "id": 8,
+#   "name": "Find Candidates",
+#   "callable_name": "find_candidates",
+#   "is_enabled": true,
+#   "priority": 10,
+#   "config": {
+#     "max_results": 50,
+#     "platforms": ["linkedin", "github"],
+#     "experience_filter": "mid,senior"
+#   }
+# }
+
+# 4. Add deliverable for the lead
+./bin/iris sdk:call leads.deliverables.create 53 \
+  type=link \
+  title="AI Recruiter Assistant Agent (with find_candidates workflow)" \
+  external_url="https://app.heyiris.io/agent/simple/358?bloq=208" \
+  description="AI agent with automated candidate search workflow. Can analyze resumes, score candidates, and generate LinkedIn Boolean queries. Configured to search LinkedIn and GitHub for mid-senior level candidates." \
+  user_id=193
+
+# 5. Document the workflow configuration
+curl -X POST "https://apiv2.heyiris.io/api/v1/leads/53/notes" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Configured recruiter agent with find_candidates workflow. Agent can now automatically generate Boolean search queries, extract candidate profiles from LinkedIn, and score candidates against job requirements. Workflow settings: max 50 results, searches LinkedIn + GitHub, filters for mid-senior experience levels."}'
+
+# 6. Test the workflow by chatting with the agent
+./bin/iris chat 358 "Find senior software engineers with Python and AWS experience in Austin, TX" --bloq=208
+
+# The agent will automatically use the find_candidates workflow
+```
+
+### Example 7: Newsletter Agent with Multi-Modal Research Workflow
+
+**Scenario:** Configure an agent to generate newsletters using the multi-modal research workflow.
+
+```bash
+# 1. Create newsletter agent
+# Agent ID: 356
+
+# 2. Attach the generate_newsletter workflow
+./bin/iris sdk:call agents.attachWorkflow 356 1 \
+  priority=20 \
+  is_enabled=true \
+  config='{"tone":"professional","newsletter_length":"standard","audience":"general audience"}'
+
+# 3. List workflows to verify
+./bin/iris sdk:call agents.listWorkflows 356
+
+# 4. Update workflow settings if needed
+./bin/iris sdk:call agents.updateWorkflowSettings 356 1 \
+  config='{"tone":"casual","newsletter_length":"brief","audience":"tech professionals"}'
+
+# 5. Test the workflow
+./bin/iris chat 356 "Generate a newsletter about AI trends in 2026. Include these videos: https://www.youtube.com/watch?v=abc123" --bloq=40
+
+# The agent will:
+# - Extract video transcripts
+# - Research the topic
+# - Generate 3 outline options
+# - Wait for user selection (HITL)
+# - Write the full newsletter
+```
+
+### Example 8: Managing Multiple Workflows on One Agent
+
+**Scenario:** Create a versatile agent that can handle both recruitment and content generation.
+
+```bash
+# 1. Create multi-purpose agent
+# Agent ID: 400
+
+# 2. Attach multiple workflows
+./bin/iris sdk:call agents.attachWorkflow 400 8 \
+  priority=10 \
+  config='{"max_results":50}'
+
+./bin/iris sdk:call agents.attachWorkflow 400 1 \
+  priority=15 \
+  config='{"tone":"professional"}'
+
+# 3. List all workflows
+./bin/iris sdk:call agents.listWorkflows 400
+
+# Output shows both workflows:
+# [
+#   {
+#     "id": 1,
+#     "name": "Generate Newsletter",
+#     "priority": 15,
+#     "is_enabled": true
+#   },
+#   {
+#     "id": 8,
+#     "name": "Find Candidates",
+#     "priority": 10,
+#     "is_enabled": true
+#   }
+# ]
+
+# 4. Temporarily disable recruitment workflow
+./bin/iris sdk:call agents.updateWorkflowSettings 400 8 is_enabled=false
+
+# 5. Re-enable later
+./bin/iris sdk:call agents.updateWorkflowSettings 400 8 is_enabled=true
+
+# 6. Replace all workflows at once (sync)
+./bin/iris sdk:call agents.syncWorkflows 400 \
+  workflows='[
+    {"workflow_id":1,"priority":20,"is_enabled":true},
+    {"workflow_id":8,"priority":5,"is_enabled":false}
+  ]'
+```
+
 ---
 
 ## Workflow Best Practices
@@ -642,7 +977,26 @@ Check top priorities weekly to focus efforts:
 ./bin/iris sdk:call leads.aggregation.list sort=priority order=desc per_page=20
 ```
 
-### 7. **Use Direct API as Fallback**
+### 7. **Configure Agent Workflows for Automation**
+Attach workflows to agents to enable automated multi-step processes:
+```bash
+# List available workflows
+./bin/iris sdk:call agents.listWorkflows <agent_id>
+
+# Attach workflow with config
+./bin/iris sdk:call agents.attachWorkflow <agent_id> <workflow_id> priority=10 config='{"key":"value"}'
+
+# Update workflow settings
+./bin/iris sdk:call agents.updateWorkflowSettings <agent_id> <workflow_id> is_enabled=true
+```
+
+### 8. **Document Workflow Configurations**
+When adding agent deliverables, document which workflows are enabled:
+```bash
+./bin/iris sdk:call leads.addNote <lead_id> "Agent configured with find_candidates workflow (priority: 10, max_results: 50)"
+```
+
+### 9. **Use Direct API as Fallback**
 When SDK has type issues, use curl:
 ```bash
 curl -X PUT "https://apiv2.heyiris.io/api/v1/leads/<lead_id>" \
@@ -751,8 +1105,18 @@ The complete lead management workflow:
 4. **Add deliverables** when work is completed
 5. **Document** with notes for context
 6. **Create tasks** for follow-ups
-7. **Send outreach** via AI-generated emails
-8. **Track outreach** with checklist steps
-9. **Monitor** priorities regularly
+7. **Configure agent workflows** for automation
+8. **Send outreach** via AI-generated emails
+9. **Track outreach** with checklist steps
+10. **Monitor** priorities regularly
 
-This workflow ensures nothing falls through the cracks and provides full visibility into client relationships.
+### Agent Workflow Management
+
+For agents with automated capabilities:
+- **List workflows**: See what automations are available
+- **Attach workflows**: Enable multi-step processes (recruitment, newsletters, etc.)
+- **Configure settings**: Customize priority, enable/disable, and workflow-specific config
+- **Update dynamically**: Adjust workflow settings without recreating agents
+- **Sync workflows**: Replace all attachments at once for bulk updates
+
+This workflow ensures nothing falls through the cracks and provides full visibility into client relationships and automated agent capabilities.
