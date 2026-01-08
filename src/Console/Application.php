@@ -18,6 +18,7 @@ use IRIS\SDK\Console\Commands\AgentCreateCommand;
 use IRIS\SDK\Console\Commands\ServisAiCommand;
 use IRIS\SDK\Console\Commands\EvalCommand;
 use IRIS\SDK\Console\Commands\DeliverCommand;
+use IRIS\SDK\Console\Commands\ScheduleCommand;
 
 class Application extends BaseApplication
 {
@@ -41,6 +42,7 @@ class Application extends BaseApplication
             new ServisAiCommand(),
             new EvalCommand(),
             new DeliverCommand(),
+            new ScheduleCommand(),
         ]);
     }
 }

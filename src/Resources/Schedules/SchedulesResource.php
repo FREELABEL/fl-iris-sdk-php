@@ -170,6 +170,34 @@ class SchedulesResource
     }
 
     /**
+     * Reset a stuck job back to 'scheduled' status.
+     * Useful for jobs stuck in 'running' status.
+     *
+     * @param int|string $jobId Job ID
+     * @return array
+     */
+    public function reset(int|string $jobId): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->post("/api/v1/users/{$userId}/bloqs/scheduled-jobs/{$jobId}/reset", []);
+
+        return $response;
+    }
+
+    /**
+     * Reset all stuck jobs (status=running with next_run_at in the past).
+     *
+     * @return array
+     */
+    public function resetAll(): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->post("/api/v1/users/{$userId}/bloqs/scheduled-jobs/reset-all", []);
+
+        return $response;
+    }
+
+    /**
      * Sync recurring tasks from an agent's schedule configuration.
      *
      * @param int|string $agentId Agent ID
@@ -211,5 +239,95 @@ class SchedulesResource
     public function failed(): array
     {
         return $this->list(['status' => 'failed']);
+    }
+
+    /**
+     * Get execution history for a specific scheduled job.
+     *
+     * @param int|string $jobId Job ID
+     * @param array{
+     *     status?: string,
+     *     limit?: int
+     * } $options Filter options
+     * @return array
+     */
+    public function executions(int|string $jobId, array $options = []): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->get("/api/v1/users/{$userId}/bloqs/scheduled-jobs/{$jobId}/executions", $options);
+
+        return $response;
+    }
+
+    /**
+     * Get all execution history for a specific agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @param array{
+     *     status?: string,
+     *     limit?: int,
+     *     from?: string,
+     *     to?: string
+     * } $options Filter options
+     * @return array
+     */
+    public function agentExecutions(int|string $agentId, array $options = []): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->get("/api/v1/users/{$userId}/bloqs/agents/{$agentId}/executions", $options);
+
+        return $response;
+    }
+
+    /**
+     * Get all executions across all agents for the user.
+     *
+     * @param array{
+     *     status?: string,
+     *     limit?: int,
+     *     from?: string,
+     *     to?: string
+     * } $options Filter options
+     * @return array
+     */
+    public function allExecutions(array $options = []): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->get("/api/v1/users/{$userId}/bloqs/agents/executions", $options);
+
+        return $response;
+    }
+
+    /**
+     * Get a single execution with full details.
+     *
+     * @param int|string $executionId Execution ID
+     * @return array
+     */
+    public function execution(int|string $executionId): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->get("/api/v1/users/{$userId}/bloqs/job-executions/{$executionId}");
+
+        return $response['data'] ?? $response;
+    }
+
+    /**
+     * Rate an execution (good/bad).
+     *
+     * @param int|string $executionId Execution ID
+     * @param string|null $rating 'good', 'bad', or null to clear
+     * @param string|null $notes Optional notes
+     * @return array
+     */
+    public function rateExecution(int|string $executionId, ?string $rating, ?string $notes = null): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->post("/api/v1/users/{$userId}/bloqs/agents/executions/{$executionId}/rate", [
+            'rating' => $rating,
+            'notes' => $notes,
+        ]);
+
+        return $response;
     }
 }
