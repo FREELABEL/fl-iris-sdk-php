@@ -4,8 +4,9 @@
 /**
  * Enable a workflow template for an agent
  * 
- * Usage: ./bin/agent-enable-workflow <agent_id> <workflow_callable_name>
+ * Usage: ./bin/agent-enable-workflow <agent_id> <workflow_callable_name|workflow_id>
  * Example: ./bin/agent-enable-workflow 164 find_candidates
+ * Example: ./bin/agent-enable-workflow 164 8
  */
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -14,19 +15,19 @@ use IRIS\SDK\IRIS;
 
 // Parse arguments
 if ($argc < 3) {
-    echo "Usage: {$argv[0]} <agent_id> <workflow_callable_name>\n";
+    echo "Usage: {$argv[0]} <agent_id> <workflow_callable_name|workflow_id>\n";
     echo "Example: {$argv[0]} 164 find_candidates\n";
+    echo "Example: {$argv[0]} 164 8\n";
     exit(1);
 }
 
 $agentId = $argv[1];
-$workflowName = $argv[2];
+$workflowIdentifier = $argv[2];
 
 // Initialize SDK
 $iris = new IRIS(getenv('IRIS_API_KEY') ?: '');
 
 try {
-    // Get current agent settings
     echo "📡 Fetching agent #{$agentId}...\n";
     $agent = $iris->agents()->get($agentId);
     
@@ -37,29 +38,70 @@ try {
     
     echo "✅ Found agent: {$agent['name']}\n\n";
     
-    // Get current settings
-    $settings = $agent['settings'] ?? [];
-    $enabledWorkflows = $settings['enabledWorkflows'] ?? [];
+    // Determine if identifier is a workflow ID (numeric) or callable name
+    $workflowId = null;
+    $workflowName = null;
     
-    echo "Current workflows: " . (empty($enabledWorkflows) ? '(none)' : implode(', ', $enabledWorkflows)) . "\n";
-    
-    // Add workflow if not already enabled
-    if (in_array($workflowName, $enabledWorkflows)) {
-        echo "⚠️  Workflow '{$workflowName}' already enabled\n";
-        exit(0);
+    if (is_numeric($workflowIdentifier)) {
+        $workflowId = (int) $workflowIdentifier;
+        echo "Using workflow ID: {$workflowId}\n";
+    } else {
+        // Look up workflow by callable name
+        $workflowName = $workflowIdentifier;
+        echo "Looking up workflow by name: {$workflowName}\n";
+        
+        // TODO: Add workflow lookup by callable_name API endpoint
+        // For now, try common workflow IDs
+        $commonWorkflows = [
+            'find_candidates' => 8,
+            'generate_newsletter' => 1,
+        ];
+        
+        if (isset($commonWorkflows[$workflowName])) {
+            $workflowId = $commonWorkflows[$workflowName];
+            echo "Mapped '{$workflowName}' to workflow ID {$workflowId}\n";
+        } else {
+            echo "⚠️  Unknown workflow name. Please provide workflow ID instead.\n";
+            exit(1);
+        }
     }
     
-    $enabledWorkflows[] = $workflowName;
-    $settings['enabledWorkflows'] = $enabledWorkflows;
+    // Check if workflow is already attached
+    echo "\n📋 Checking current workflows...\n";
+    $currentWorkflows = $iris->agents()->listWorkflows($agentId);
     
-    // Update agent
-    echo "\n🔄 Updating agent settings...\n";
-    $result = $iris->agents()->update($agentId, [
-        'settings' => $settings
+    $alreadyAttached = false;
+    foreach ($currentWorkflows as $workflow) {
+        if ($workflow['id'] == $workflowId) {
+            $alreadyAttached = true;
+            if ($workflow['is_enabled']) {
+                echo "⚠️  Workflow already enabled\n";
+                exit(0);
+            } else {
+                echo "Workflow is attached but disabled. Re-enabling...\n";
+                $iris->agents()->updateWorkflowSettings($agentId, $workflowId, [
+                    'is_enabled' => true
+                ]);
+                echo "✅ Workflow re-enabled\n";
+                exit(0);
+            }
+        }
+    }
+    
+    // Attach workflow
+    echo "\n🔗 Attaching workflow...\n";
+    $result = $iris->agents()->attachWorkflow($agentId, $workflowId, [
+        'is_enabled' => true,
+        'priority' => 0,
     ]);
     
-    echo "✅ Workflow '{$workflowName}' enabled for agent #{$agentId}\n";
-    echo "Enabled workflows: " . implode(', ', $enabledWorkflows) . "\n";
+    echo "✅ Workflow enabled for agent #{$agentId}\n";
+    echo "Workflow: {$result['workflow_name']} ({$result['callable_name']})\n";
+    
+    // List all enabled workflows
+    $allWorkflows = $iris->agents()->listWorkflows($agentId);
+    $enabledNames = array_map(fn($w) => $w['callable_name'], $allWorkflows);
+    echo "Enabled workflows: " . implode(', ', $enabledNames) . "\n";
     
 } catch (Exception $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";
