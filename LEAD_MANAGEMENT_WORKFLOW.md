@@ -425,6 +425,184 @@ $iris->leads->tasks(412)->delete(11);
 
 Agents can execute multi-step workflows to automate complex tasks. Workflows must be attached to agents before they can be used. This is managed through the agent-workflow relational system.
 
+### Discovering Available Workflows
+
+Before attaching workflows to agents, you can discover what workflows are available using the workflow discovery API.
+
+#### List All Callable Workflows
+
+```bash
+# List all available workflows
+./bin/iris sdk:call agents.listAvailableWorkflows
+
+# Filter by category
+./bin/iris sdk:call agents.listAvailableWorkflows category=Recruitment
+
+# Filter by execution mode
+./bin/iris sdk:call agents.listAvailableWorkflows execution_mode=agentic
+
+# Search by keyword
+./bin/iris sdk:call agents.listAvailableWorkflows search=newsletter
+```
+
+```php
+// List all available workflows
+$workflows = $iris->agents->listAvailableWorkflows();
+
+foreach ($workflows as $workflow) {
+    echo "{$workflow['name']} (ID: {$workflow['id']})\n";
+    echo "  Callable: {$workflow['callable_name']}\n";
+    echo "  Category: {$workflow['category']}\n";
+    echo "  Mode: {$workflow['execution_mode']}\n";
+    echo "  Agentic: " . ($workflow['is_agentic'] ? 'Yes' : 'No') . "\n";
+}
+
+// Filter workflows
+$recruitmentWorkflows = $iris->agents->listAvailableWorkflows([
+    'category' => 'Recruitment',
+    'execution_mode' => 'agentic'
+]);
+```
+
+#### Find Workflow by Name
+
+```bash
+# Find workflow by callable name (exact match)
+./bin/iris sdk:call agents.findWorkflowByName find_candidates
+
+# Example output:
+# {
+#   "id": 8,
+#   "name": "LinkedIn Candidate Finder",
+#   "callable_name": "find_candidates",
+#   "callable_description": "Search LinkedIn for qualified candidates",
+#   "category": "Recruitment",
+#   "execution_mode": "agentic",
+#   "is_agentic": true,
+#   "default_model": "gpt-4o"
+# }
+```
+
+```php
+// Find workflow by name
+$workflow = $iris->agents->findWorkflowByName('find_candidates');
+
+if ($workflow) {
+    echo "Found: {$workflow['name']} (ID: {$workflow['id']})\n";
+    echo "Description: {$workflow['callable_description']}\n";
+    
+    // Now attach it to an agent
+    $iris->agents->attachWorkflow(164, $workflow['id'], [
+        'priority' => 10,
+        'is_enabled' => true
+    ]);
+} else {
+    echo "Workflow not found\n";
+}
+```
+
+#### Get Workflow Details
+
+```bash
+# Get details by workflow ID
+./bin/iris sdk:call agents.getWorkflowDetails 8
+
+# Get details by callable name
+./bin/iris sdk:call agents.getWorkflowDetails find_candidates
+
+# Example output shows full workflow configuration including:
+# - Input/output schemas
+# - Dependencies
+# - Agent configuration (for agentic workflows)
+# - Model requirements
+# - Features and benefits
+```
+
+```php
+// Get detailed workflow information
+$details = $iris->agents->getWorkflowDetails('find_candidates');
+
+echo "Workflow: {$details['name']}\n";
+echo "Description: {$details['callable_description']}\n";
+echo "Model: {$details['default_model']}\n";
+echo "Execution: {$details['execution_mode']}\n";
+
+if ($details['is_agentic']) {
+    echo "\nAgentic Configuration:\n";
+    $config = $details['agent_config'];
+    echo "  Goal: {$config['goal']}\n";
+    echo "  Max Iterations: {$details['max_iterations']}\n";
+}
+
+// Check input schema
+if (!empty($details['input_schema'])) {
+    echo "\nRequired Inputs:\n";
+    foreach ($details['input_schema']['properties'] as $field => $schema) {
+        $required = in_array($field, $details['input_schema']['required'] ?? []);
+        echo "  - {$field}: {$schema['description']}" . ($required ? ' (required)' : '') . "\n";
+    }
+}
+```
+
+#### Complete Discovery-to-Attachment Workflow
+
+Here's a real-world example of discovering and attaching a workflow:
+
+```bash
+# Step 1: Search for recruiting workflows
+./bin/iris sdk:call agents.listAvailableWorkflows category=Recruitment
+
+# Step 2: Get details about a specific workflow
+./bin/iris sdk:call agents.getWorkflowDetails find_candidates
+
+# Step 3: Attach it to your agent
+./bin/iris sdk:call agents.attachWorkflow 164 8 \
+  priority=10 \
+  config='{"max_results":100,"include_skills":true}'
+
+# Step 4: Verify attachment
+./bin/iris sdk:call agents.listWorkflows 164
+```
+
+```php
+// Complete workflow: Discover → Attach → Verify
+
+// 1. Search for content generation workflows
+$workflows = $iris->agents->listAvailableWorkflows([
+    'search' => 'newsletter'
+]);
+
+// 2. Find the specific workflow
+$newsletter = $iris->agents->findWorkflowByName('generate_newsletter');
+
+if (!$newsletter) {
+    throw new Exception('Newsletter workflow not found');
+}
+
+// 3. Get detailed information
+$details = $iris->agents->getWorkflowDetails($newsletter['id']);
+
+echo "Attaching: {$details['name']}\n";
+echo "Model required: {$details['default_model']}\n";
+
+// 4. Attach to agent with appropriate configuration
+$result = $iris->agents->attachWorkflow(356, $newsletter['id'], [
+    'priority' => 20,
+    'is_enabled' => true,
+    'config' => [
+        'tone' => 'professional',
+        'length' => 'medium',
+        'include_images' => true
+    ]
+]);
+
+echo "✓ Workflow attached successfully\n";
+
+// 5. Verify attachment
+$attachedWorkflows = $iris->agents->listWorkflows(356);
+echo "Agent now has " . count($attachedWorkflows) . " workflow(s) attached\n";
+```
+
 ### Understanding Workflows
 
 Workflows are reusable templates that define multi-step processes:

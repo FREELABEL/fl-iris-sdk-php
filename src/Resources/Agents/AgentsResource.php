@@ -1248,4 +1248,93 @@ class AgentsResource
         return $response['data'] ?? $response;
     }
 
+    // ========================================================================
+    // Workflow Discovery Methods
+    // ========================================================================
+
+    /**
+     * List all available callable workflows that can be attached to agents.
+     *
+     * @param array{
+     *     category?: string,
+     *     execution_mode?: string,
+     *     search?: string
+     * } $filters Optional filters
+     * @return array List of available workflows
+     * 
+     * @example
+     * ```php
+     * // List all callable workflows
+     * $workflows = $iris->agents->listAvailableWorkflows();
+     * 
+     * // Search for specific workflows
+     * $workflows = $iris->agents->listAvailableWorkflows(['search' => 'candidate']);
+     * 
+     * // Filter by execution mode
+     * $workflows = $iris->agents->listAvailableWorkflows(['execution_mode' => 'agentic']);
+     * ```
+     */
+    public function listAvailableWorkflows(array $filters = []): array
+    {
+        $response = $this->http->get('/api/v1/workflow-templates/callable', $filters);
+        return $response['data'] ?? $response;
+    }
+
+    /**
+     * Search for a workflow by its callable_name.
+     *
+     * @param string $callableName Workflow callable name (e.g., 'find_candidates')
+     * @return array|null Workflow data or null if not found
+     * 
+     * @example
+     * ```php
+     * // Find workflow by callable name
+     * $workflow = $iris->agents->findWorkflowByName('find_candidates');
+     * 
+     * if ($workflow) {
+     *     echo "Found: {$workflow['name']} (ID: {$workflow['id']})\n";
+     *     // Now attach it to an agent
+     *     $iris->agents->attachWorkflow(164, $workflow['id']);
+     * }
+     * ```
+     */
+    public function findWorkflowByName(string $callableName): ?array
+    {
+        $response = $this->http->get('/api/v1/workflow-templates/search', [
+            'callable_name' => $callableName
+        ]);
+        
+        if (isset($response['success']) && $response['success'] === false) {
+            return null;
+        }
+        
+        return $response['data'] ?? null;
+    }
+
+    /**
+     * Get detailed information about a workflow template.
+     *
+     * @param int|string $identifier Workflow ID or callable_name
+     * @return array Detailed workflow information
+     * 
+     * @example
+     * ```php
+     * // Get workflow details by ID
+     * $details = $iris->agents->getWorkflowDetails(8);
+     * 
+     * // Get workflow details by callable name
+     * $details = $iris->agents->getWorkflowDetails('find_candidates');
+     * 
+     * echo "Workflow: {$details['name']}\n";
+     * echo "Description: {$details['callable_description']}\n";
+     * echo "Model: {$details['default_model']}\n";
+     * echo "Agentic: " . ($details['is_agentic'] ? 'Yes' : 'No') . "\n";
+     * ```
+     */
+    public function getWorkflowDetails(int|string $identifier): array
+    {
+        $response = $this->http->get("/api/v1/workflow-templates/{$identifier}");
+        return $response['data'] ?? $response;
+    }
+
 }
