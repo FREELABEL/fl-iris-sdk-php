@@ -1115,4 +1115,137 @@ class AgentsResource
         return new SkillsResource($this->http, $this->config, (int) $agentId);
     }
 
+    /**
+     * List workflows attached to an agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @return array Array of workflows with pivot data (is_enabled, priority, config)
+     * 
+     * @example
+     * ```php
+     * $workflows = $iris->agents->listWorkflows(164);
+     * foreach ($workflows as $workflow) {
+     *     echo "{$workflow['name']} - Priority: {$workflow['priority']}\n";
+     * }
+     * ```
+     */
+    public function listWorkflows(int|string $agentId): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->get("/api/v1/users/{$userId}/bloqs/agents/{$agentId}/workflows");
+        
+        return $response['data'] ?? [];
+    }
+
+    /**
+     * Attach a workflow to an agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @param int|string $workflowId Workflow Template ID
+     * @param array{
+     *     is_enabled?: bool,
+     *     priority?: int,
+     *     config?: array
+     * } $options Workflow configuration
+     * @return array Response data
+     * 
+     * @example
+     * ```php
+     * $iris->agents->attachWorkflow(164, 8, [
+     *     'is_enabled' => true,
+     *     'priority' => 10,
+     *     'config' => ['max_results' => 50]
+     * ]);
+     * ```
+     */
+    public function attachWorkflow(int|string $agentId, int|string $workflowId, array $options = []): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->post(
+            "/api/v1/users/{$userId}/bloqs/agents/{$agentId}/workflows/{$workflowId}",
+            $options
+        );
+        
+        return $response['data'] ?? $response;
+    }
+
+    /**
+     * Detach a workflow from an agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @param int|string $workflowId Workflow Template ID
+     * @return array Response data
+     * 
+     * @example
+     * ```php
+     * $iris->agents->detachWorkflow(164, 8);
+     * ```
+     */
+    public function detachWorkflow(int|string $agentId, int|string $workflowId): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->delete(
+            "/api/v1/users/{$userId}/bloqs/agents/{$agentId}/workflows/{$workflowId}"
+        );
+        
+        return $response;
+    }
+
+    /**
+     * Update workflow settings for an agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @param int|string $workflowId Workflow Template ID
+     * @param array{
+     *     is_enabled?: bool,
+     *     priority?: int,
+     *     config?: array
+     * } $settings Updated settings
+     * @return array Response data
+     * 
+     * @example
+     * ```php
+     * $iris->agents->updateWorkflowSettings(164, 8, [
+     *     'priority' => 20,
+     *     'is_enabled' => false
+     * ]);
+     * ```
+     */
+    public function updateWorkflowSettings(int|string $agentId, int|string $workflowId, array $settings): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->patch(
+            "/api/v1/users/{$userId}/bloqs/agents/{$agentId}/workflows/{$workflowId}",
+            $settings
+        );
+        
+        return $response;
+    }
+
+    /**
+     * Sync all workflows for an agent (replaces existing attachments).
+     *
+     * @param int|string $agentId Agent ID
+     * @param array $workflows Array of workflow configurations
+     * @return array Response data with synced count
+     * 
+     * @example
+     * ```php
+     * $iris->agents->syncWorkflows(164, [
+     *     ['workflow_id' => 8, 'priority' => 10, 'is_enabled' => true],
+     *     ['workflow_id' => 1, 'priority' => 5, 'is_enabled' => true],
+     * ]);
+     * ```
+     */
+    public function syncWorkflows(int|string $agentId, array $workflows): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->put(
+            "/api/v1/users/{$userId}/bloqs/agents/{$agentId}/workflows",
+            ['workflows' => $workflows]
+        );
+        
+        return $response['data'] ?? $response;
+    }
+
 }
