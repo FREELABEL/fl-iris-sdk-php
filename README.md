@@ -235,6 +235,77 @@ IRIS lets you build **AI agents** - intelligent assistants that can answer quest
 
 ---
 
+### 📚 Courses — Learning Management System
+
+**What it is:** Create, manage, and deliver online courses with structured learning paths, progress tracking, and enrollment management. Turn your expertise into structured learning experiences.
+
+**Course Structure:**
+- **Courses** - The main learning container with metadata (difficulty, duration, learning objectives)
+- **Chapters** - Sequential organization (e.g., "Introduction", "Advanced Topics")
+- **Content** - Videos and articles organized within chapters
+- **Progress Tracking** - Per-item tracking with completion status and percentage
+
+**Key Features:**
+- **Marketplace** - Publish courses for discovery, filter by difficulty level
+- **Enrollment Management** - Free or paid courses (integrated with billing system)
+- **Progress Tracking** - Track completion per content item (videos, articles)
+- **Flexible Content** - Mix videos and articles in any order
+- **Certificates** - Optional course completion certificates
+- **Multi-instructor** - Assign instructors to courses
+
+**Real examples:**
+- **Training programs** - Onboard new employees with structured courses on company processes
+- **Product education** - Teach customers how to use your product effectively
+- **Coaching business** - Deliver structured programs to coaching clients
+- **Online academy** - Sell educational content with progress tracking and certificates
+- **Internal knowledge** - Create internal training libraries for teams
+
+**SDK Example:**
+```php
+// List marketplace courses
+$courses = $iris->courses->list(['difficulty' => 'beginner']);
+
+// Get course details with chapters
+$course = $iris->courses->get(123);
+
+// Enroll a user
+$iris->courses->enroll(123, $userId);
+
+// Track progress when user completes a video
+$iris->courses->updateProgress(123, $userId, [
+    'chapter_id' => 1,
+    'content_id' => 789,
+    'content_type' => 'video',
+    'status' => 'completed',
+    'progress_percentage' => 100
+]);
+```
+
+**CLI Example:**
+```bash
+# Browse courses
+bin/iris call courses.list difficulty=beginner
+
+# Get course details
+bin/iris call courses.get 123
+
+# Enroll user
+bin/iris call courses.enroll 123 456
+
+# Update progress
+bin/iris call courses.updateProgress 123 456 '{
+  "chapter_id": 1,
+  "content_id": 789,
+  "status": "completed"
+}'
+```
+
+**Why this matters:** Create structured learning experiences without building your own LMS. Courses integrate with your existing content (videos, articles) and billing system (Programs), so you can monetize your expertise immediately.
+
+**Full Documentation:** See [COURSES_API.md](COURSES_API.md) for complete guide with examples.
+
+---
+
 ### 🤖 AI Model Access — Use Any AI
 
 **What it is:** IRIS connects to all major AI providers. Use GPT-4, Claude, Gemini, or even run local models with Ollama. Switch models anytime without changing your agents.

@@ -23,6 +23,8 @@ use IRIS\SDK\Resources\Tools\ToolsResource;
 use IRIS\SDK\Resources\Articles\ArticlesResource;
 use IRIS\SDK\Resources\Schedules\SchedulesResource;
 use IRIS\SDK\Resources\ServisAi\ServisAiResource;
+use IRIS\SDK\Resources\Programs\ProgramsResource;
+use IRIS\SDK\Resources\Courses\CoursesResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -171,6 +173,16 @@ class IRIS
     public ServisAiResource $servisAi;
 
     /**
+     * Programs resource for managing membership programs and funnels.
+     */
+    public ProgramsResource $programs;
+
+    /**
+     * Courses resource for managing courses, enrollments, and content.
+     */
+    public CoursesResource $courses;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -212,6 +224,8 @@ class IRIS
         $this->articles = new ArticlesResource($this->http, $this->config);
         $this->schedules = new SchedulesResource($this->http, $this->config);
         $this->servisAi = new ServisAiResource($this->http, $this->config);
+        $this->programs = new ProgramsResource($this->http, $this->config);
+        $this->courses = new CoursesResource($this->http, $this->config);
     }
 
     /**

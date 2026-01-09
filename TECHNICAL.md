@@ -16,6 +16,11 @@ Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execut
 # 🔍 Search leads with beautiful colored output
 ./bin/iris sdk:call leads.search search=john bloq_id=40 status=Won
 
+# 💳 Check Stripe payment history
+./bin/iris payments 110                  # Full payment details
+./bin/iris payments 110 --summary        # Quick summary
+./bin/iris payments 110 --json           # JSON for automation
+
 # 📦 Add deliverable
 ./bin/iris sdk:call leads.deliverables.create 24 type=link title="Trained AI Agent" external_url="https://app.heyiris.io/agent/356" user_id=193
 

@@ -1,0 +1,239 @@
+{
+    "basic_conversation": {
+        "test_name": "basic_conversation",
+        "description": "Tests introduction and capabilities description",
+        "prompt": "Hello! Please introduce yourself and tell me what you can help me with.",
+        "success": true,
+        "response": "I am Ayala Strategy Agent, an expert in strategic planning and educational development. My primary focus is on designing courses and leadership programs that enhance educational leadership and professional development. I can assist you in the following areas:\n\n- Analyzing team member profiles to identify relevant skills and expertise.\n- Recommending optimal course topics, program formats, and delivery methods that align with your team's strengths.\n- Suggesting innovative approaches to develop educational leadership courses that meet current industry needs and trends.\n- Providing guidance for creating impactful, marketable, and sustainable educational services.\n\nMy insights aim to support your organization in expanding its educational offerings, ensuring they are high-quality and targeted effectively. How can I assist you today?",
+        "response_time_ms": 11500,
+        "response_length": 839,
+        "evaluation": {
+            "score": 100,
+            "checks_passed": 3,
+            "checks_total": 3,
+            "details": {
+                "min_response_length": {
+                    "passed": true,
+                    "expected": ">= 50",
+                    "actual": 839
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 15000ms",
+                    "actual": "11500ms"
+                },
+                "self_introduction": {
+                    "passed": true,
+                    "expected": "Self introduction",
+                    "actual": "Found introduction"
+                }
+            }
+        },
+        "error": null
+    },
+    "web_search_capability": {
+        "test_name": "web_search_capability",
+        "description": "Tests web search functionality",
+        "prompt": "What are the latest developments in artificial intelligence this week?",
+        "success": false,
+        "response": "",
+        "response_time_ms": 2798,
+        "response_length": 0,
+        "evaluation": {
+            "score": 33,
+            "checks_passed": 1,
+            "checks_total": 3,
+            "details": {
+                "min_response_length": {
+                    "passed": false,
+                    "expected": ">= 100",
+                    "actual": 0
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 25000ms",
+                    "actual": "2798ms"
+                },
+                "keywords": {
+                    "passed": false,
+                    "expected": "AI, artificial intelligence",
+                    "found": "",
+                    "missing": "AI, artificial intelligence",
+                    "ratio": "0%"
+                }
+            }
+        },
+        "error": null
+    },
+    "market_research": {
+        "test_name": "market_research",
+        "description": "Tests market research and analysis capabilities",
+        "prompt": "Can you analyze the current market trends for electric vehicles?",
+        "success": false,
+        "response": "",
+        "response_time_ms": 8234,
+        "response_length": 0,
+        "evaluation": {
+            "score": 25,
+            "checks_passed": 1,
+            "checks_total": 4,
+            "details": {
+                "min_response_length": {
+                    "passed": false,
+                    "expected": ">= 150",
+                    "actual": 0
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 30000ms",
+                    "actual": "8234ms"
+                },
+                "keywords": {
+                    "passed": false,
+                    "expected": "EV, electric, market, trend",
+                    "found": "",
+                    "missing": "EV, electric, market, trend",
+                    "ratio": "0%"
+                },
+                "structured": {
+                    "passed": false,
+                    "expected": "Structured format (bullets, numbers, or headers)",
+                    "actual": "No structure markers found"
+                }
+            }
+        },
+        "error": null
+    },
+    "personalization": {
+        "test_name": "personalization",
+        "description": "Tests personalization and memory",
+        "prompt": "I work in software development and love hiking on weekends. Can you suggest some activities for me?",
+        "success": true,
+        "response": "",
+        "response_time_ms": 10683,
+        "response_length": 0,
+        "evaluation": {
+            "score": 50,
+            "checks_passed": 1,
+            "checks_total": 2,
+            "details": {
+                "min_response_length": {
+                    "passed": false,
+                    "expected": ">= 100",
+                    "actual": 0
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 30000ms",
+                    "actual": "10683ms"
+                }
+            }
+        },
+        "error": null
+    },
+    "complex_reasoning": {
+        "test_name": "complex_reasoning",
+        "description": "Tests complex planning abilities",
+        "prompt": "Help me plan a 5-day vacation to Tokyo, Japan with a budget of $2000. Include flights, accommodation, and activities.",
+        "success": false,
+        "response": "",
+        "response_time_ms": 13314,
+        "response_length": 0,
+        "evaluation": {
+            "score": 25,
+            "checks_passed": 1,
+            "checks_total": 4,
+            "details": {
+                "min_response_length": {
+                    "passed": false,
+                    "expected": ">= 200",
+                    "actual": 0
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 30000ms",
+                    "actual": "13314ms"
+                },
+                "keywords": {
+                    "passed": false,
+                    "expected": "Tokyo, Japan, budget",
+                    "found": "",
+                    "missing": "Tokyo, Japan, budget",
+                    "ratio": "0%"
+                },
+                "structured": {
+                    "passed": false,
+                    "expected": "Structured format (bullets, numbers, or headers)",
+                    "actual": "No structure markers found"
+                }
+            }
+        },
+        "error": null
+    },
+    "tool_integration": {
+        "test_name": "tool_integration",
+        "description": "Tests external API\/tool usage",
+        "prompt": "Search for recent news about technology startups and summarize the top 3 stories.",
+        "success": false,
+        "response": "",
+        "response_time_ms": 3933,
+        "response_length": 0,
+        "evaluation": {
+            "score": 33,
+            "checks_passed": 1,
+            "checks_total": 3,
+            "details": {
+                "min_response_length": {
+                    "passed": false,
+                    "expected": ">= 150",
+                    "actual": 0
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 30000ms",
+                    "actual": "3933ms"
+                },
+                "keywords": {
+                    "passed": false,
+                    "expected": "startup, technology",
+                    "found": "",
+                    "missing": "startup, technology",
+                    "ratio": "0%"
+                }
+            }
+        },
+        "error": null
+    },
+    "error_handling": {
+        "test_name": "error_handling",
+        "description": "Tests graceful failure handling",
+        "prompt": "What is the weather forecast for Atlantis next week?",
+        "success": true,
+        "response": "I currently do not have access to the specific weather details for Atlantis. However, if you are referring to Atlantis Paradise Island in the Bahamas or another location named Atlantis, I recommend checking a reliable weather service or website for the most accurate and up-to-date forecast. If you specify the exact location, I can assist further.",
+        "response_time_ms": 9180,
+        "response_length": 348,
+        "evaluation": {
+            "score": 100,
+            "checks_passed": 3,
+            "checks_total": 3,
+            "details": {
+                "min_response_length": {
+                    "passed": true,
+                    "expected": ">= 30",
+                    "actual": 348
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 15000ms",
+                    "actual": "9180ms"
+                },
+                "forbidden_keywords": {
+                    "passed": true,
+                    "forbidden": "error, failed, exception",
+                    "found": ""
+                }
+            }
+        },
+        "error": null
+    }
+}

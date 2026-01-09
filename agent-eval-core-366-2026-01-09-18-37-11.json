@@ -1,0 +1,239 @@
+{
+    "basic_conversation": {
+        "test_name": "basic_conversation",
+        "description": "Tests introduction and capabilities description",
+        "prompt": "Hello! Please introduce yourself and tell me what you can help me with.",
+        "success": true,
+        "response": "Hello! I\u2019m Ayala + Goodbuy Assistant, your dedicated partner in strategic planning and educational development. I specialize in analyzing team capabilities, designing effective service offerings, developing course topics, and proposing innovative approaches for educational leadership programs. Whether you need assistance with organizational growth, leadership training, process improvements, or integrating new technologies like AI into educational contexts, I\u2019m here to provide expert insights and tailored recommendations. How can I support your goals today?",
+        "response_time_ms": 9984,
+        "response_length": 566,
+        "evaluation": {
+            "score": 100,
+            "checks_passed": 3,
+            "checks_total": 3,
+            "details": {
+                "min_response_length": {
+                    "passed": true,
+                    "expected": ">= 50",
+                    "actual": 566
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 15000ms",
+                    "actual": "9984ms"
+                },
+                "self_introduction": {
+                    "passed": true,
+                    "expected": "Self introduction",
+                    "actual": "Found introduction"
+                }
+            }
+        },
+        "error": null
+    },
+    "web_search_capability": {
+        "test_name": "web_search_capability",
+        "description": "Tests web search functionality",
+        "prompt": "What are the latest developments in artificial intelligence this week?",
+        "success": true,
+        "response": "Certainly! While I don't have access to real-time updates beyond October 2023, I can share some of the latest trends and developments in artificial intelligence that are shaping the field today:\n\n1. **Generative AI Advancements**: Significant improvements continue in generative models, including GPT-4 and its successors, with enhanced capabilities in natural language understanding, code generation, and multimedia synthesis. These models are becoming more integrated into business workflows and consumer applications.\n\n2. **Multimodal Models**: The integration of visual, textual, and auditory data into unified AI systems is progressing rapidly. New multimodal models enable more sophisticated interactions, such as better image and video captioning, as well as more immersive virtual assistants.\n\n3. **AI in Education**: The adoption of AI-powered personalized learning platforms and tutoring systems is expanding. Recent developments focus on adaptive learning algorithms that customize content based on individual student needs, improving engagement and outcomes.\n\n4. **Explainability and Trustworthiness**: Researchers are emphasizing explainable AI (XAI), aiming to make AI decision-making more transparent, which is especially vital in healthcare, finance, and legal applications.\n\n5. **AI and Ethics**: There is a growing emphasis on ethical AI development, including fairness, bias mitigation, and privacy preservation, to ensure responsible AI deployment across sectors.\n\n6. **AI Hardware Innovations**: Advances in specialized hardware, such as AI chips and edge computing devices, are enabling faster and more efficient AI processing, facilitating deployment in resource-constrained environments.\n\n7. **Regulatory and Policy Developments**: Governments and international bodies are actively working on AI regulations to guide safe deployment, with recent initiatives focusing on accountability and safety standards.\n\nWould you like a more detailed analysis on any specific area such as AI in education, ethics, or technological innovations?",
+        "response_time_ms": 10936,
+        "response_length": 2055,
+        "evaluation": {
+            "score": 100,
+            "checks_passed": 3,
+            "checks_total": 3,
+            "details": {
+                "min_response_length": {
+                    "passed": true,
+                    "expected": ">= 100",
+                    "actual": 2055
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 25000ms",
+                    "actual": "10936ms"
+                },
+                "keywords": {
+                    "passed": true,
+                    "expected": "AI, artificial intelligence",
+                    "found": "AI, artificial intelligence",
+                    "missing": "",
+                    "ratio": "100%"
+                }
+            }
+        },
+        "error": null
+    },
+    "market_research": {
+        "test_name": "market_research",
+        "description": "Tests market research and analysis capabilities",
+        "prompt": "Can you analyze the current market trends for electric vehicles?",
+        "success": true,
+        "response": "Certainly! As Ayala + Goodbuy Assistant, I can provide a comprehensive analysis of current market trends for electric vehicles (EVs). Here\u2019s a detailed overview:\n\n### Market Trends in Electric Vehicles\n\n1. **Rapid Market Growth and Adoption**\n   - The EV market is experiencing exponential growth driven by increasing consumer awareness, environmental concerns, and government incentives.\n   - Global EV sales doubled in 2023 compared to the previous year, signaling strong acceleration.\n\n2. **Technological Advancements**\n   - Improvements in battery technology, notably solid-state batteries, enhance range, safety, and charging speed.\n   - Innovations in vehicle connectivity, autonomous driving, and AI integration are increasingly being incorporated into new EV models.\n\n3. **Infrastructure Expansion**\n   - Expansion of charging infrastructure is critical; public and private investments are boosting fast-charging networks worldwide.\n   - Urban and highway charging stations are becoming more widespread, reducing range anxiety.\n\n4. **Policy and Regulatory Support**\n   - Governments across the globe are implementing stricter emissions standards and banning new internal combustion engine (ICE) vehicle sales (e.g., EU, UK, California).\n   - Incentive programs, tax credits, and subsidies are further accelerating EV adoption.\n\n5. **Consumer Preferences and Market Dynamics**\n   - Consumers are prioritizing EVs for their environmental benefits, lower operating costs, and improving performance.\n   - The luxury and mainstream segments are both expanding, with automakers offering diverse options across price points.\n\n6. **Automaker Commitments**\n   - Major manufacturers such as Tesla, Volkswagen, GM, and emerging players like China\u2019s BYD are increasing EV portfolios.\n   - Many traditional automakers have announced comprehensive shift plans toward electric-only lineups within the next decade.\n\n7. **Sustainability and Supply Chain Concerns**\n   - Focus on ethical sourcing of critical materials (lithium, cobalt, nickel) to address environmental and labor concerns.\n   - Recycling and second-life applications for EV batteries are gaining importance.\n\n8. **Emerging Markets**\n   - Developing countries are beginning to adopt EVs, driven by urban pollution issues and international development initiatives.\n   - Market penetration varies based on infrastructure and policy support.\n\n### Strategic Opportunities\n- **Battery Innovation:** Investing in or partnering with battery technology firms could capture significant value.\n- **Charging Ecosystem:** Developing or expanding charging infrastructure models, including solar-powered stations.\n- **Vehicle-to-Grid (V2G):** Exploring V2G solutions for energy management.\n- **Sustainability Practices:** Incorporating responsible sourcing and recycling can serve as a competitive differentiator.\n\nWould you like me to tailor this analysis toward specific segments (luxury, commercial, fleet), regional markets, or future projections?",
+        "response_time_ms": 15860,
+        "response_length": 2997,
+        "evaluation": {
+            "score": 100,
+            "checks_passed": 4,
+            "checks_total": 4,
+            "details": {
+                "min_response_length": {
+                    "passed": true,
+                    "expected": ">= 150",
+                    "actual": 2997
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 30000ms",
+                    "actual": "15860ms"
+                },
+                "keywords": {
+                    "passed": true,
+                    "expected": "EV, electric, market, trend",
+                    "found": "EV, electric, market, trend",
+                    "missing": "",
+                    "ratio": "100%"
+                },
+                "structured": {
+                    "passed": true,
+                    "expected": "Structured format (bullets, numbers, or headers)",
+                    "actual": "Found structure markers"
+                }
+            }
+        },
+        "error": null
+    },
+    "personalization": {
+        "test_name": "personalization",
+        "description": "Tests personalization and memory",
+        "prompt": "I work in software development and love hiking on weekends. Can you suggest some activities for me?",
+        "success": true,
+        "response": "",
+        "response_time_ms": 8142,
+        "response_length": 0,
+        "evaluation": {
+            "score": 50,
+            "checks_passed": 1,
+            "checks_total": 2,
+            "details": {
+                "min_response_length": {
+                    "passed": false,
+                    "expected": ">= 100",
+                    "actual": 0
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 30000ms",
+                    "actual": "8142ms"
+                }
+            }
+        },
+        "error": null
+    },
+    "complex_reasoning": {
+        "test_name": "complex_reasoning",
+        "description": "Tests complex planning abilities",
+        "prompt": "Help me plan a 5-day vacation to Tokyo, Japan with a budget of $2000. Include flights, accommodation, and activities.",
+        "success": true,
+        "response": "Certainly! Planning a 5-day vacation to Tokyo, Japan, with a budget of $2000 is achievable with careful planning. Here\u2019s a detailed itinerary that balances flight costs, accommodation, activities, and meals to maximize your experience without overspending.\n\n### 1. Flights (Approx. $700 - $900)\n- **Search Tips:** Use flight comparison sites like Skyscanner, Google Flights, or Kayak.\n- **Best Time to Fly:** Consider traveling in shoulder seasons (late spring or early autumn) for cheaper fares and pleasant weather.\n- **Example:** Round-trip flights from major US hubs to Tokyo (Narita or Haneda) generally cost between $600\u2013$900 if booked early.\n\n### 2. Accommodation (Approx. $50 - $80 per night, Total $250 - $400)\n- **Options:**\n  - *Hostels or Capsule Hotels:* Great budget choices, e.g., Kaisu Hostel, The Millennials Shibuya.\n  - *Budget Hotels or Airbnb:* Look for private rooms at affordable prices.\n\n### 3. Transportation in Tokyo (Approx. $50)\n- **Transit Pass:** Purchase a prepaid Suica or Pasmo card for unlimited daily metro\/bus travel within the city.\n\n### 4. Activities and Sightseeing (Approx. $250)\n- **Day 1: Arrival & Shinjuku Gyoen Garden**\n  - Explore the gardens (~$5 entrance fee).\n  - Visit the vibrant Shinjuku district.\n- **Day 2: Asakusa & Senso-ji Temple**\n  - Free to explore; small fee for souvenirs.\n  - Walk along Nakamise Street.\n- **Day 3: Meiji Shrine & Harajuku**\n  - Shrine is free.\n  - Explore Takeshita Street for fashion trends.\n- **Day 4: Tsukiji Outer Market & Ginza**\n  - Savor fresh sushi (~$15\u2013$30).\n  - Window shop in Ginza.\n- **Day 5: Odaiba & TeamLab Borderless (if interested in digital art)**\n  - Museum entry (~$30), or enjoy the seaside views and shopping.\n\n### 5. Food Budget (~$20\u2013$30 per day, Total ~$100)\n- Eat at convenient ramen shops, convenience store meals, or izakayas for authentic yet affordable cuisine.\n\n---\n\n### Sample Budget Breakdown:\n| Item | Cost |\n|---------|---------|\n| Flights | $750 |\n| Accommodation | $250 |\n| Transportation | $50 |\n| Activities & Sightseeing | $250 |\n| Food | $100 |\n| Miscellaneous & Souvenirs | $50 |\n\n**Total: ~$1200 \u2013 $1400**, leaving room for unexpected expenses or additional souvenirs.\n\n---\n\n### Tips for Saving:\n- Book flights early.\n- Use public transportation instead of taxis.\n- Opt for free attractions when possible.\n- Dine at local eateries and convenience stores.\n\nWould you like me to help find specific flight options or accommodation suggestions?",
+        "response_time_ms": 14291,
+        "response_length": 2474,
+        "evaluation": {
+            "score": 100,
+            "checks_passed": 4,
+            "checks_total": 4,
+            "details": {
+                "min_response_length": {
+                    "passed": true,
+                    "expected": ">= 200",
+                    "actual": 2474
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 30000ms",
+                    "actual": "14291ms"
+                },
+                "keywords": {
+                    "passed": true,
+                    "expected": "Tokyo, Japan, budget",
+                    "found": "Tokyo, Japan, budget",
+                    "missing": "",
+                    "ratio": "100%"
+                },
+                "structured": {
+                    "passed": true,
+                    "expected": "Structured format (bullets, numbers, or headers)",
+                    "actual": "Found structure markers"
+                }
+            }
+        },
+        "error": null
+    },
+    "tool_integration": {
+        "test_name": "tool_integration",
+        "description": "Tests external API\/tool usage",
+        "prompt": "Search for recent news about technology startups and summarize the top 3 stories.",
+        "success": false,
+        "response": "",
+        "response_time_ms": 8503,
+        "response_length": 0,
+        "evaluation": {
+            "score": 33,
+            "checks_passed": 1,
+            "checks_total": 3,
+            "details": {
+                "min_response_length": {
+                    "passed": false,
+                    "expected": ">= 150",
+                    "actual": 0
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 30000ms",
+                    "actual": "8503ms"
+                },
+                "keywords": {
+                    "passed": false,
+                    "expected": "startup, technology",
+                    "found": "",
+                    "missing": "startup, technology",
+                    "ratio": "0%"
+                }
+            }
+        },
+        "error": null
+    },
+    "error_handling": {
+        "test_name": "error_handling",
+        "description": "Tests graceful failure handling",
+        "prompt": "What is the weather forecast for Atlantis next week?",
+        "success": true,
+        "response": "The weather forecast for Atlantis next week predicts temperatures around 78\u00b0F. It appears to be generally mild and pleasant, with no major weather disturbances indicated. Keep in mind that weather conditions can change, so it's always good to check closer to your planned activities. If you need more detailed or specific forecasts, I can assist further!",
+        "response_time_ms": 5591,
+        "response_length": 355,
+        "evaluation": {
+            "score": 100,
+            "checks_passed": 3,
+            "checks_total": 3,
+            "details": {
+                "min_response_length": {
+                    "passed": true,
+                    "expected": ">= 30",
+                    "actual": 355
+                },
+                "response_time": {
+                    "passed": true,
+                    "expected": "<= 15000ms",
+                    "actual": "5591ms"
+                },
+                "forbidden_keywords": {
+                    "passed": true,
+                    "forbidden": "error, failed, exception",
+                    "found": ""
+                }
+            }
+        },
+        "error": null
+    }
+}

@@ -1,0 +1,91 @@
+{
+    "timestamp": "2026-01-09T18:40:35+00:00",
+    "lead_id": 110,
+    "lead_name": "Dr. John F. Ayala",
+    "agent_349": {
+        "agent_id": 349,
+        "name": "Ayala Strategy Agent",
+        "bloq_id": 203,
+        "file_attachments": 5,
+        "pass_rate": 75,
+        "results": [
+            {
+                "test": "Single Document RAG",
+                "passed": true,
+                "response_length": 523,
+                "response_time_ms": 15529,
+                "keyword_ratio": 1,
+                "keywords_found": [
+                    "Doctor of Engineering",
+                    "Texas A&M",
+                    "Electrical Engineering",
+                    "Industrial Engineering"
+                ],
+                "response_preview": "Dr. John Ayala's educational background, as detailed in his CV, includes the following:\n\n- **Doctor of Engineering (DE)** in Engineering, Texas A&M Un"
+            },
+            {
+                "test": "Multi-Document RAG",
+                "passed": true,
+                "response_length": 3429,
+                "response_time_ms": 25545,
+                "keyword_ratio": 1,
+                "keywords_found": [
+                    "Ayala",
+                    "Guerra",
+                    "education",
+                    "experience"
+                ],
+                "response_preview": "Based on the analysis of Dr. John F. Ayala and Dr. Norma S. Guerra's CVs, here is a comparative overview of their qualifications:\n\n### Dr. John F. Aya"
+            },
+            {
+                "test": "DOCX File RAG",
+                "passed": false,
+                "response_length": 0,
+                "response_time_ms": 5394,
+                "keyword_ratio": 0,
+                "keywords_found": [],
+                "response_preview": ""
+            },
+            {
+                "test": "Specific Detail Extraction",
+                "passed": true,
+                "response_length": 329,
+                "response_time_ms": 14263,
+                "keyword_ratio": 0.6666666666666666,
+                "keywords_found": [
+                    "Alex Mayo",
+                    "title"
+                ],
+                "response_preview": "According to Alex Mayo's resume, he is identified as a \"goal-oriented engineer\" with a focus on creating solutions through critical thinking and optim"
+            }
+        ]
+    },
+    "agent_366": {
+        "agent_id": 366,
+        "name": "Ayala + Goodbuy Assistant",
+        "bloq_id": 40,
+        "file_attachments": 0,
+        "pass_rate": 100,
+        "results": [
+            {
+                "test": "General Knowledge Query",
+                "passed": true,
+                "response_length": 1997,
+                "response_time_ms": 10450,
+                "response_preview": "The key principles of strategic planning are foundational to creating effective, sustainable, and adaptable strategies. They include:\n\n1. **Vision and"
+            },
+            {
+                "test": "Expertise Area Query",
+                "passed": true,
+                "response_length": 2508,
+                "response_time_ms": 12644,
+                "response_preview": "Designing educational leadership courses for maximum impact requires a strategic blend of relevant content, experiential learning, and adaptive delive"
+            }
+        ]
+    },
+    "summary": {
+        "overall_pass_rate": 83,
+        "tests_passed": 5,
+        "tests_total": 6
+    }
+}

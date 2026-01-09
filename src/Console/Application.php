@@ -19,6 +19,8 @@ use IRIS\SDK\Console\Commands\ServisAiCommand;
 use IRIS\SDK\Console\Commands\EvalCommand;
 use IRIS\SDK\Console\Commands\DeliverCommand;
 use IRIS\SDK\Console\Commands\ScheduleCommand;
+use IRIS\SDK\Console\Commands\SopCommand;
+use IRIS\SDK\Console\Commands\PaymentsCommand;
 
 class Application extends BaseApplication
 {
@@ -43,6 +45,8 @@ class Application extends BaseApplication
             new EvalCommand(),
             new DeliverCommand(),
             new ScheduleCommand(),
+            new SopCommand(),
+            new PaymentsCommand(),
         ]);
     }
 }

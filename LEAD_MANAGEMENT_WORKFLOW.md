@@ -421,6 +421,144 @@ $iris->leads->tasks(412)->delete(11);
 
 ---
 
+## Checking Stripe Payments
+
+Verify payment status and view complete Stripe payment history for leads.
+
+### Quick Payment Summary
+
+```bash
+# Quick summary (recommended for quick checks)
+./bin/iris payments 110 --summary
+
+# Example output:
+# Payment Summary - Dr. John F. Ayala
+# ====================================
+# 
+# Customer:    John Ayala
+# Email:       jayala@aec-hq.com
+# Stripe ID:   cus_TcnOtQuBmG7vkE
+# 
+# ✅ Status: PAID
+# 
+# Invoices:    1 total, 1 paid, 0 pending
+# Payments:    1 successful
+# Total Paid:  $541.25
+```
+
+### Full Payment Details
+
+```bash
+# View complete payment history
+./bin/iris payments 110
+
+# Includes:
+# - Customer information
+# - All invoices (with status, amounts, dates)
+# - Payment transactions (card details, amounts)
+# - Checkout sessions
+# - Financial summary
+# - PDF download links
+```
+
+### Via SDK Method
+
+```bash
+# Using the SDK proxy (returns raw data)
+./bin/iris sdk:call leads.stripePayments 110
+
+# JSON output for automation
+./bin/iris sdk:call leads.stripePayments 110 --json
+```
+
+### PHP SDK Usage
+
+```php
+// Get payment history
+$payments = $iris->leads->stripePayments(110);
+
+// Check if customer exists
+if ($payments['has_stripe_customer']) {
+    echo "Customer: {$payments['customer']['name']}\n";
+    echo "Email: {$payments['customer']['email']}\n";
+    echo "Total Paid: \${$payments['total_paid']}\n";
+}
+
+// List invoices
+foreach ($payments['invoices'] as $invoice) {
+    echo "Invoice #{$invoice['number']}: ";
+    echo "\${$invoice['amount_paid']} - {$invoice['status']}\n";
+    
+    if ($invoice['status'] === 'paid') {
+        echo "  Paid at: {$invoice['paid_at']}\n";
+        echo "  PDF: {$invoice['invoice_pdf']}\n";
+    }
+}
+
+// Check payments
+foreach ($payments['payments'] as $payment) {
+    $card = $payment['payment_method'];
+    echo "Payment: \${$payment['amount']} - {$payment['status']}\n";
+    echo "  Card: {$card['brand']} ending in {$card['last4']}\n";
+    echo "  Date: {$payment['created']}\n";
+}
+
+// Summary stats
+$summary = $payments['summary'];
+echo "\nSummary:\n";
+echo "  Total Invoices: {$summary['total_invoices']}\n";
+echo "  Paid: {$summary['paid_invoices']}\n";
+echo "  Pending: {$summary['pending_invoices']}\n";
+echo "  Total Revenue: \${$payments['total_paid']}\n";
+```
+
+### Payment Status Indicators
+
+The `payments` command uses visual indicators:
+
+- **✅ PAID** - Invoice fully paid
+- **⏳ PENDING** - Payment in progress
+- **📝 DRAFT** - Invoice not sent yet
+- **❌ VOID** - Invoice cancelled
+- **✅ SUCCEEDED** - Payment transaction successful
+
+### Use Cases
+
+```bash
+# After client says "I paid the invoice"
+./bin/iris payments 110 --summary
+
+# Verify payment before marking tasks complete
+./bin/iris payments 110 --summary && ./bin/iris sdk:call leads.tasks.update 110 13 is_completed=true
+
+# Get JSON data for automated workflows
+./bin/iris payments 110 --json | jq '.summary.total_paid'
+
+# Check multiple leads
+for lead_id in 110 24 53; do
+  echo "Checking lead $lead_id..."
+  ./bin/iris payments $lead_id --summary
+  echo ""
+done
+```
+
+### Troubleshooting
+
+**No Stripe customer found:**
+- Lead email may not match Stripe customer email
+- Customer may not exist in your Stripe account
+- Check lead email is correct: `./bin/iris sdk:call leads.get <lead_id>`
+
+**Payment shows but invoice doesn't:**
+- Payment may be for a different invoice
+- Use Stripe dashboard to investigate: https://dashboard.stripe.com
+
+**Total paid is in cents:**
+- SDK automatically converts to dollars (e.g., 54125 cents → $541.25)
+- If you see raw API response, divide by 100
+
+---
+
 ## Managing Agent Workflows
 
 Agents can execute multi-step workflows to automate complex tasks. Workflows must be attached to agents before they can be used. This is managed through the agent-workflow relational system.

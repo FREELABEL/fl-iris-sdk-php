@@ -140,7 +140,7 @@ class Client
      */
     protected function buildUrl(string $endpoint): string
     {
-        // Use FL-API URL for leads, deliverables, profiles, services, agents management, cloud-files, articles, bloqs
+        // Use FL-API URL for leads, deliverables, profiles, services, agents management, cloud-files, articles, bloqs, programs, courses
         // Check /users/ FIRST because /users/{id}/bloqs/agents needs to go to FL-API
         if (str_contains($endpoint, '/users/')
             || str_contains($endpoint, '/leads')
@@ -151,6 +151,10 @@ class Client
             || str_contains($endpoint, '/cloud-files')
             || str_contains($endpoint, '/articles')
             || str_contains($endpoint, '/bloqs/')
+            || str_contains($endpoint, '/programs')
+            || str_contains($endpoint, '/program-enrollments')
+            || str_contains($endpoint, '/user-programs')
+            || str_contains($endpoint, '/courses')
         ) {
             return $this->config->flApiUrl . '/' . ltrim($endpoint, '/');
         }
