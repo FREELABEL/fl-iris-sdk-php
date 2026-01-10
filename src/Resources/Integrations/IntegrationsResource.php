@@ -318,47 +318,22 @@ class IntegrationsResource
     /**
      * Check connection status for an integration type.
      *
-     * @param string $type Integration type (e.g., 'gmail', 'google-drive')
-     * @return IntegrationStatus
+     * @param string $type Integration type (e.g., 'vapi', 'servis-ai')
+     * @return array{connected: bool, integration: ?Integration}
      */
-    public function status(string $type): IntegrationStatus
+    public function status(string $type): array
     {
         $integrations = $this->list();
         $integration = $integrations->findByType($type);
 
         if (!$integration) {
-            return new IntegrationStatus(false, null);
+            return ['connected' => false, 'integration' => null];
         }
 
-        return new IntegrationStatus(
-            $integration->isConnected(),
-            $integration
-        );
-    }
-
-    /**
-     * Test an integration by type (convenience method).
-     * 
-     * This validates that the integration is connected AND working.
-     * Use this before creating agents that depend on integrations.
-     *
-     * @param string $type Integration type
-     * @return TestResult
-     * @throws \Exception If integration is not found
-     */
-    public function testByType(string $type): TestResult
-    {
-        $status = $this->status($type);
-
-        if (!$status->isConnected()) {
-            return new TestResult([
-                'success' => false,
-                'error' => "Integration '{$type}' is not connected. Run: ./bin/iris integrations connect {$type}",
-                'message' => $status->getStatusMessage(),
-            ]);
-        }
-
-        return $this->test($status->getIntegrationId());
+        return [
+            'connected' => $integration->status === 'active',
+            'integration' => $integration,
+        ];
     }
 
     /**
