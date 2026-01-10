@@ -285,7 +285,7 @@ HELP
         IRIS $iris,
         int $agentId,
         array $results,
-        int $avgScore,
+        float $avgScore,
         int $passed,
         int $totalTests,
         int $passRate,
