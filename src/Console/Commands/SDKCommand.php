@@ -19,7 +19,22 @@ class SDKCommand extends Command
         $this
             ->setName('sdk:call')
             ->setDescription('Dynamic proxy to SDK resources and methods')
-            ->setHelp('Usage: iris call <resource>.<method> [args] [--options]')
+            ->setHelp(<<<'EOT'
+Usage: iris sdk:call <resource>.<method> [args] [--options]
+
+Examples:
+  iris sdk:call leads.list search=Dima
+  iris sdk:call leads.list query=Dima          # 'query' is an alias for 'search'
+  iris sdk:call leads.search query=Martinez
+  iris sdk:call agents.chat id=123 message="Hello"
+  iris sdk:call bloqs.get 42
+
+Parameter Aliases:
+  - query => search (for leads.list, leads.search, leads.listForUser)
+
+This allows more intuitive CLI usage while maintaining API compatibility.
+EOT
+            )
             ->addArgument('endpoint', InputArgument::REQUIRED, 'Resource.method (e.g., leads.list, agents.chat)')
             ->addArgument('params', InputArgument::IS_ARRAY, 'Parameters as key=value pairs')
             ->addOption('json', null, InputOption::VALUE_NONE, 'Output as JSON')
@@ -58,6 +73,9 @@ class SDKCommand extends Command
             
             // Parse parameters
             $params = $this->parseParams($input->getArgument('params'));
+
+            // Apply parameter aliases (e.g., query => search)
+            $params = $this->applyParameterAliases($endpoint, $params);
 
             // Auto-inject user_id if not provided (needed for many API calls)
             // BUT skip for global search endpoints that search across all users
@@ -291,6 +309,37 @@ class SDKCommand extends Command
             }
         }
         return $parsed;
+    }
+
+    /**
+     * Apply parameter aliases for common use cases.
+     * This allows users to use intuitive names like 'query' that get mapped to 'search'.
+     *
+     * @param string $endpoint The endpoint being called (e.g., 'leads.list')
+     * @param array $params The parsed parameters
+     * @return array The parameters with aliases applied
+     */
+    private function applyParameterAliases(string $endpoint, array $params): array
+    {
+        // Define aliases for specific endpoints
+        $aliasMap = [
+            'leads.list' => ['query' => 'search'],
+            'leads.search' => ['query' => 'search'],
+            'leads.listForUser' => ['query' => 'search'],
+        ];
+
+        // If this endpoint has alias mappings
+        if (isset($aliasMap[$endpoint])) {
+            foreach ($aliasMap[$endpoint] as $alias => $canonical) {
+                // If alias is used but canonical isn't, map it
+                if (isset($params[$alias]) && !isset($params[$canonical])) {
+                    $params[$canonical] = $params[$alias];
+                    unset($params[$alias]);
+                }
+            }
+        }
+
+        return $params;
     }
 
     /**

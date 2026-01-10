@@ -21,6 +21,11 @@ use IRIS\SDK\Console\Commands\DeliverCommand;
 use IRIS\SDK\Console\Commands\ScheduleCommand;
 use IRIS\SDK\Console\Commands\SopCommand;
 use IRIS\SDK\Console\Commands\PaymentsCommand;
+use IRIS\SDK\Console\Commands\AppCommand;
+use IRIS\SDK\Console\Commands\BloqIngestCommand;
+use IRIS\SDK\Console\Commands\BloqIngestionStatusCommand;
+use IRIS\SDK\Console\Commands\BloqIngestionJobsCommand;
+use IRIS\SDK\Console\Commands\BloqCancelIngestionCommand;
 
 class Application extends BaseApplication
 {
@@ -47,6 +52,11 @@ class Application extends BaseApplication
             new ScheduleCommand(),
             new SopCommand(),
             new PaymentsCommand(),
+            new AppCommand(),
+            new BloqIngestCommand(),
+            new BloqIngestionStatusCommand(),
+            new BloqIngestionJobsCommand(),
+            new BloqCancelIngestionCommand(),
         ]);
     }
 }

@@ -778,4 +778,229 @@ class BloqsResource
         $this->http->delete("/api/v1/users/{$userId}/bloqs/list/item/{$itemId}/chat/messages");
         return true;
     }
+
+    // =========================================================================
+    // FOLDER INGESTION (Bulk import from cloud storage)
+    // =========================================================================
+
+    /**
+     * Start bulk file ingestion from cloud storage folder.
+     *
+     * Ingests files from Dropbox, Google Drive, or S3 folders into a bloq.
+     * Files are processed asynchronously with automatic text extraction and
+     * vectorization for RAG (Retrieval-Augmented Generation).
+     *
+     * Supported file types:
+     * - Documents: PDF, DOCX, TXT, MD, RTF
+     * - Data: CSV, JSON, XML
+     * - Code: PY, JS, TS, PHP, JAVA, GO, RB, CPP, H
+     * - Spreadsheets: XLSX, XLS
+     * - Images: JPG, JPEG, PNG, GIF, BMP, WEBP, TIFF (requires include_images=true)
+     *
+     * Image ingestion uses GPT-4 Vision API (gpt-4o-mini) for OCR and analysis.
+     * Cost: ~$0.02 per 10 images with high detail level.
+     *
+     * @param int $bloqId Bloq ID to ingest files into
+     * @param array{
+     *     source: string,
+     *     path: string,
+     *     recursive?: bool,
+     *     file_types?: string[],
+     *     create_lists?: bool,
+     *     target_list_id?: int,
+     *     list_name?: string,
+     *     include_images?: bool,
+     *     image_detail_level?: string
+     * } $options Ingestion options
+     * @return array Job information with job_id for tracking
+     *
+     * @example
+     * ```php
+     * // Ingest from Dropbox folder
+     * $job = $iris->bloqs->ingestFolder(40, [
+     *     'source' => 'dropbox',
+     *     'path' => '/Engineering Projects/Microfluidics',
+     *     'recursive' => true,
+     *     'file_types' => ['pdf', 'docx', 'txt'],
+     *     'list_name' => 'Engineering Docs'
+     * ]);
+     *
+     * echo "Job started with ID: {$job['job_id']}\n";
+     *
+     * // Ingest from Google Drive folder
+     * $job = $iris->bloqs->ingestFolder(40, [
+     *     'source' => 'google_drive',
+     *     'path' => '1A2B3C4D5E6F7G8H9I0J', // Google Drive folder ID
+     *     'file_types' => ['pdf', 'xlsx']
+     * ]);
+     *
+     * // Ingest medical images with OCR
+     * $job = $iris->bloqs->ingestFolder(40, [
+     *     'source' => 'dropbox',
+     *     'path' => '/Medical Records/Patient Charts',
+     *     'recursive' => true,
+     *     'file_types' => ['pdf', 'jpg', 'png'],
+     *     'include_images' => true,           // Enable image processing
+     *     'image_detail_level' => 'high',     // high, low, or auto
+     *     'list_name' => 'Patient Records'
+     * ]);
+     * ```
+     */
+    public function ingestFolder(int $bloqId, array $options): array
+    {
+        $response = $this->http->post("/api/v1/bloqs/{$bloqId}/ingest-folder", $options);
+        return $response['data'] ?? $response;
+    }
+
+    /**
+     * Get real-time status of an ingestion job.
+     *
+     * @param int $jobId Ingestion job ID
+     * @return array Job status with progress details
+     *
+     * @example
+     * ```php
+     * $status = $iris->bloqs->getIngestionStatus(123);
+     *
+     * echo "Status: {$status['status']}\n";
+     * echo "Progress: {$status['processed_files']}/{$status['total_files']}\n";
+     * echo "Current file: {$status['current_file']}\n";
+     * echo "ETA: {$status['estimated_remaining']}\n";
+     *
+     * if (!empty($status['error_log'])) {
+     *     echo "Errors:\n";
+     *     foreach ($status['error_log'] as $error) {
+     *         echo "  - {$error['file']}: {$error['error']}\n";
+     *     }
+     * }
+     * ```
+     */
+    public function getIngestionStatus(int $jobId): array
+    {
+        $response = $this->http->get("/api/v1/ingestion-jobs/{$jobId}/status");
+        return $response['data'] ?? $response;
+    }
+
+    /**
+     * List all ingestion jobs for a bloq.
+     *
+     * @param int $bloqId Bloq ID
+     * @param array{per_page?: int, page?: int} $options Pagination options
+     * @return array List of ingestion jobs with pagination
+     *
+     * @example
+     * ```php
+     * $result = $iris->bloqs->listIngestionJobs(40);
+     *
+     * foreach ($result['jobs'] as $job) {
+     *     echo "Job {$job['job_id']}: {$job['status']} ";
+     *     echo "({$job['successful_files']}/{$job['total_files']} files)\n";
+     * }
+     * ```
+     */
+    public function listIngestionJobs(int $bloqId, array $options = []): array
+    {
+        $response = $this->http->get("/api/v1/bloqs/{$bloqId}/ingestion-jobs", $options);
+        return $response['data'] ?? $response;
+    }
+
+    /**
+     * Cancel an in-progress ingestion job.
+     *
+     * @param int $jobId Ingestion job ID
+     * @return array Cancellation result
+     *
+     * @example
+     * ```php
+     * $result = $iris->bloqs->cancelIngestionJob(123);
+     * echo $result['message']; // "Job cancelled successfully"
+     * ```
+     */
+    public function cancelIngestionJob(int $jobId): array
+    {
+        $response = $this->http->post("/api/v1/ingestion-jobs/{$jobId}/cancel");
+        return $response['data'] ?? $response;
+    }
+
+    /**
+     * Retry failed files from a completed ingestion job.
+     *
+     * @param int $jobId Ingestion job ID
+     * @return array Retry result
+     *
+     * @example
+     * ```php
+     * // Retry files that failed during initial ingestion
+     * $result = $iris->bloqs->retryFailedFiles(123);
+     * ```
+     */
+    public function retryFailedFiles(int $jobId): array
+    {
+        $response = $this->http->post("/api/v1/ingestion-jobs/{$jobId}/retry");
+        return $response['data'] ?? $response;
+    }
+
+    /**
+     * Wait for an ingestion job to complete (blocking).
+     *
+     * Polls the job status every 2 seconds until completion.
+     * Useful for CLI scripts or batch processing.
+     *
+     * @param int $jobId Ingestion job ID
+     * @param callable|null $callback Optional callback function called on each update
+     * @param int $pollInterval Seconds between status checks (default: 2)
+     * @param int $timeout Maximum wait time in seconds (default: 3600 = 1 hour)
+     * @return array Final job status
+     *
+     * @throws \Exception if job fails or timeout is reached
+     *
+     * @example
+     * ```php
+     * // Basic usage
+     * $final = $iris->bloqs->waitForIngestion(123);
+     * echo "Completed: {$final['successful_files']} files\n";
+     *
+     * // With progress callback
+     * $final = $iris->bloqs->waitForIngestion(123, function($status) {
+     *     echo "\r{$status['progress_percent']}% - {$status['current_file']}";
+     * });
+     * ```
+     */
+    public function waitForIngestion(
+        int $jobId,
+        ?callable $callback = null,
+        int $pollInterval = 2,
+        int $timeout = 3600
+    ): array {
+        $startTime = time();
+        
+        while (true) {
+            $status = $this->getIngestionStatus($jobId);
+            
+            // Call user callback if provided
+            if ($callback !== null) {
+                $callback($status);
+            }
+            
+            // Check if completed
+            if (in_array($status['status'], ['completed', 'partial', 'failed'])) {
+                if ($status['status'] === 'failed') {
+                    $errors = implode(', ', array_map(
+                        fn($e) => $e['file'] . ': ' . $e['error'],
+                        $status['error_log'] ?? []
+                    ));
+                    throw new \Exception("Ingestion job failed: " . $errors);
+                }
+                return $status;
+            }
+            
+            // Check timeout
+            if ((time() - $startTime) > $timeout) {
+                throw new \Exception("Ingestion job timed out after {$timeout} seconds");
+            }
+            
+            // Wait before next poll
+            sleep($pollInterval);
+        }
+    }
 }

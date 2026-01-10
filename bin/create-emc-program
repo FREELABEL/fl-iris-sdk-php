@@ -1,0 +1,238 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Create EMC Austin March 2026 Program
+ * 
+ * Creates the artist intake form for EMC with custom fields:
+ * - Artist/Band Name
+ * - Spotify Artist Profile (URL with validation)
+ * - Instagram Handle
+ * - Demo Track (MP3 file upload)
+ * - Track Title
+ * - Artist Bio (optional)
+ * - How did you hear about us (optional)
+ */
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use IRIS\SDK\IRIS;
+
+// ANSI color codes for pretty output
+const COLOR_RESET = "\033[0m";
+const COLOR_GREEN = "\033[32m";
+const COLOR_YELLOW = "\033[33m";
+const COLOR_BLUE = "\033[34m";
+const COLOR_RED = "\033[31m";
+const COLOR_BOLD = "\033[1m";
+
+function log_step($message) {
+    echo COLOR_BOLD . COLOR_BLUE . "➜ " . COLOR_RESET . $message . "\n";
+}
+
+function log_success($message) {
+    echo COLOR_GREEN . "✔ " . $message . COLOR_RESET . "\n";
+}
+
+function log_error($message) {
+    echo COLOR_RED . "✖ " . $message . COLOR_RESET . "\n";
+}
+
+function log_info($message) {
+    echo COLOR_YELLOW . "ℹ " . $message . COLOR_RESET . "\n";
+}
+
+try {
+    log_step("Creating EMC Austin March 2026 Program...\n");
+
+    // Initialize SDK client (auto-loads from .env file)
+    $iris = new IRIS([
+        'api_key' => getenv('IRIS_API_KEY') ?: getenv('FL_RAICHU_API_TOKEN') ?: 'test-api-key',
+        'base_url' => getenv('IRIS_BASE_URL') ?: 'http://localhost:8000',
+    ]);
+    
+    log_info("API Base URL: http://localhost:8000");
+
+    // Program data
+    $programData = [
+        'name' => 'EMC Austin - March 2026',
+        'slug' => 'emc-austin-march-2026',
+        'description' => 'Submit your demo for our pre-SXSW compilation album. Selected artists will be featured on the EMC Austin compilation and receive promotional video clips.',
+        'landing_page_content' => <<<MARKDOWN
+# EMC Austin - March 2026
+
+## About the Event
+
+EMC (Electronic Music Collective) is hosting a pre-SXSW showcase featuring emerging electronic artists from Austin and beyond.
+
+## What You Get
+
+✅ Featured on our compilation album  
+✅ Professional video clips with custom branding  
+✅ Social media promotion across our channels  
+✅ Performance opportunity at our March showcase  
+
+## Submission Guidelines
+
+- Must be original music
+- Electronic/dance genre preferred
+- High-quality MP3 (at least 320kbps)
+- Must have active Spotify artist profile
+
+## Timeline
+
+- **Submissions Open:** Now
+- **Submissions Close:** February 1, 2026
+- **Artists Notified:** February 7, 2026
+- **Showcase Date:** March 15, 2026 (Pre-SXSW)
+
+Submit your best track below!
+MARKDOWN
+        ,
+        'active' => true,
+        'tier' => 'free',
+        'bloq_id' => 1, // Using System Data bloq for testing (in production use Peso's bloq)
+        'allow_free_enrollment' => true,
+        'has_paid_membership' => false,
+        'custom_fields' => [
+            [
+                'id' => 'artist_name',
+                'field_name' => 'artist_name',
+                'label' => 'Artist/Band Name',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Your stage name or band name'
+            ],
+            [
+                'id' => 'spotify_link',
+                'field_name' => 'spotify_link',
+                'label' => 'Spotify Artist Profile',
+                'type' => 'url',
+                'required' => true,
+                'placeholder' => 'https://open.spotify.com/artist/...',
+                'validation' => [
+                    'pattern' => '^https://open\\.spotify\\.com/artist/.*',
+                    'message' => 'Please enter a valid Spotify artist URL (https://open.spotify.com/artist/...)'
+                ]
+            ],
+            [
+                'id' => 'instagram_handle',
+                'field_name' => 'instagram_handle',
+                'label' => 'Instagram Handle',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => '@yourhandle'
+            ],
+            [
+                'id' => 'demo_track',
+                'field_name' => 'demo_track',
+                'label' => 'Demo Track (MP3)',
+                'type' => 'file',
+                'required' => true,
+                'accept' => '.mp3,audio/mpeg',
+                'maxSize' => 10485760, // 10MB in bytes
+                'helpText' => 'Upload your best track (max 10MB, MP3 format)'
+            ],
+            [
+                'id' => 'track_title',
+                'field_name' => 'track_title',
+                'label' => 'Track Title',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Name of the track you are submitting'
+            ],
+            [
+                'id' => 'artist_bio',
+                'field_name' => 'artist_bio',
+                'label' => 'Artist Bio',
+                'type' => 'textarea',
+                'required' => false,
+                'placeholder' => 'Tell us about your music, influences, and why you want to be part of EMC Austin...'
+            ],
+            [
+                'id' => 'how_did_you_hear',
+                'field_name' => 'how_did_you_hear',
+                'label' => 'How did you hear about EMC?',
+                'type' => 'text',
+                'required' => false,
+                'placeholder' => 'Social media, friend, etc.'
+            ]
+        ]
+    ];
+
+    log_step("Creating program via API...");
+    
+    // Create program using SDK
+    $program = $iris->programs->create($programData);
+    
+    log_success("Program created successfully!\n");
+
+    // Display program details
+    echo COLOR_BOLD . "\n📋 Program Details:\n" . COLOR_RESET;
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+    echo "  ID:          " . COLOR_GREEN . $program->id . COLOR_RESET . "\n";
+    echo "  Name:        " . COLOR_GREEN . $program->name . COLOR_RESET . "\n";
+    echo "  Slug:        " . COLOR_GREEN . $program->slug . COLOR_RESET . "\n";
+    echo "  Bloq ID:     " . COLOR_GREEN . $program->bloqId . COLOR_RESET . "\n";
+    echo "  Tier:        " . COLOR_GREEN . ($program->tier ?? 'free') . COLOR_RESET . "\n";
+    echo "  Active:      " . COLOR_GREEN . ($program->active ? 'Yes' : 'No') . COLOR_RESET . "\n";
+    echo "  Custom Fields: " . COLOR_GREEN . count($program->customFields ?? []) . COLOR_RESET . "\n";
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+
+    // Display custom fields
+    if ($program->customFields) {
+        echo "\n" . COLOR_BOLD . "📝 Custom Fields:\n" . COLOR_RESET;
+        foreach ($program->customFields as $field) {
+            $required = ($field['required'] ?? false) ? COLOR_RED . " *" . COLOR_RESET : "";
+            echo "  • " . $field['label'] . $required . " (" . $field['type'] . ")\n";
+        }
+    }
+
+    // Display public URL
+    echo "\n" . COLOR_BOLD . "🌐 Public Form URL:\n" . COLOR_RESET;
+    $publicUrl = $program->getPublicUrl();
+    echo "  " . COLOR_BLUE . $publicUrl . COLOR_RESET . "\n";
+
+    // Local URL for testing
+    $localUrl = str_replace('https://heyiris.io', 'http://localhost', $publicUrl);
+    echo "\n" . COLOR_BOLD . "🧪 Local Testing URL:\n" . COLOR_RESET;
+    echo "  " . COLOR_YELLOW . $localUrl . COLOR_RESET . "\n";
+
+    // API endpoint for submissions
+    $baseUrl = getenv('IRIS_BASE_URL') ?: 'http://localhost:8000';
+    echo "\n" . COLOR_BOLD . "📡 API Endpoints:\n" . COLOR_RESET;
+    echo "  Get Program:     GET " . $baseUrl . "/api/v1/programs/" . $program->id . "\n";
+    echo "  Get Submissions: GET " . $baseUrl . "/api/v1/programs/" . $program->id . "/enrollments\n";
+    echo "  Submit Form:     POST " . $baseUrl . "/api/program-enrollments/enroll\n";
+
+    // Example SDK usage
+    echo "\n" . COLOR_BOLD . "💻 SDK Usage:\n" . COLOR_RESET;
+    echo <<<CODE
+  \$iris = new IRIS\SDK\Client(\$apiKey);
+  
+  // Get submissions
+  \$submissions = \$iris->programs->getSubmissions({$program->id});
+  
+  // Get public URL
+  \$url = \$program->getPublicUrl();
+
+CODE;
+
+    log_success("\n✨ Program created successfully! Ready to accept submissions.");
+    
+    exit(0);
+
+} catch (\Exception $e) {
+    log_error("\n❌ Error creating program:");
+    log_error($e->getMessage());
+    
+    if (method_exists($e, 'getResponse')) {
+        $response = $e->getResponse();
+        if ($response) {
+            log_error("\nAPI Response:");
+            echo json_encode(json_decode($response->getBody(), true), JSON_PRETTY_PRINT) . "\n";
+        }
+    }
+    
+    exit(1);
+}

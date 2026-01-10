@@ -214,4 +214,22 @@ class Program
     {
         return $this->slug ?? strtolower(str_replace(' ', '-', $this->name));
     }
+
+    /**
+     * Get the public URL for the program landing page/form.
+     */
+    public function getPublicUrl(): string
+    {
+        $baseUrl = 'https://heyiris.io/programs/';
+        return $baseUrl . $this->getSlug();
+    }
+
+    /**
+     * Alias for getEnrollmentCount.
+     * Useful for form-focused programs.
+     */
+    public function getSubmissionsCount(): int
+    {
+        return $this->getEnrollmentCount();
+    }
 }

@@ -1,0 +1,1738 @@
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  #110 │ Dr. John F. Ayala, PE, PMP, LSSMBB │ ✓ Won
+  🔑 id: 110
+  👤 name: Dr. John F. Ayala, PE, PMP, LSSMBB
+  👤 nickname: Dr. John F. Ayala, PE, PMP, LSSMBB
+  📧 email: jayala@aec-hq.com
+  📊 status: ✓ Won
+  🏷️ lead_type: unknown
+  🏢 company: Ayala Engineering & Consulting, LLC
+  📱 phone: (210) 885-6552
+  📇 contact_info: [Array: 5 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #552 │ Lil Vonno │ ✨ New
+  🔑 id: 552
+  👤 name: Lil Vonno
+  👤 nickname: Lil Vonno
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Lil Vonno Music
+  📇 contact_info: {"email":null,"phone":null,"company":"Lil Vonno Music","social_handle":"@lilvonnoooooo"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #79 │ Richard Delgado │ ✓ Won
+  🔑 id: 79
+  👤 nickname: Richard Delgado
+  📊 status: ✓ Won
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false,"social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #551 │ celebrilee │ ✨ New
+  🔑 id: 551
+  👤 name: celebrilee
+  👤 nickname: celebrilee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":"@celebrilee"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #550 │ celebrilee │ ✨ New
+  🔑 id: 550
+  👤 name: celebrilee
+  👤 nickname: celebrilee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":"@celebrilee"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #549 │ wealththerapy │ ✨ New
+  🔑 id: 549
+  👤 name: wealththerapy
+  👤 nickname: wealththerapy
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":"@wealththerapy"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #548 │ womos │ ✨ New
+  🔑 id: 548
+  👤 name: womos
+  👤 nickname: womos
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":"@womos"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #547 │ Marcus Barney │ ✨ New
+  🔑 id: 547
+  👤 name: Marcus Barney
+  👤 nickname: Marcus Barney
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":"@him500"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #546 │ djgriptexas │ ✨ New
+  🔑 id: 546
+  👤 name: djgriptexas
+  👤 nickname: djgriptexas
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":"@djgriptexas"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #545 │ danielramireztx │ ✨ New
+  🔑 id: 545
+  👤 name: danielramireztx
+  👤 nickname: danielramireztx
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":"@danielramireztx"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #544 │ Wallstreet │ ✨ New
+  🔑 id: 544
+  👤 name: Wallstreet
+  👤 nickname: Wallstreet
+  📧 email: support@wallstreettrapper.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Wallstreet
+  📇 contact_info: {"email":"support@wallstreettrapper.com","phone":null,"company":"Wallstreet","social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #543 │ DJ Grip Texas │ ✨ New
+  🔑 id: 543
+  👤 name: DJ Grip Texas
+  👤 nickname: DJ Grip Texas
+  📧 email: djgriptexas@gmail.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5122034471
+  📇 contact_info: {"email":"djgriptexas@gmail.com","phone":"(512) 203-4471","company":null,"social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #542 │ Daniel Ramirez │ ✨ New
+  🔑 id: 542
+  👤 name: Daniel Ramirez
+  👤 nickname: Daniel Ramirez
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #541 │ Wallstreet Trapper │ ✨ New
+  🔑 id: 541
+  👤 name: Wallstreet Trapper
+  👤 nickname: Wallstreet Trapper
+  📧 email: support@wallstreettrapper.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: [Array: 4 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #540 │ Wealth Therapy │ ✨ New
+  🔑 id: 540
+  👤 name: Wealth Therapy
+  👤 nickname: Wealth Therapy
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":"@wealththerapy"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #539 │ Vomos │ ✨ New
+  🔑 id: 539
+  👤 name: Vomos
+  👤 nickname: Vomos
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Wealth Therapy
+  📇 contact_info: {"email":null,"phone":null,"company":"Wealth Therapy","social_handle":"@vomos"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #538 │ Kendra Cathey │ ✨ New
+  🔑 id: 538
+  👤 name: Kendra Cathey
+  👤 nickname: Kendra Cathey
+  📧 email: info@kendracatheythfinancial.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Kendra Cathey (Personal & Business Credit Queen)
+  📇 contact_info: [Array: 4 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #537 │ Ke'Shawn J │ ✨ New
+  🔑 id: 537
+  👤 name: Ke'Shawn J
+  👤 nickname: Ke'Shawn J
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: 10HEATMUSIC
+  📇 contact_info: {"email":null,"phone":null,"company":"10HEATMUSIC","social_handle":"@keshawnjbeats0975"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #536 │ Anne-Charlotte Moulard │ ✨ New
+  🔑 id: 536
+  👤 name: Anne-Charlotte Moulard
+  👤 nickname: Anne-Charlotte Moulard
+  📧 email: contact@annecharlottemoulard.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 683194223
+  📇 contact_info: [Array: 4 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #535 │ Trilly Polk │ ✨ New
+  🔑 id: 535
+  👤 name: Trilly Polk
+  👤 nickname: Trilly Polk
+  📧 email: trillypolk2@gmail.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"trillypolk2@gmail.com","phone":null,"company":null,"social_handle":"@trillypolk"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #534 │ CreativeGs │ ✨ New
+  🔑 id: 534
+  👤 name: CreativeGs
+  👤 nickname: CreativeGs
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"social_handle":"@keepitcut3ent"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #533 │ wtr ur plants │ ✨ New
+  🔑 id: 533
+  👤 name: wtr ur plants
+  👤 nickname: wtr ur plants
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: wtr.your.plants
+  📇 contact_info: {"email":null,"phone":null,"company":"wtr.your.plants","social_handle":"@wtr.your.plants"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #532 │ Dub Academy │ ✨ New
+  🔑 id: 532
+  👤 name: Dub Academy
+  👤 nickname: Dub Academy
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Dub Academy
+  📇 contact_info: {"email":null,"phone":null,"company":"Dub Academy","social_handle":"@dubacademy"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #531 │ KingMilitia │ ✨ New
+  🔑 id: 531
+  👤 name: KingMilitia
+  👤 nickname: KingMilitia
+  📧 email: KingMilitia@gmail.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"KingMilitia@gmail.com","phone":null,"company":null,"social_handle":"@KingMilitia"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #530 │ Damond Mayo │ ✨ New
+  🔑 id: 530
+  👤 name: Damond Mayo
+  👤 nickname: Damond Mayo
+  📧 email: damond@freelabel.net
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"damond@freelabel.net","phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #529 │ Damond Mayo │ ✨ New
+  🔑 id: 529
+  👤 name: Damond Mayo
+  👤 nickname: Damond Mayo
+  📧 email: damond@freelabel.net
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Freelabel
+  📇 contact_info: {"email":"damond@freelabel.net","phone":null,"company":"Freelabel","auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #528 │ Damond Mayo │ ✨ New
+  🔑 id: 528
+  👤 name: Damond Mayo
+  👤 nickname: Damond Mayo
+  📧 email: damond@freelabel.net
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Freelabel
+  📇 contact_info: {"email":"damond@freelabel.net","phone":null,"company":"Freelabel","auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #527 │ Damond Mayo │ ✨ New
+  🔑 id: 527
+  👤 name: Damond Mayo
+  👤 nickname: Damond Mayo
+  📧 email: damond@freelabel.net
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Freelabel
+  📇 contact_info: {"email":"damond@freelabel.net","phone":null,"company":"Freelabel","auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #526 │ Damond Mayo │ ✨ New
+  🔑 id: 526
+  👤 name: Damond Mayo
+  👤 nickname: Damond Mayo
+  📧 email: damond@freelabel.net
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Freelabel
+  📇 contact_info: {"email":"damond@freelabel.net","phone":null,"company":"Freelabel","auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #517 │ Fakhar Zaman Khan │ 📄 Proposal
+  🔑 id: 517
+  👤 name: Fakhar Zaman Khan
+  👤 nickname: Fakhar Zaman Khan
+  📧 email: fakhar@softpyramid.com
+  📊 status: 📄 Proposal
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"fakhar@softpyramid.com","phone":null,"company":null,"social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #518 │ Jacob Adberstein │ 📄 Proposal
+  🔑 id: 518
+  👤 name: Jacob Adberstein
+  👤 nickname: Jacob Adberstein
+  📧 email: jacob@leadautopilotai.com
+  📊 status: 📄 Proposal
+  🏷️ lead_type: unknown
+  🏢 company: Lead Autopilot AI
+  📇 contact_info: [Array: 4 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #522 │ Jason Bashara │ ⭐ Qualified
+  🔑 id: 522
+  👤 name: Jason Bashara
+  👤 nickname: Jason Bashara
+  📧 email: jason@basharalaw.com
+  📊 status: ⭐ Qualified
+  🏷️ lead_type: unknown
+  🏢 company: Bashara Law
+  📇 contact_info: {"email":"jason@basharalaw.com","phone":null,"company":"Bashara Law","auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #74 │ Dima Semyansky │ ⚡ Negotiation
+  🔑 id: 74
+  👤 name: Dima Semyansky
+  👤 nickname: Dima Semyansky
+  📊 status: ⚡ Negotiation
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"asldkfjlkj@lkjasd.com","phone":"(386) 314-6252","company":null,"social_handle":null,"au...
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #525 │ Patsy Keegan │ Active
+  🔑 id: 525
+  👤 name: Patsy Keegan
+  👤 nickname: Patsy Keegan
+  📧 email: pattypillrn@yahoo.com
+  📊 status: Active
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"pattypillrn@yahoo.com","phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #524 │ Gabriela │ ✨ New
+  🔑 id: 524
+  👤 name: Gabriela
+  👤 nickname: Gabriela
+  📧 email: gabby@gabrielasgroup.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Gabrielas Group
+  📇 contact_info: {"email":"gabby@gabrielasgroup.com","phone":null,"company":"Gabrielas Group","social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #50 │ emilyglynn010@gmail.com │ ✨ New
+  🔑 id: 50
+  👤 nickname: emilyglynn010@gmail.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"emilyglynn010@gmail.com"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #67 │ Lisa Martinez │ ✓ Won
+  🔑 id: 67
+  👤 name: Lisa Martinez
+  👤 nickname: Lisa Martinez
+  📧 email: lisamartinez980@gmail.com
+  📊 status: ✓ Won
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"lisamartinez980@gmail.com","phone":null,"company":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #53 │ @gniice_ │ ✓ Won
+  🔑 id: 53
+  👤 nickname: @gniice_
+  📊 status: ✓ Won
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"info@creativegs.co","phone":"(404) 435-5254","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #24 │ Rodney Mayo │ ✓ Won
+  🔑 id: 24
+  👤 nickname: Rodney Mayo
+  📧 email: rodney.mayo@icloud.com
+  📊 status: ✓ Won
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"rodney.mayo@icloud.com","phone":"832-414-5257","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #75 │ Christiaan Cilliers │ ✓ Won
+  🔑 id: 75
+  👤 nickname: Christiaan Cilliers
+  📧 email: info@sgmdigital.com
+  📊 status: ✓ Won
+  🏷️ lead_type: unknown
+  🏢 company: SGM Digital
+  📇 contact_info: [Array: 5 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #412 │ Tha Juan │ ✓ Won
+  🔑 id: 412
+  👤 name: Tha Juan
+  👤 nickname: Tha Juan
+  📧 email: Ballstarpmb@gmail.com
+  📊 status: ✓ Won
+  🏷️ lead_type: unknown
+  🏢 company: Tha Juan Braid N Loc Shop
+  📱 phone: 2144004503
+  📇 contact_info: [Array: 4 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #523 │ Rashad Bernard │ ✨ New
+  🔑 id: 523
+  👤 name: Rashad Bernard
+  👤 nickname: Rashad Bernard
+  📧 email: rashadbernard4@gmail.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"rashadbernard4@gmail.com","phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #2 │ @brobrooke │ Prospected
+  🔑 id: 2
+  👤 nickname: @brobrooke
+  📧 email: brookerizz.asmartchoice@gmail.com
+  📊 status: Prospected
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"brookerizz.asmartchoice@gmail.com","manual_entry":["@brobrooke"]}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #521 │ Bashara Law │ ✨ New
+  🔑 id: 521
+  👤 name: Bashara Law
+  👤 nickname: Bashara Law
+  📧 email: jsb@basharalaw.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Bashara Law
+  📇 contact_info: {"email":"jsb@basharalaw.com","phone":null,"company":"Bashara Law","auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #520 │ Savannah Astani │ ✨ New
+  🔑 id: 520
+  👤 name: Savannah Astani
+  👤 nickname: Savannah Astani
+  📧 email: Savannah.Astani@elliman.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Douglas Elliman Real Estate
+  📱 phone: 5128663795
+  📇 contact_info: [Array: 4 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #103 │ Tirone Cannon │ 📄 Proposal
+  🔑 id: 103
+  👤 name: Tirone Cannon
+  👤 nickname: Tirone Cannon
+  📊 status: 📄 Proposal
+  🏷️ lead_type: unknown
+  📱 phone: (817) 897-1595
+  📇 contact_info: [Array: 5 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #511 │ 5th & Brew │ 📞 Contacted
+  🔑 id: 511
+  👤 name: 5th & Brew
+  👤 nickname: 5th & Brew
+  📊 status: 📞 Contacted
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #513 │ La Colombe Coffee Workshop │ 📞 Contacted
+  🔑 id: 513
+  👤 name: La Colombe Coffee Workshop
+  👤 nickname: La Colombe Coffee Workshop
+  📊 status: 📞 Contacted
+  🏷️ lead_type: unknown
+  📱 phone: 7379103780
+  📇 contact_info: {"email":null,"phone":"7379103780","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #508 │ President's House Coffee │ 📞 Contacted
+  🔑 id: 508
+  👤 name: President's House Coffee
+  👤 nickname: President's House Coffee
+  📊 status: 📞 Contacted
+  🏷️ lead_type: unknown
+  📱 phone: 51247637004821
+  📇 contact_info: {"email":null,"phone":"51247637004821","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #512 │ Coffeehouse at Caroline │ ⭐ Qualified
+  🔑 id: 512
+  👤 name: Coffeehouse at Caroline
+  👤 nickname: Coffeehouse at Caroline
+  📊 status: ⭐ Qualified
+  🏷️ lead_type: unknown
+  📱 phone: 5129826766
+  📇 contact_info: {"email":null,"phone":"5129826766","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #510 │ Jo's Coffee – Symphony Square │ ⭐ Qualified
+  🔑 id: 510
+  👤 name: Jo's Coffee – Symphony Square
+  👤 nickname: Jo's Coffee – Symphony Square
+  📊 status: ⭐ Qualified
+  🏷️ lead_type: unknown
+  📱 phone: 5123182247
+  📇 contact_info: {"email":null,"phone":"5123182247","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #519 │ JJ Bricks (Jay) │ ⭐ Qualified
+  🔑 id: 519
+  👤 name: JJ Bricks (Jay)
+  👤 nickname: JJ Bricks (Jay)
+  📊 status: ⭐ Qualified
+  🏷️ lead_type: unknown
+  🏢 company: Test Company 09:15:13
+  📇 contact_info: {"email":null,"phone":null,"company":"Test Company 09:15:13","social_handle":"@bricks"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #514 │ The Coffee Bar │ ⭐ Qualified
+  🔑 id: 514
+  👤 name: The Coffee Bar
+  👤 nickname: The Coffee Bar
+  📊 status: ⭐ Qualified
+  🏷️ lead_type: unknown
+  📱 phone: 7372573046
+  📇 contact_info: {"email":null,"phone":"7372573046","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #515 │ Union Coffee House │ ⭐ Qualified
+  🔑 id: 515
+  👤 name: Union Coffee House
+  👤 nickname: Union Coffee House
+  📊 status: ⭐ Qualified
+  🏷️ lead_type: unknown
+  📱 phone: 4695015440
+  📇 contact_info: {"email":null,"phone":"4695015440","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #509 │ Cafe at the Loren │ ✨ New
+  🔑 id: 509
+  👤 name: Cafe at the Loren
+  👤 nickname: Cafe at the Loren
+  📧 email: info@thelorenhotels.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: The Loren Hotel
+  📱 phone: 5125801182
+  📇 contact_info: [Array: 4 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #435 │ Sip Munch Cafe │ ✨ New
+  🔑 id: 435
+  👤 name: Sip Munch Cafe
+  👤 nickname: Sip Munch Cafe
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5123304300
+  📇 contact_info: {"email":null,"phone":"5123304300","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #428 │ Cafe Largesse │ ✨ New
+  🔑 id: 428
+  👤 name: Cafe Largesse
+  👤 nickname: Cafe Largesse
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 3057660348
+  📇 contact_info: {"email":null,"phone":"3057660348","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #471 │ Café No Sé │ ✨ New
+  🔑 id: 471
+  👤 name: Café No Sé
+  👤 nickname: Café No Sé
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5129422061
+  📇 contact_info: {"email":null,"phone":"5129422061","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #456 │ Café Crème - Oltorf │ ✨ New
+  🔑 id: 456
+  👤 name: Café Crème - Oltorf
+  👤 nickname: Café Crème - Oltorf
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5127109473
+  📇 contact_info: {"email":null,"phone":"5127109473","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #453 │ Maaribu Cafe & Gifts │ ✨ New
+  🔑 id: 453
+  👤 name: Maaribu Cafe & Gifts
+  👤 nickname: Maaribu Cafe & Gifts
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5127619916
+  📇 contact_info: {"email":null,"phone":"5127619916","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #486 │ Capitol Cafe - Congress Ave │ ✨ New
+  🔑 id: 486
+  👤 name: Capitol Cafe - Congress Ave
+  👤 nickname: Capitol Cafe - Congress Ave
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5125031785
+  📇 contact_info: {"email":null,"phone":"5125031785","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #473 │ Pecan Square Café │ ✨ New
+  🔑 id: 473
+  👤 name: Pecan Square Café
+  👤 nickname: Pecan Square Café
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5122651612
+  📇 contact_info: {"email":null,"phone":"5122651612","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #498 │ Capital One Café │ ✨ New
+  🔑 id: 498
+  👤 name: Capital One Café
+  👤 nickname: Capital One Café
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5123627195
+  📇 contact_info: {"email":null,"phone":"5123627195","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #491 │ Galaxy Cafe │ ✨ New
+  🔑 id: 491
+  👤 name: Galaxy Cafe
+  👤 nickname: Galaxy Cafe
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124783434
+  📇 contact_info: {"email":null,"phone":"5124783434","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #191 │ Greek Islands Café │ ✨ New
+  🔑 id: 191
+  👤 name: Greek Islands Café
+  👤 nickname: Greek Islands Café
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #323 │ Greek Islands Café │ ✨ New
+  🔑 id: 323
+  👤 name: Greek Islands Café
+  👤 nickname: Greek Islands Café
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #460 │ Brew and Brew │ 📞 Contacted
+  🔑 id: 460
+  👤 name: Brew and Brew
+  👤 nickname: Brew and Brew
+  📊 status: 📞 Contacted
+  🏷️ lead_type: unknown
+  📱 phone: 5128279673
+  📇 contact_info: {"email":null,"phone":"5128279673","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #81 │ Billy Otto │ On Hold
+  🔑 id: 81
+  👤 nickname: Billy Otto
+  📊 status: On Hold
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false,"social_handle":"@billyotto"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #68 │ Ash Money Wellness │ On Hold
+  🔑 id: 68
+  👤 nickname: Ash Money Wellness
+  📊 status: On Hold
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":true}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #414 │ Emily Production Test │ ✨ New
+  🔑 id: 414
+  👤 name: Emily Production Test
+  👤 nickname: Emily Production Test
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Production Company
+  📱 phone: 5122471515
+  📇 contact_info: {"email":null,"phone":"5122471515","company":"Production Company","social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #419 │ richard │ ✨ New
+  🔑 id: 419
+  👤 name: richard
+  👤 nickname: Dave
+  📧 email: someone@SignalPattern.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: SignalPattern.com
+  📇 contact_info: {"email":"someone@SignalPattern.com","phone":null,"company":"Signal Pattern","social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #65 │ @nsgbillz │ ✓ Won
+  🔑 id: 65
+  👤 nickname: @nsgbillz
+  📊 status: ✓ Won
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"nsgbillz@instagram.com","phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #411 │ Brooke Rizzuto │ ✨ New
+  🔑 id: 411
+  👤 name: Brooke Rizzuto
+  👤 nickname: Brooke Rizzuto
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: B&C Mobile Detailing
+  📱 phone: 8178546161
+  📇 contact_info: {"email":null,"phone":"(817) 854-6161","company":"B&C Detailing","social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #29 │ austin j howard │ 📄 Proposal
+  🔑 id: 29
+  👤 nickname: austin j howard
+  📊 status: 📄 Proposal
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #105 │ Jack Sinatra │ On Hold
+  🔑 id: 105
+  👤 nickname: Jack Sinatra
+  📊 status: On Hold
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":"thejacksinatra@gmail.com","phone":"(194) 039-3167","company":null,"social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #104 │ Tiron Aeronotiqz │ On Hold
+  🔑 id: 104
+  👤 nickname: Tiron Aeronotiqz
+  📊 status: On Hold
+  🏷️ lead_type: unknown
+  📇 contact_info: [Array: 5 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #102 │ Brian Rivera │ On Hold
+  🔑 id: 102
+  👤 nickname: Brian Rivera
+  📊 status: On Hold
+  🏷️ lead_type: unknown
+  📇 contact_info: [Array: 5 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #76 │ Maxx Baig │ On Hold
+  🔑 id: 76
+  👤 nickname: Maxx Baig
+  📊 status: On Hold
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false,"social_handle":"mr.classyy"}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #80 │ Robert Kerr │ On Hold
+  🔑 id: 80
+  👤 nickname: Robert Kerr
+  📊 status: On Hold
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":"(210) 844-5363","company":null,"auto_respond":false,"social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #507 │ Alfred Coffee │ ✨ New
+  🔑 id: 507
+  👤 name: Alfred Coffee
+  👤 nickname: Alfred Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124789611
+  📇 contact_info: {"email":null,"phone":"5124789611","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #506 │ Codependent Cocktails + Coffee │ ✨ New
+  🔑 id: 506
+  👤 name: Codependent Cocktails + Coffee
+  👤 nickname: Codependent Cocktails + Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #505 │ Jo's Coffee – Red River │ ✨ New
+  🔑 id: 505
+  👤 name: Jo's Coffee – Red River
+  👤 nickname: Jo's Coffee – Red River
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5123835211
+  📇 contact_info: {"email":null,"phone":"5123835211","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #504 │ 2nd & Roast │ ✨ New
+  🔑 id: 504
+  👤 name: 2nd & Roast
+  👤 nickname: 2nd & Roast
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5125423600
+  📇 contact_info: {"email":null,"phone":"5125423600","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #503 │ Longhorn Coffee Co │ ✨ New
+  🔑 id: 503
+  👤 name: Longhorn Coffee Co
+  👤 nickname: Longhorn Coffee Co
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5122320818
+  📇 contact_info: {"email":null,"phone":"5122320818","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #502 │ Good Things │ ✨ New
+  🔑 id: 502
+  👤 name: Good Things
+  👤 nickname: Good Things
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5126002000
+  📇 contact_info: {"email":null,"phone":"5126002000","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #501 │ La La Land │ ✨ New
+  🔑 id: 501
+  👤 name: La La Land
+  👤 nickname: La La Land
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5122847939
+  📇 contact_info: {"email":null,"phone":"5122847939","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #500 │ Medici Roasting │ ✨ New
+  🔑 id: 500
+  👤 name: Medici Roasting
+  👤 nickname: Medici Roasting
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #499 │ Cuvee Coffee Bar │ ✨ New
+  🔑 id: 499
+  👤 name: Cuvee Coffee Bar
+  👤 nickname: Cuvee Coffee Bar
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #497 │ Hillside Farmacy │ ✨ New
+  🔑 id: 497
+  👤 name: Hillside Farmacy
+  👤 nickname: Hillside Farmacy
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5126280168
+  📇 contact_info: {"email":null,"phone":"5126280168","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #496 │ Halcyon │ ✨ New
+  🔑 id: 496
+  👤 name: Halcyon
+  👤 nickname: Halcyon
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124729637
+  📇 contact_info: {"email":null,"phone":"5124729637","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #495 │ The Hideout Coffee House │ ✨ New
+  🔑 id: 495
+  👤 name: The Hideout Coffee House
+  👤 nickname: The Hideout Coffee House
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124761313
+  📇 contact_info: {"email":null,"phone":"5124761313","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #494 │ Carpenter Coffee Bar │ ✨ New
+  🔑 id: 494
+  👤 name: Carpenter Coffee Bar
+  👤 nickname: Carpenter Coffee Bar
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5126825300
+  📇 contact_info: {"email":null,"phone":"5126825300","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #493 │ Jo's Coffee – South Congress │ ✨ New
+  🔑 id: 493
+  👤 name: Jo's Coffee – South Congress
+  👤 nickname: Jo's Coffee – South Congress
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5128522300
+  📇 contact_info: {"email":null,"phone":"5128522300","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #492 │ Medici Roasting │ ✨ New
+  🔑 id: 492
+  👤 name: Medici Roasting
+  👤 nickname: Medici Roasting
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #490 │ Better Half Coffee & Cocktails │ ✨ New
+  🔑 id: 490
+  👤 name: Better Half Coffee & Cocktails
+  👤 nickname: Better Half Coffee & Cocktails
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5126450786
+  📇 contact_info: {"email":null,"phone":"5126450786","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #489 │ 1886 Cafe & Bakery │ ✨ New
+  🔑 id: 489
+  👤 name: 1886 Cafe & Bakery
+  👤 nickname: 1886 Cafe & Bakery
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5127902990
+  📇 contact_info: {"email":null,"phone":"5127902990","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #488 │ Freddo ATX │ ✨ New
+  🔑 id: 488
+  👤 name: Freddo ATX
+  👤 nickname: Freddo ATX
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5125994069
+  📇 contact_info: {"email":null,"phone":"5125994069","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #487 │ Mañana │ ✨ New
+  🔑 id: 487
+  👤 name: Mañana
+  👤 nickname: Mañana
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5128723144
+  📇 contact_info: {"email":null,"phone":"5128723144","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #485 │ Jo's Coffee – Downtown │ ✨ New
+  🔑 id: 485
+  👤 name: Jo's Coffee – Downtown
+  👤 nickname: Jo's Coffee – Downtown
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124699003
+  📇 contact_info: {"email":null,"phone":"5124699003","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #484 │ Lucky Lab Coffee Co. │ ✨ New
+  🔑 id: 484
+  👤 name: Lucky Lab Coffee Co.
+  👤 nickname: Lucky Lab Coffee Co.
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124206950
+  📇 contact_info: {"email":null,"phone":"5124206950","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #483 │ Cosmic Saltillo │ ✨ New
+  🔑 id: 483
+  👤 name: Cosmic Saltillo
+  👤 nickname: Cosmic Saltillo
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5127637216
+  📇 contact_info: {"email":null,"phone":"5127637216","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #482 │ Revolución │ ✨ New
+  🔑 id: 482
+  👤 name: Revolución
+  👤 nickname: Revolución
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5127383112
+  📇 contact_info: {"email":null,"phone":"5127383112","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #481 │ Monkey Nest Coffee │ ✨ New
+  🔑 id: 481
+  👤 name: Monkey Nest Coffee
+  👤 nickname: Monkey Nest Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5125058033
+  📇 contact_info: {"email":null,"phone":"5125058033","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #480 │ CoffeePeople │ ✨ New
+  🔑 id: 480
+  👤 name: CoffeePeople
+  👤 nickname: CoffeePeople
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124725050115
+  📇 contact_info: {"email":null,"phone":"5124725050115","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #479 │ Drifters Social Coffee & Cocktails │ ✨ New
+  🔑 id: 479
+  👤 name: Drifters Social Coffee & Cocktails
+  👤 nickname: Drifters Social Coffee & Cocktails
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5126587843
+  📇 contact_info: {"email":null,"phone":"5126587843","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #478 │ The Hive │ ✨ New
+  🔑 id: 478
+  👤 name: The Hive
+  👤 nickname: The Hive
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5122152942
+  📇 contact_info: {"email":null,"phone":"5122152942","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #477 │ The Dead Rabbit, Austin │ ✨ New
+  🔑 id: 477
+  👤 name: The Dead Rabbit, Austin
+  👤 nickname: The Dead Rabbit, Austin
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 7375308830
+  📇 contact_info: {"email":null,"phone":"7375308830","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #476 │ Amity's Coffee and Karaoke │ ✨ New
+  🔑 id: 476
+  👤 name: Amity's Coffee and Karaoke
+  👤 nickname: Amity's Coffee and Karaoke
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #475 │ Centro │ ✨ New
+  🔑 id: 475
+  👤 name: Centro
+  👤 nickname: Centro
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5129920278
+  📇 contact_info: {"email":null,"phone":"5129920278","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #474 │ Flightpath Coffeehouse │ ✨ New
+  🔑 id: 474
+  👤 name: Flightpath Coffeehouse
+  👤 nickname: Flightpath Coffeehouse
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124584472
+  📇 contact_info: {"email":null,"phone":"5124584472","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #472 │ The Well │ ✨ New
+  🔑 id: 472
+  👤 name: The Well
+  👤 nickname: The Well
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 7377421129
+  📇 contact_info: {"email":null,"phone":"7377421129","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #470 │ Magnolia Cafe │ ✨ New
+  🔑 id: 470
+  👤 name: Magnolia Cafe
+  👤 nickname: Magnolia Cafe
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124450000
+  📇 contact_info: {"email":null,"phone":"5124450000","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #469 │ Summer Moon Coffee (South 1st) │ ✨ New
+  🔑 id: 469
+  👤 name: Summer Moon Coffee (South 1st)
+  👤 nickname: Summer Moon Coffee (South 1st)
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5128041665
+  📇 contact_info: {"email":null,"phone":"5128041665","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #468 │ Cherrywood Coffeehouse │ ✨ New
+  🔑 id: 468
+  👤 name: Cherrywood Coffeehouse
+  👤 nickname: Cherrywood Coffeehouse
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5125381991
+  📇 contact_info: {"email":null,"phone":"5125381991","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #467 │ Houndstooth Coffee │ ✨ New
+  🔑 id: 467
+  👤 name: Houndstooth Coffee
+  👤 nickname: Houndstooth Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5123946051
+  📇 contact_info: {"email":null,"phone":"5123946051","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #466 │ Bennu Coffee on Congress │ ✨ New
+  🔑 id: 466
+  👤 name: Bennu Coffee on Congress
+  👤 nickname: Bennu Coffee on Congress
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124483919
+  📇 contact_info: {"email":null,"phone":"5124483919","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #465 │ Epoch Coffee │ ✨ New
+  🔑 id: 465
+  👤 name: Epoch Coffee
+  👤 nickname: Epoch Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124543762
+  📇 contact_info: {"email":null,"phone":"5124543762","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #464 │ Mozart's Coffee Roasters │ ✨ New
+  🔑 id: 464
+  👤 name: Mozart's Coffee Roasters
+  👤 nickname: Mozart's Coffee Roasters
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124772900
+  📇 contact_info: {"email":null,"phone":"5124772900","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #463 │ Bottega │ ✨ New
+  🔑 id: 463
+  👤 name: Bottega
+  👤 nickname: Bottega
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #462 │ Merit Coffee │ ✨ New
+  🔑 id: 462
+  👤 name: Merit Coffee
+  👤 nickname: Merit Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5129060266
+  📇 contact_info: {"email":null,"phone":"5129060266","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #461 │ Once Over Coffee Bar │ ✨ New
+  🔑 id: 461
+  👤 name: Once Over Coffee Bar
+  👤 nickname: Once Over Coffee Bar
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #459 │ The Buzz Mill │ ✨ New
+  🔑 id: 459
+  👤 name: The Buzz Mill
+  👤 nickname: The Buzz Mill
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5125479909
+  📇 contact_info: {"email":null,"phone":"5125479909","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #458 │ Sweetwaters Coffee & Tea │ ✨ New
+  🔑 id: 458
+  👤 name: Sweetwaters Coffee & Tea
+  👤 nickname: Sweetwaters Coffee & Tea
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 7377173103
+  📇 contact_info: {"email":null,"phone":"7377173103","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #457 │ Radio Rosewood │ ✨ New
+  🔑 id: 457
+  👤 name: Radio Rosewood
+  👤 nickname: Radio Rosewood
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 7373684777
+  📇 contact_info: {"email":null,"phone":"7373684777","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #455 │ Barrett's Coffee │ ✨ New
+  🔑 id: 455
+  👤 name: Barrett's Coffee
+  👤 nickname: Barrett's Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5126777667
+  📇 contact_info: {"email":null,"phone":"5126777667","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #454 │ Stouthaus Coffee - Sunset Valley │ ✨ New
+  🔑 id: 454
+  👤 name: Stouthaus Coffee - Sunset Valley
+  👤 nickname: Stouthaus Coffee - Sunset Valley
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5127210030
+  📇 contact_info: {"email":null,"phone":"5127210030","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #452 │ Kick Butt Coffee │ ✨ New
+  🔑 id: 452
+  👤 name: Kick Butt Coffee
+  👤 nickname: Kick Butt Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124545425
+  📇 contact_info: {"email":null,"phone":"5124545425","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #451 │ Desnudo Coffee: Downtown │ ✨ New
+  🔑 id: 451
+  👤 name: Desnudo Coffee: Downtown
+  👤 nickname: Desnudo Coffee: Downtown
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 4244001857
+  📇 contact_info: {"email":null,"phone":"4244001857","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #450 │ Minimo Coffee & Matcha │ ✨ New
+  🔑 id: 450
+  👤 name: Minimo Coffee & Matcha
+  👤 nickname: Minimo Coffee & Matcha
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5123662377
+  📇 contact_info: {"email":null,"phone":"5123662377","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #449 │ Strangelove │ ✨ New
+  🔑 id: 449
+  👤 name: Strangelove
+  👤 nickname: Strangelove
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5123372170
+  📇 contact_info: {"email":null,"phone":"5123372170","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #448 │ Stargazer Cocktails & Coffee │ ✨ New
+  🔑 id: 448
+  👤 name: Stargazer Cocktails & Coffee
+  👤 nickname: Stargazer Cocktails & Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5126979674
+  📇 contact_info: {"email":null,"phone":"5126979674","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #447 │ Cafe Java │ ✨ New
+  🔑 id: 447
+  👤 name: Cafe Java
+  👤 nickname: Cafe Java
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5123397677
+  📇 contact_info: {"email":null,"phone":"5123397677","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #446 │ Lake Austin Coffee Spot │ ✨ New
+  🔑 id: 446
+  👤 name: Lake Austin Coffee Spot
+  👤 nickname: Lake Austin Coffee Spot
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 7376106321
+  📇 contact_info: {"email":null,"phone":"7376106321","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #445 │ Simona's Coffee + Cocktails │ ✨ New
+  🔑 id: 445
+  👤 name: Simona's Coffee + Cocktails
+  👤 nickname: Simona's Coffee + Cocktails
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5122201795507
+  📇 contact_info: {"email":null,"phone":"5122201795507","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #444 │ Spokesman Coffee │ ✨ New
+  🔑 id: 444
+  👤 name: Spokesman Coffee
+  👤 nickname: Spokesman Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5125869657
+  📇 contact_info: {"email":null,"phone":"5125869657","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #443 │ Cosmic Pickle │ ✨ New
+  🔑 id: 443
+  👤 name: Cosmic Pickle
+  👤 nickname: Cosmic Pickle
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124810694
+  📇 contact_info: {"email":null,"phone":"5124810694","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #442 │ Trianon Coffee │ ✨ New
+  🔑 id: 442
+  👤 name: Trianon Coffee
+  👤 nickname: Trianon Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5123284033
+  📇 contact_info: {"email":null,"phone":"5123284033","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #441 │ Genuine Joe Coffeehouse (Russell's Bakery) │ ✨ New
+  🔑 id: 441
+  👤 name: Genuine Joe Coffeehouse (Russell's Bakery)
+  👤 nickname: Genuine Joe Coffeehouse (Russell's Bakery)
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5122917958
+  📇 contact_info: {"email":null,"phone":"5122917958","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #440 │ Figure 8 Coffee Purveyors Cafe & Roastery │ ✨ New
+  🔑 id: 440
+  👤 name: Figure 8 Coffee Purveyors Cafe & Roastery
+  👤 nickname: Figure 8 Coffee Purveyors Cafe & Roastery
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #439 │ Haraz Coffee House │ ✨ New
+  🔑 id: 439
+  👤 name: Haraz Coffee House
+  👤 nickname: Haraz Coffee House
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5122435667
+  📇 contact_info: {"email":null,"phone":"5122435667","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #438 │ RIP Coffee │ ✨ New
+  🔑 id: 438
+  👤 name: RIP Coffee
+  👤 nickname: RIP Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #437 │ Coffeyeh │ ✨ New
+  🔑 id: 437
+  👤 name: Coffeyeh
+  👤 nickname: Coffeyeh
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 2149455876
+  📇 contact_info: {"email":null,"phone":"2149455876","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #436 │ Idlewild Coffee │ ✨ New
+  🔑 id: 436
+  👤 name: Idlewild Coffee
+  👤 nickname: Idlewild Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5128040472
+  📇 contact_info: {"email":null,"phone":"5128040472","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #434 │ Juiced Up Cafe Downtown │ ✨ New
+  🔑 id: 434
+  👤 name: Juiced Up Cafe Downtown
+  👤 nickname: Juiced Up Cafe Downtown
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 7373289383
+  📇 contact_info: {"email":null,"phone":"7373289383","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #433 │ Gen Bobabee & Coffee House │ ✨ New
+  🔑 id: 433
+  👤 name: Gen Bobabee & Coffee House
+  👤 nickname: Gen Bobabee & Coffee House
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5125205245
+  📇 contact_info: {"email":null,"phone":"5125205245","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #432 │ Merfolk’s Specialty Coffee │ ✨ New
+  🔑 id: 432
+  👤 name: Merfolk’s Specialty Coffee
+  👤 nickname: Merfolk’s Specialty Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5128934277
+  📇 contact_info: {"email":null,"phone":"5128934277","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #431 │ Afuga Coffee │ ✨ New
+  🔑 id: 431
+  👤 name: Afuga Coffee
+  👤 nickname: Afuga Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5126401640
+  📇 contact_info: {"email":null,"phone":"5126401640","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #430 │ Neon Belly Coffee & Bakery │ ✨ New
+  🔑 id: 430
+  👤 name: Neon Belly Coffee & Bakery
+  👤 nickname: Neon Belly Coffee & Bakery
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5124841324
+  📇 contact_info: {"email":null,"phone":"5124841324","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #429 │ Terrible Love │ ✨ New
+  🔑 id: 429
+  👤 name: Terrible Love
+  👤 nickname: Terrible Love
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #427 │ Café Crème - Downtown │ ✨ New
+  🔑 id: 427
+  👤 name: Café Crème - Downtown
+  👤 nickname: Café Crème - Downtown
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5127300377
+  📇 contact_info: {"email":null,"phone":"5127300377","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #426 │ Radix House Coffee │ ✨ New
+  🔑 id: 426
+  👤 name: Radix House Coffee
+  👤 nickname: Radix House Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 7372569959
+  📇 contact_info: {"email":null,"phone":"7372569959","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #425 │ Prana Café │ ✨ New
+  🔑 id: 425
+  👤 name: Prana Café
+  👤 nickname: Prana Café
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5122777262
+  📇 contact_info: {"email":null,"phone":"5122777262","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #424 │ BRB Coffee │ ✨ New
+  🔑 id: 424
+  👤 name: BRB Coffee
+  👤 nickname: BRB Coffee
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 6147728409
+  📇 contact_info: {"email":null,"phone":"6147728409","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #423 │ Flora Coffee & Culture │ ✨ New
+  🔑 id: 423
+  👤 name: Flora Coffee & Culture
+  👤 nickname: Flora Coffee & Culture
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #422 │ LazyDaze │ ✨ New
+  🔑 id: 422
+  👤 name: LazyDaze
+  👤 nickname: LazyDaze
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 5123053464
+  📇 contact_info: {"email":null,"phone":"5123053464","company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #418 │ Haroon │ ✨ New
+  🔑 id: 418
+  👤 name: Haroon
+  👤 nickname: Haroon
+  📧 email: haroon@whatsapp.com
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Pathways Injury Consultatnts
+  📱 phone: 9231143971
+  📇 contact_info: [Array: 4 items]
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #415 │ treyton mayo │ ✨ New
+  🔑 id: 415
+  👤 name: treyton mayo
+  👤 nickname: treyton mayo
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📱 phone: 6823737645
+  📇 contact_info: {"email":null,"phone":"6823737645","company":null,"social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #413 │ John Arango │ ✨ New
+  🔑 id: 413
+  👤 name: John Arango
+  👤 nickname: John Arango
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  🏢 company: Dent Society
+  📱 phone: 8172016718
+  📇 contact_info: {"email":null,"phone":"(817) 201-6718","company":"Dent Society","social_handle":null}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #410 │ Casa Astral │ ✨ New
+  🔑 id: 410
+  👤 name: Casa Astral
+  👤 nickname: Casa Astral
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #409 │ Ensueño │ ✨ New
+  🔑 id: 409
+  👤 name: Ensueño
+  👤 nickname: Ensueño
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #408 │ Soho │ ✨ New
+  🔑 id: 408
+  👤 name: Soho
+  👤 nickname: Soho
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #407 │ Casa HX │ ✨ New
+  🔑 id: 407
+  👤 name: Casa HX
+  👤 nickname: Casa HX
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #406 │ El Nido │ ✨ New
+  🔑 id: 406
+  👤 name: El Nido
+  👤 nickname: El Nido
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #405 │ Tropical Suites by MIJ │ ✨ New
+  🔑 id: 405
+  👤 name: Tropical Suites by MIJ
+  👤 nickname: Tropical Suites by MIJ
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #404 │ Hotel Para Ti Holbox │ ✨ New
+  🔑 id: 404
+  👤 name: Hotel Para Ti Holbox
+  👤 nickname: Hotel Para Ti Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #403 │ Choby's House Holbox │ ✨ New
+  🔑 id: 403
+  👤 name: Choby's House Holbox
+  👤 nickname: Choby's House Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #402 │ El Corazón Boutique Hotel │ ✨ New
+  🔑 id: 402
+  👤 name: El Corazón Boutique Hotel
+  👤 nickname: El Corazón Boutique Hotel
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #401 │ Holbox Dream Beach Front Hotel │ ✨ New
+  🔑 id: 401
+  👤 name: Holbox Dream Beach Front Hotel
+  👤 nickname: Holbox Dream Beach Front Hotel
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #399 │ Ensueno Holbox & Beach Club │ ✨ New
+  🔑 id: 399
+  👤 name: Ensueno Holbox & Beach Club
+  👤 nickname: Ensueno Holbox & Beach Club
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #400 │ Villas El Encanto Holbox │ ✨ New
+  🔑 id: 400
+  👤 name: Villas El Encanto Holbox
+  👤 nickname: Villas El Encanto Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #396 │ Bhoga Boutique Hotel │ ✨ New
+  🔑 id: 396
+  👤 name: Bhoga Boutique Hotel
+  👤 nickname: Bhoga Boutique Hotel
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #397 │ Nomade Holbox │ ✨ New
+  🔑 id: 397
+  👤 name: Nomade Holbox
+  👤 nickname: Nomade Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #398 │ Mystique Holbox by Royalton, A Tribute Portfoli... │ ✨ New
+  🔑 id: 398
+  👤 name: Mystique Holbox by Royalton, A Tribute Portfolio Resort
+  👤 nickname: Mystique Holbox by Royalton, A Tribute Portfolio Resort
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #395 │ NAJ CASA HOLBOX │ ✨ New
+  🔑 id: 395
+  👤 name: NAJ CASA HOLBOX
+  👤 nickname: NAJ CASA HOLBOX
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #394 │ Arte Sano Vegan Hotel Holbox │ ✨ New
+  🔑 id: 394
+  👤 name: Arte Sano Vegan Hotel Holbox
+  👤 nickname: Arte Sano Vegan Hotel Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #393 │ Villas HM Paraiso del Mar │ ✨ New
+  🔑 id: 393
+  👤 name: Villas HM Paraiso del Mar
+  👤 nickname: Villas HM Paraiso del Mar
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #392 │ ALCOBAS DEL MAR │ ✨ New
+  🔑 id: 392
+  👤 name: ALCOBAS DEL MAR
+  👤 nickname: ALCOBAS DEL MAR
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #391 │ Casa Peregrino Holbox │ ✨ New
+  🔑 id: 391
+  👤 name: Casa Peregrino Holbox
+  👤 nickname: Casa Peregrino Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #390 │ Hotel Para Ti │ ✨ New
+  🔑 id: 390
+  👤 name: Hotel Para Ti
+  👤 nickname: Hotel Para Ti
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #389 │ Hotel Villas Margaritas Holbox │ ✨ New
+  🔑 id: 389
+  👤 name: Hotel Villas Margaritas Holbox
+  👤 nickname: Hotel Villas Margaritas Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #388 │ Las Nubes de Holbox │ ✨ New
+  🔑 id: 388
+  👤 name: Las Nubes de Holbox
+  👤 nickname: Las Nubes de Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #387 │ Ser Casasandra Holbox México │ ✨ New
+  🔑 id: 387
+  👤 name: Ser Casasandra Holbox México
+  👤 nickname: Ser Casasandra Holbox México
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #386 │ Mapache Hostel │ ✨ New
+  🔑 id: 386
+  👤 name: Mapache Hostel
+  👤 nickname: Mapache Hostel
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #385 │ Hostel Tribu │ ✨ New
+  🔑 id: 385
+  👤 name: Hostel Tribu
+  👤 nickname: Hostel Tribu
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #382 │ Balam ecocamping holbox │ ✨ New
+  🔑 id: 382
+  👤 name: Balam ecocamping holbox
+  👤 nickname: Balam ecocamping holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #384 │ Hostal Holbox │ ✨ New
+  🔑 id: 384
+  👤 name: Hostal Holbox
+  👤 nickname: Hostal Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #383 │ Che Holbox Hostel & Bar │ ✨ New
+  🔑 id: 383
+  👤 name: Che Holbox Hostel & Bar
+  👤 nickname: Che Holbox Hostel & Bar
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #381 │ MAYAB HolBox - Beach Zone │ ✨ New
+  🔑 id: 381
+  👤 name: MAYAB HolBox - Beach Zone
+  👤 nickname: MAYAB HolBox - Beach Zone
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #380 │ Golden Paradise Hostel │ ✨ New
+  🔑 id: 380
+  👤 name: Golden Paradise Hostel
+  👤 nickname: Golden Paradise Hostel
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #379 │ Casa Fuego │ ✨ New
+  🔑 id: 379
+  👤 name: Casa Fuego
+  👤 nickname: Casa Fuego
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #378 │ Choby's House Holbox │ ✨ New
+  🔑 id: 378
+  👤 name: Choby's House Holbox
+  👤 nickname: Choby's House Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #376 │ M&M Apartments Holbox │ ✨ New
+  🔑 id: 376
+  👤 name: M&M Apartments Holbox
+  👤 nickname: M&M Apartments Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #375 │ Casa Sunshine Holbox │ ✨ New
+  🔑 id: 375
+  👤 name: Casa Sunshine Holbox
+  👤 nickname: Casa Sunshine Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #377 │ Holbox Cabañas Ida Y Vuelta │ ✨ New
+  🔑 id: 377
+  👤 name: Holbox Cabañas Ida Y Vuelta
+  👤 nickname: Holbox Cabañas Ida Y Vuelta
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #374 │ Squalo's place casa de huespedes │ ✨ New
+  🔑 id: 374
+  👤 name: Squalo's place casa de huespedes
+  👤 nickname: Squalo's place casa de huespedes
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #373 │ Soho Boutique Holbox │ ✨ New
+  🔑 id: 373
+  👤 name: Soho Boutique Holbox
+  👤 nickname: Soho Boutique Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #372 │ Hotel Mittoz Holbox │ ✨ New
+  🔑 id: 372
+  👤 name: Hotel Mittoz Holbox
+  👤 nickname: Hotel Mittoz Holbox
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #371 │ Casa Astral │ ✨ New
+  🔑 id: 371
+  👤 name: Casa Astral
+  👤 nickname: Casa Astral
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #370 │ Ensueño │ ✨ New
+  🔑 id: 370
+  👤 name: Ensueño
+  👤 nickname: Ensueño
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+  ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+  #369 │ Soho │ ✨ New
+  🔑 id: 369
+  👤 name: Soho
+  👤 nickname: Soho
+  📊 status: ✨ New
+  🏷️ lead_type: unknown
+  📇 contact_info: {"email":null,"phone":null,"company":null,"auto_respond":false}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Total: 200 items
+💡 Tip: Use --json flag for full data
+

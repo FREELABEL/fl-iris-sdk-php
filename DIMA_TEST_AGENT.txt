@@ -1,0 +1,27 @@
+# Dima POC - Test Agent with Custom Functions
+# Created: 2026-01-09 21:59:54
+
+AGENT_ID=441
+AGENT_NAME=Phone Number Optimizer (Dima POC)
+MODEL=gpt-4o-mini
+
+# Custom Functions (5 total):
+# - fetchPhoneNumbers
+# - releasePhoneNumber
+# - getCallHistory
+# - tagPhoneNumber
+# - sendAlert
+
+# Test Execution:
+curl -X POST "https://heyiris.io/api/chat/execute" \
+  -H "Authorization: Bearer $IRIS_API_KEY" \
+  -H "X-User-ID: $IRIS_USER_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agentId": 441,
+    "query": "Check for unused phone numbers and auto-release them",
+    "context": {
+      "client_id": "client_123",
+      "current_date": "2026-01-09T12:00:00Z"
+    }
+  }'

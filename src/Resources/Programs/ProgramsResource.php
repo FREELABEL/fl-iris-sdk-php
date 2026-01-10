@@ -140,7 +140,7 @@ class ProgramsResource
      */
     public function create(array $data): Program
     {
-        $response = $this->http->post("/api/programs", $data);
+        $response = $this->http->post("/api/v1/programs", $data);
         return new Program($response);
     }
 
@@ -429,5 +429,30 @@ class ProgramsResource
     public function getMemberships(int $programId, array $filters = []): array
     {
         return $this->http->get("/api/programs/{$programId}/memberships", $filters);
+    }
+
+    /**
+     * Get enrollments for a specific program.
+     *
+     * @param int $programId Program ID
+     * @param array{
+     *     status?: string,
+     *     page?: int,
+     *     per_page?: int
+     * } $filters Filter options
+     * @return array List of enrollments
+     */
+    public function getEnrollments(int $programId, array $filters = []): array
+    {
+        return $this->http->get("/api/v1/programs/{$programId}/enrollments", $filters);
+    }
+
+    /**
+     * Alias for getEnrollments.
+     * Useful for form-focused programs where enrollments are "submissions".
+     */
+    public function getSubmissions(int $programId, array $filters = []): array
+    {
+        return $this->getEnrollments($programId, $filters);
     }
 }

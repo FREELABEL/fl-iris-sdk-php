@@ -54,7 +54,7 @@ class Integration
 
     public function isConnected(): bool
     {
-        return $this->status === 'connected';
+        return $this->status === 'connected' || $this->status === 'active';
     }
 
     public function isDisconnected(): bool
@@ -74,5 +74,25 @@ class Integration
         }
 
         return in_array($capability, $this->capabilities, true);
+    }
+
+    /**
+     * Get the error message if integration has an error.
+     *
+     * @return string|null
+     */
+    public function getErrorMessage(): ?string
+    {
+        return $this->getAttribute('error_message');
+    }
+
+    /**
+     * Check if the integration token/credentials are expired.
+     *
+     * @return bool
+     */
+    public function isExpired(): bool
+    {
+        return $this->status === 'expired' || $this->hasError();
     }
 }

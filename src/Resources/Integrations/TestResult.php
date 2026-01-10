@@ -13,6 +13,7 @@ class TestResult
 {
     public bool $success;
     public ?string $message;
+    public ?string $error;
     public ?array $details;
     public ?int $latencyMs;
 
@@ -24,6 +25,7 @@ class TestResult
 
         $this->success = (bool) ($data['success'] ?? false);
         $this->message = $data['message'] ?? null;
+        $this->error = $data['error'] ?? null;
         $this->details = isset($data['details']) && is_array($data['details'])
             ? $data['details']
             : null;

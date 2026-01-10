@@ -40,6 +40,13 @@ Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execut
 
 # 🎵 Download YouTube audio as MP3 (320kbps)
 ./bin/iris tools youtube-audio --url="https://www.youtube.com/watch?v=abc123" --agent-id=11
+
+# 📱 IRIS-Hosted App Management
+./bin/iris app create my-calculator          # Create app scaffolding
+./bin/iris app create my-app --template=react # React template
+./bin/iris app deploy                         # Deploy current directory
+./bin/iris app list                           # List your apps
+./bin/iris app delete 123                     # Delete an app
 ```
 
 ## Installation
@@ -3120,6 +3127,175 @@ $plans = $iris->usage->availablePlans();
 # Get available plans
 ./bin/iris sdk:call usage.availablePlans
 ```
+
+### 📱 App Management
+
+Create, deploy, and manage IRIS-hosted web applications directly from the CLI.
+
+#### Overview
+
+IRIS supports two app deployment modes:
+- **GitHub-backed**: Connect an existing GitHub repository (for developers with version control)
+- **IRIS-hosted**: Deploy directly to IRIS Cloud via CLI (for quick deployments without GitHub)
+
+The `app` command handles IRIS-hosted deployments with scaffolding templates.
+
+#### Create App
+
+Create a new app with scaffolding:
+
+```bash
+# Create basic app (HTML/JS with IRIS Bridge)
+./bin/iris app create my-calculator
+
+# Create React app
+./bin/iris app create my-dashboard --template=react
+
+# Create Vue app
+./bin/iris app create my-widget --template=vue
+```
+
+**Templates Available:**
+
+| Template | Description |
+|----------|-------------|
+| `basic` | Simple HTML/JS with IRIS Bridge integration (default) |
+| `react` | React 18 app with IRIS Bridge hooks |
+| `vue` | Vue 3 app with IRIS Bridge composables |
+
+**Generated Files:**
+
+```
+my-calculator/
+├── index.html      # Main app entry point
+├── README.md       # Documentation
+└── iris.json       # App configuration
+```
+
+**iris.json Structure:**
+
+```json
+{
+    "name": "my-calculator",
+    "entry_point": "index.html",
+    "version": "1.0.0",
+    "description": "my-calculator - Built with IRIS"
+}
+```
+
+#### Deploy App
+
+Deploy your app to IRIS Cloud:
+
+```bash
+# Deploy current directory
+./bin/iris app deploy
+
+# Deploy specific directory
+./bin/iris app deploy --path=/path/to/my-app
+```
+
+**What Gets Deployed:**
+- All files in the directory (excluding `node_modules`, `.git`, `vendor`, etc.)
+- Files are uploaded to IRIS Cloud Storage
+- App is registered in your IRIS dashboard
+- Returns a public URL for your app
+
+**Example Output:**
+
+```
+🚀 Deploy to IRIS
+=================
+
+ Deploying: my-calculator
+ Collecting files...
+ Found 3 files
+ Uploading to IRIS...
+
+ [OK] App deployed successfully!
+      App ID: 42
+      URL: https://apps.heyiris.io/42/
+```
+
+#### List Apps
+
+View all your IRIS apps:
+
+```bash
+./bin/iris app list
+```
+
+**Example Output:**
+
+```
+📱 Your IRIS Apps
+=================
+
++----+---------------+------------+--------------+------------+-------------+
+| ID | Name          | Type       | Source       | Agent      | Last Synced |
++----+---------------+------------+--------------+------------+-------------+
+| 42 | my-calculator | ☁️ IRIS    | IRIS Cloud   | -          | Never       |
+| 38 | my-widget     | 🔗 GitHub  | github.com/..| Widget Bot | 2026-01-09  |
++----+---------------+------------+--------------+------------+-------------+
+
+Total: 2 app(s)
+```
+
+#### Delete App
+
+Remove an app:
+
+```bash
+./bin/iris app delete 42
+```
+
+#### IRIS Bridge Integration
+
+All templates include the IRIS Bridge script for communication with IRIS agents:
+
+```html
+<script src="https://cdn.heyiris.io/iris-bridge.js"></script>
+<script>
+  // Get app context (user info, agent data, etc.)
+  window.iris?.getContext().then(ctx => {
+    console.log('User:', ctx.user);
+    console.log('Agent:', ctx.agent);
+  });
+
+  // Send message to IRIS agent
+  window.iris?.sendMessage('Hello from my app!');
+
+  // Listen for messages from agent
+  window.iris?.onMessage(msg => {
+    console.log('Agent says:', msg);
+  });
+</script>
+```
+
+#### Full Workflow Example
+
+```bash
+# 1. Create a new app
+./bin/iris app create expense-tracker --template=react
+
+# 2. Navigate and edit
+cd expense-tracker
+# ... edit your files ...
+
+# 3. Deploy to IRIS
+./bin/iris app deploy
+
+# 4. View in dashboard
+./bin/iris app list
+```
+
+#### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `IRIS_API_KEY` | Your API key | Required |
+| `IRIS_USER_ID` | Your user ID | Required |
+| `IRIS_API_URL` | API base URL | `https://api.heyiris.io` |
 
 ## Error Handling
 

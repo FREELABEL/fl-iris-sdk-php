@@ -25,6 +25,8 @@ use IRIS\SDK\Resources\Schedules\SchedulesResource;
 use IRIS\SDK\Resources\ServisAi\ServisAiResource;
 use IRIS\SDK\Resources\Programs\ProgramsResource;
 use IRIS\SDK\Resources\Courses\CoursesResource;
+use IRIS\SDK\Resources\Audio\AudioResource;
+use IRIS\SDK\Resources\Social\SocialMediaResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -183,6 +185,16 @@ class IRIS
     public CoursesResource $courses;
 
     /**
+     * Audio resource for FFMPEG audio processing (merge, crossfade, metadata).
+     */
+    public AudioResource $audio;
+
+    /**
+     * Social Media resource for publishing to Instagram, TikTok, X, etc.
+     */
+    public SocialMediaResource $social;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -226,6 +238,8 @@ class IRIS
         $this->servisAi = new ServisAiResource($this->http, $this->config);
         $this->programs = new ProgramsResource($this->http, $this->config);
         $this->courses = new CoursesResource($this->http, $this->config);
+        $this->audio = new AudioResource($this->http, $this->config);
+        $this->social = new SocialMediaResource($this->http, $this->config);
     }
 
     /**
