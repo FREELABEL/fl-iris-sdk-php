@@ -52,6 +52,7 @@ HELP
             ->addOption('list', 'l', InputOption::VALUE_NONE, 'List available core tests')
             ->addOption('json', null, InputOption::VALUE_NONE, 'Output results as JSON')
             ->addOption('save', 's', InputOption::VALUE_OPTIONAL, 'Save results to file (auto-generated name if no value)', false)
+            ->addOption('update-agent', 'u', InputOption::VALUE_NONE, 'Update agent metadata with evaluation scores')
             ->addOption('api-key', null, InputOption::VALUE_REQUIRED, 'API key')
             ->addOption('user-id', null, InputOption::VALUE_REQUIRED, 'User ID');
     }
@@ -120,10 +121,17 @@ HELP
                 $io->success("Results saved to: {$filename}");
             }
 
-            // Quick summary
+            // Calculate summary metrics
             $totalTests = count($results);
             $passed = count(array_filter($results, fn($r) => $r['success'] ?? false));
             $passRate = $totalTests > 0 ? round(($passed / $totalTests) * 100) : 0;
+            $totalScore = array_sum(array_map(fn($r) => $r['evaluation']['score'] ?? 0, $results));
+            $avgScore = $totalTests > 0 ? round($totalScore / $totalTests) : 0;
+
+            // Update agent with evaluation scores if requested
+            if ($input->getOption('update-agent')) {
+                $this->updateAgentWithScores($iris, $agentId, $results, $avgScore, $passed, $totalTests, $passRate, $testType, $io);
+            }
 
             $io->newLine();
             $statusIcon = $passRate >= 70 ? '🟢' : ($passRate >= 50 ? '🟡' : '🔴');
@@ -268,5 +276,81 @@ HELP
         $io->text('Restored original settings');
 
         return $results;
+    }
+
+    /**
+     * Update agent metadata with evaluation scores.
+     */
+    private function updateAgentWithScores(
+        IRIS $iris,
+        int $agentId,
+        array $results,
+        int $avgScore,
+        int $passed,
+        int $totalTests,
+        int $passRate,
+        string $testType,
+        SymfonyStyle $io
+    ): void {
+        $io->newLine();
+        $io->text('📝 Updating agent with evaluation scores...');
+
+        // Determine status
+        $status = match (true) {
+            $avgScore >= 80 => 'excellent',
+            $avgScore >= 60 => 'good',
+            $avgScore >= 40 => 'needs_improvement',
+            default => 'major_issues'
+        };
+
+        // Determine certification badge
+        $badge = match (true) {
+            $avgScore >= 80 => 'gold',
+            $avgScore >= 70 => 'silver',
+            $avgScore >= 60 => 'bronze',
+            default => 'none'
+        };
+
+        $badgeIcon = match ($badge) {
+            'gold' => '🏆',
+            'silver' => '🥈',
+            'bronze' => '🥉',
+            default => '⚪'
+        };
+
+        // Build evaluation metadata
+        $evaluationData = [
+            'last_evaluated_at' => date('Y-m-d H:i:s'),
+            'average_score' => $avgScore,
+            'tests_passed' => $passed,
+            'tests_total' => $totalTests,
+            'pass_rate' => $passRate,
+            'status' => $status,
+            'certification_badge' => $badge,
+            'test_type' => $testType,
+            'test_names' => array_keys($results),
+        ];
+
+        try {
+            // Update agent settings
+            $agent = $iris->agents->get($agentId);
+            $currentSettings = $agent->settings ?? [];
+            $currentSettings['evaluation'] = $evaluationData;
+
+            $iris->agents->patch($agentId, [
+                'settings' => $currentSettings,
+            ]);
+
+            $io->success("✅ Agent metadata updated successfully!");
+            $io->definitionList(
+                ['Certification Badge' => "{$badgeIcon} {$badge}"],
+                ['Status' => $status],
+                ['Average Score' => "{$avgScore}%"],
+                ['Pass Rate' => "{$passRate}% ({$passed}/{$totalTests})"],
+                ['Last Evaluated' => $evaluationData['last_evaluated_at']]
+            );
+        } catch (\Exception $e) {
+            $io->error("Failed to update agent metadata: " . $e->getMessage());
+        }
     }
 }
