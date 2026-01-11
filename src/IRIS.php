@@ -27,6 +27,8 @@ use IRIS\SDK\Resources\Programs\ProgramsResource;
 use IRIS\SDK\Resources\Courses\CoursesResource;
 use IRIS\SDK\Resources\Audio\AudioResource;
 use IRIS\SDK\Resources\Social\SocialMediaResource;
+use IRIS\SDK\Resources\Voice\VoiceResource;
+use IRIS\SDK\Resources\Phone\PhoneResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -195,6 +197,16 @@ class IRIS
     public SocialMediaResource $social;
 
     /**
+     * Voice resource for managing agent voice settings across providers.
+     */
+    public VoiceResource $voice;
+
+    /**
+     * Phone resource for managing agent phone numbers across providers.
+     */
+    public PhoneResource $phone;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -240,6 +252,8 @@ class IRIS
         $this->courses = new CoursesResource($this->http, $this->config);
         $this->audio = new AudioResource($this->http, $this->config);
         $this->social = new SocialMediaResource($this->http, $this->config);
+        $this->voice = new VoiceResource($this->http, $this->config);
+        $this->phone = new PhoneResource($this->http, $this->config);
     }
 
     /**

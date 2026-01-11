@@ -72,12 +72,15 @@ HELP
             // Article generation options
             ->addOption('url', 'u', InputOption::VALUE_REQUIRED, 'YouTube URL or webpage URL')
             ->addOption('topic', 't', InputOption::VALUE_REQUIRED, 'Topic for research-based article')
-            ->addOption('source-type', 's', InputOption::VALUE_REQUIRED, 'Source type: video, topic, webpage, rss', 'video')
+            ->addOption('content', null, InputOption::VALUE_REQUIRED, 'Inline content for research-notes or draft')
+            ->addOption('source-type', 's', InputOption::VALUE_REQUIRED, 'Source type: video, topic, webpage, rss, research, notes, research-notes, draft', 'video')
             ->addOption('length', null, InputOption::VALUE_REQUIRED, 'Article length: short, medium, long', 'medium')
             ->addOption('style', null, InputOption::VALUE_REQUIRED, 'Article style: informative, editorial, newsletter, analysis', 'informative')
             ->addOption('profile-id', null, InputOption::VALUE_REQUIRED, 'Profile ID for publishing')
+            ->addOption('edits', null, InputOption::VALUE_REQUIRED, 'Editing instructions for draft mode (e.g., "Make more casual, add examples")')
+            ->addOption('draft', null, InputOption::VALUE_NONE, 'Save as draft (unpublished)')
             ->addOption('publish', null, InputOption::VALUE_NONE, 'Publish to Freelabel')
-            ->addOption('no-publish', null, InputOption::VALUE_NONE, 'Do not publish (dry run)')
+            ->addOption('no-publish', null, InputOption::VALUE_NONE, 'Do not publish (test mode, no save)')
             // Demand package options
             ->addOption('case-id', 'c', InputOption::VALUE_REQUIRED, 'Case ID or patient name (e.g., "Richard Ramos", "CAS12345")')
             ->addOption('ai-model', 'm', InputOption::VALUE_REQUIRED, 'AI model to use: gpt-4o, gpt-5-nano, claude-3-5-sonnet', 'gpt-5-nano')
@@ -494,47 +497,107 @@ HELP
     {
         $url = $input->getOption('url');
         $topic = $input->getOption('topic');
+        $content = $input->getOption('content');
+        $file = $input->getOption('file');
         $sourceType = $input->getOption('source-type') ?: 'video';
         $length = $input->getOption('length') ?: 'medium';
         $style = $input->getOption('style') ?: 'informative';
         $profileId = $input->getOption('profile-id');
+        $edits = $input->getOption('edits');
+        $draft = $input->getOption('draft');
         $publish = $input->getOption('publish');
         $noPublish = $input->getOption('no-publish');
 
-        // Determine source
-        $source = $url ?: $topic;
-        if (!$source) {
-            $io->error('Please provide either --url (for video/webpage) or --topic (for research)');
-            return Command::FAILURE;
+        // Normalize source type aliases
+        if (in_array($sourceType, ['research', 'notes'])) {
+            $sourceType = 'research-notes';
         }
 
-        // Determine source type based on input if not explicit
-        if (!$url && $topic) {
-            $sourceType = 'topic';
+        // Warn if --edits provided with non-draft source type
+        if ($edits && $sourceType !== 'draft') {
+            $io->warning("--edits is only used with --source-type=draft. Your editing instructions will be ignored.");
+            $io->text("To polish a draft with editing instructions, use:");
+            $io->text("  ./bin/iris tools article --source-type=draft --content=\"...\" --edits=\"{$edits}\"");
+            $io->newLine();
+        }
+
+        // Determine source based on source type
+        $source = null;
+
+        if (in_array($sourceType, ['research-notes', 'draft'])) {
+            // For research-notes and draft, content or file is required
+            if ($content) {
+                $source = $content;
+            } elseif ($file) {
+                if (!file_exists($file)) {
+                    $io->error("File not found: {$file}");
+                    return Command::FAILURE;
+                }
+                $source = file_get_contents($file);
+                $io->text("Reading from file: {$file}");
+            } else {
+                $io->error("Source type '{$sourceType}' requires --content or --file parameter");
+                $io->text("Examples:");
+                $io->text("  ./bin/iris tools article --source-type=research --content=\"AI trends: ...\"");
+                $io->text("  ./bin/iris tools article --source-type=draft --file=/path/to/draft.md");
+                return Command::FAILURE;
+            }
+        } else {
+            // For video, topic, webpage, rss
+            $source = $url ?: $topic;
+            if (!$source) {
+                $io->error('Please provide either --url (for video/webpage) or --topic (for research)');
+                return Command::FAILURE;
+            }
+
+            // Determine source type based on input if not explicit
+            if (!$url && $topic) {
+                $sourceType = 'topic';
+            }
         }
 
         // Build params
         $params = [
             'source_type' => $sourceType,
             'source' => $source,
+            'content' => in_array($sourceType, ['research-notes', 'draft']) ? $source : null,
             'article_length' => $length,
             'article_style' => $style,
-            'publish_to_fl' => $noPublish ? false : ($publish ? true : true), // Default to publish
+            'publish_to_fl' => $noPublish ? false : true, // Default to publish
+            'article_status' => $draft ? 0 : 1, // 0=draft, 1=published
             'publish_to_social' => false,
         ];
+
+        // Add editing instructions for draft mode
+        if ($edits && $sourceType === 'draft') {
+            $params['editing_instructions'] = $edits;
+        }
 
         if ($profileId) {
             $params['profile_id'] = (int) $profileId;
         }
 
+        // Determine status label for display
+        $statusLabel = $noPublish ? 'No (test mode)' : ($draft ? 'Draft (unpublished)' : 'Published');
+
         $io->title('Article Generation');
         $io->writeln("<fg=cyan>Source Type:</> {$sourceType}");
-        $io->writeln("<fg=cyan>Source:</> {$source}");
+
+        if (in_array($sourceType, ['research-notes', 'draft'])) {
+            $io->writeln("<fg=cyan>Content Length:</> " . strlen($source) . " chars");
+        } else {
+            $io->writeln("<fg=cyan>Source:</> {$source}");
+        }
+
         $io->writeln("<fg=cyan>Length:</> {$length}");
         $io->writeln("<fg=cyan>Style:</> {$style}");
-        $io->writeln("<fg=cyan>Publish:</> " . ($params['publish_to_fl'] ? 'Yes' : 'No (dry run)'));
-        $io->newLine();
+        $io->writeln("<fg=cyan>Status:</> {$statusLabel}");
 
+        if ($edits && $sourceType === 'draft') {
+            $io->writeln("<fg=cyan>Editing Instructions:</> {$edits}");
+        }
+
+        $io->newLine();
         $io->text('Dispatching article generation job...');
         $io->newLine();
 
@@ -559,12 +622,20 @@ HELP
             if (isset($result['queue'])) {
                 $io->writeln("  <fg=cyan>Queue:</> {$result['queue']}");
             }
-            if (isset($result['source'])) {
-                $io->writeln("  <fg=cyan>Source:</> {$result['source']}");
+            if (isset($result['source_type'])) {
+                $io->writeln("  <fg=cyan>Source Type:</> {$result['source_type']}");
             }
 
             $io->newLine();
-            $io->writeln('<fg=gray>Note: Article generation takes 1-3 minutes. Check your dashboard for the result.</>');
+
+            // Show different notes based on source type
+            if ($sourceType === 'research-notes') {
+                $io->writeln('<fg=gray>Note: Research notes article generation takes 1-2 minutes.</>');
+            } elseif ($sourceType === 'draft') {
+                $io->writeln('<fg=gray>Note: Draft polishing takes ~1 minute.</>');
+            } else {
+                $io->writeln('<fg=gray>Note: Article generation takes 1-3 minutes. Check your dashboard for the result.</>');
+            }
 
             return Command::SUCCESS;
 

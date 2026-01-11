@@ -8,6 +8,11 @@ Complete guide to using the CopyCatAI integration for content generation, video 
 - [Setup](#setup)
 - [Features](#features)
   - [Article Generation](#article-generation)
+    - [From YouTube Video](#from-youtube-video)
+    - [From Topic](#from-topic-research-based)
+    - [From Webpage/RSS](#from-webpagerss)
+    - [From Research Notes](#from-research-notes-new)
+    - [From Draft](#from-draft-new)
   - [YouTube Audio Download](#youtube-audio-download)
   - [Video Downloading](#video-downloading)
   - [Clip Cutting](#clip-cutting)
@@ -62,7 +67,279 @@ VALUES (193, 'copycat-ai', 'CopycatAI', 'active', 'content', '[]', '{"api_key":"
 
 ### Article Generation
 
-Generate AI-powered articles on any topic with customizable parameters.
+Generate AI-powered articles from multiple source types with customizable parameters. The article generation pipeline supports six input modes, each optimized for different content creation workflows.
+
+#### Source Types Overview
+
+| Source Type | Description | Use Case |
+|-------------|-------------|----------|
+| `video` | YouTube video URL | Convert video content to articles |
+| `topic` | Research-based generation | Create articles from AI research |
+| `webpage` | Single webpage URL | Transform web content |
+| `rss` | RSS feed URL | Synthesize from multiple articles |
+| `research-notes` | Raw notes/bullet points | Structure unorganized research |
+| `draft` | Existing article draft | Polish and refine drafts |
+
+---
+
+#### From YouTube Video
+
+Generate articles from YouTube video transcripts.
+
+**CLI Usage:**
+```bash
+# Basic video → article
+./bin/iris tools article \
+  --url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" \
+  --length=medium \
+  --style=informative
+
+# With publishing options
+./bin/iris tools article \
+  --url="https://www.youtube.com/watch?v=abc123" \
+  --source-type=video \
+  --profile-id=9203684 \
+  --publish
+```
+
+**PHP SDK:**
+```php
+$result = $iris->articles->generateFromVideo([
+    'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    'article_length' => 'medium',
+    'article_style' => 'informative',
+    'profile_id' => 9203684,
+]);
+```
+
+---
+
+#### From Topic (Research-Based)
+
+Generate articles based on AI-powered topic research.
+
+**CLI Usage:**
+```bash
+./bin/iris tools article \
+  --topic="Future of AI in Healthcare" \
+  --source-type=topic \
+  --length=long \
+  --style=analysis
+```
+
+**PHP SDK:**
+```php
+$result = $iris->articles->generateFromTopic(
+    'Future of AI in Healthcare',
+    ['article_length' => 'long', 'article_style' => 'analysis']
+);
+```
+
+---
+
+#### From Webpage/RSS
+
+Generate articles from web content or RSS feeds.
+
+**CLI Usage:**
+```bash
+# From webpage
+./bin/iris tools article \
+  --url="https://example.com/blog/interesting-article" \
+  --source-type=webpage \
+  --length=medium
+
+# From RSS feed
+./bin/iris tools article \
+  --url="https://example.com/feed.xml" \
+  --source-type=rss \
+  --length=short
+```
+
+**PHP SDK:**
+```php
+// From webpage
+$result = $iris->articles->generateFromWebpage(
+    'https://example.com/blog/article',
+    ['article_length' => 'medium']
+);
+
+// From RSS
+$result = $iris->articles->generateFromRss(
+    'https://example.com/feed.xml',
+    ['article_length' => 'short']
+);
+```
+
+---
+
+#### From Research Notes (NEW)
+
+Transform raw, unstructured research notes into polished, structured articles. This mode applies **heavy AI structuring** - extracting themes, building narrative flow, and creating coherent article structure from disorganized content.
+
+**When to use:**
+- Bullet points and raw notes from research sessions
+- Unorganized findings from multiple sources
+- Brain dumps that need heavy structuring
+- Interview notes or meeting summaries
+
+**CLI Usage:**
+```bash
+# From inline content
+./bin/iris tools article \
+  --source-type=research \
+  --content="AI trends 2025: - Telemedicine up 300% - AI diagnostics improving - Patient engagement focus - Remote monitoring gaining traction" \
+  --length=medium \
+  --style=informative \
+  --profile-id=9203684
+
+# Using alias 'notes' instead of 'research'
+./bin/iris tools article \
+  --source-type=notes \
+  --content="Healthcare AI findings: ..." \
+  --profile-id=9203684
+
+# From file (supports .md, .txt, .docx, .pdf)
+./bin/iris tools article \
+  --source-type=research-notes \
+  --file=/path/to/research-notes.md \
+  --length=long \
+  --style=analysis \
+  --profile-id=9203684
+
+# Save as draft (don't publish)
+./bin/iris tools article \
+  --source-type=research \
+  --file=/path/to/notes.txt \
+  --draft \
+  --profile-id=9203684
+```
+
+**PHP SDK:**
+```php
+// From inline content
+$result = $iris->articles->generateFromResearchNotes(
+    "AI trends 2025: - Telemedicine up 300% - AI diagnostics improving...",
+    [
+        'article_length' => 'medium',
+        'article_style' => 'informative',
+        'profile_id' => 9203684,
+    ]
+);
+
+// Using the general generate method
+$result = $iris->articles->generate([
+    'source_type' => 'research-notes',
+    'source' => 'Your raw research notes here...',
+    'article_length' => 'long',
+    'profile_id' => 9203684,
+    'publish_to_fl' => true,
+]);
+```
+
+**Source Type Aliases:**
+- `research-notes` (canonical)
+- `research` (alias)
+- `notes` (alias)
+
+---
+
+#### From Draft (NEW)
+
+Polish an existing article draft to publication quality. This mode applies **light editing** - preserving your voice while improving grammar, clarity, flow, and structure. Optionally provide specific editing instructions for guided revisions.
+
+**When to use:**
+- Rough drafts that need professional polish
+- Articles requiring grammar and style cleanup
+- Content that needs tone adjustments
+- Drafts needing structural improvements
+
+**CLI Usage:**
+```bash
+# Basic draft polishing
+./bin/iris tools article \
+  --source-type=draft \
+  --content="# My Draft Article\n\nThis is my rough article that needs polishing..." \
+  --profile-id=9203684
+
+# With specific editing instructions
+./bin/iris tools article \
+  --source-type=draft \
+  --content="Your draft content here..." \
+  --edits="Make more casual and conversational, add practical examples" \
+  --profile-id=9203684
+
+# From file with editing instructions
+./bin/iris tools article \
+  --source-type=draft \
+  --file=/path/to/draft.md \
+  --edits="Strengthen the introduction, add a call-to-action at the end" \
+  --length=medium \
+  --profile-id=9203684
+
+# Save polished version as draft (don't publish)
+./bin/iris tools article \
+  --source-type=draft \
+  --file=/path/to/rough-draft.docx \
+  --edits="Make more technical, add code examples" \
+  --draft \
+  --profile-id=9203684
+```
+
+**PHP SDK:**
+```php
+// Basic draft polishing
+$result = $iris->articles->generateFromDraft(
+    "# My Draft Article\n\nThis is my rough article that needs polishing...",
+    [
+        'profile_id' => 9203684,
+    ]
+);
+
+// With editing instructions
+$result = $iris->articles->generateFromDraft(
+    "Your draft content here...",
+    [
+        'editing_instructions' => 'Make more casual, add practical examples',
+        'profile_id' => 9203684,
+        'article_length' => 'medium',
+    ]
+);
+
+// Using the general generate method
+$result = $iris->articles->generate([
+    'source_type' => 'draft',
+    'source' => 'Your draft content...',
+    'editing_instructions' => 'Improve flow and add transitions',
+    'profile_id' => 9203684,
+    'publish_to_fl' => true,
+]);
+```
+
+---
+
+#### Article Generation Options
+
+| Option | CLI Flag | Description | Default |
+|--------|----------|-------------|---------|
+| Source Type | `--source-type`, `-s` | video, topic, webpage, rss, research-notes, draft | `video` |
+| URL | `--url`, `-u` | YouTube URL, webpage, or RSS feed | - |
+| Topic | `--topic`, `-t` | Topic for research-based generation | - |
+| Content | `--content` | Inline content for research-notes/draft | - |
+| File | `--file`, `-f` | File path (.md, .txt, .docx, .pdf) | - |
+| Edits | `--edits` | Editing instructions for draft mode | - |
+| Length | `--length` | short, medium, long | `medium` |
+| Style | `--style` | informative, editorial, newsletter, analysis | `informative` |
+| Profile ID | `--profile-id` | Profile ID for publishing | - |
+| Publish | `--publish` | Publish to Freelabel | true |
+| Draft | `--draft` | Save as draft (unpublished) | false |
+| No Publish | `--no-publish` | Don't publish (test mode) | false |
+
+---
+
+#### Legacy Integration Method
+
+For backward compatibility, you can also use the agent integration method:
 
 **CLI Usage:**
 ```bash
@@ -84,12 +361,6 @@ $result = $iris->agents->callIntegration(11, 'copycat-ai', 'generate_article', [
 
 echo $result['result']['article'];
 ```
-
-**Parameters:**
-- `topic` (string, required): Article topic
-- `min_words` (int, optional): Minimum word count (default: 500)
-- `max_words` (int, optional): Maximum word count (default: 2000)
-- `tone` (string, optional): Writing tone (professional, casual, technical)
 
 ---
 

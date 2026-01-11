@@ -26,6 +26,12 @@ Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execut
 # 📝 Generate article from YouTube video
 ./bin/iris tools article --url="https://www.youtube.com/watch?v=abc123" --length=medium --style=informative
 
+# 📝 Generate article from research notes (NEW)
+./bin/iris tools article --source-type=research --content="AI trends: telemedicine up 300%..." --profile-id=9203684
+
+# 📝 Polish a draft article (NEW)
+./bin/iris tools article --source-type=draft --file=/path/to/draft.md --edits="Make more casual" --profile-id=9203684
+
 # 📰 Newsletter with multi-modal ingestion (videos + web links + topic)
 ./bin/iris tools newsletter-research --topic="AI trends" --videos="https://youtube.com/watch?v=abc" --links="https://example.com/article"
 ./bin/iris tools newsletter-write --selected-option=1 --outline-json="..." --context-json="..."
@@ -433,7 +439,18 @@ foreach ($scoring->getTopCandidates(5) as $candidate) {
 
 ### Article Generation
 
-Generate articles from YouTube videos, topics, webpages, or RSS feeds using AI-powered content generation.
+Generate articles from multiple source types using AI-powered content generation. The pipeline supports six input modes, each optimized for different content creation workflows.
+
+#### Source Types Overview
+
+| Source Type | Description | Use Case |
+|-------------|-------------|----------|
+| `video` | YouTube video URL | Convert video content to articles |
+| `topic` | Research-based generation | Create articles from AI research |
+| `webpage` | Single webpage URL | Transform web content |
+| `rss` | RSS feed URL | Synthesize from multiple articles |
+| `research-notes` | Raw notes/bullet points | Structure unorganized research |
+| `draft` | Existing article draft | Polish and refine drafts |
 
 #### From YouTube Video (Most Common)
 
@@ -492,17 +509,77 @@ Generate articles from YouTube videos, topics, webpages, or RSS feeds using AI-p
   --length=short
 ```
 
+#### From Research Notes (NEW)
+
+Transform raw, unstructured research notes into polished, structured articles. This mode applies **heavy AI structuring** - extracting themes, building narrative flow, and creating coherent structure from disorganized content.
+
+```bash
+# From inline content
+./bin/iris tools article \
+  --source-type=research \
+  --content="AI trends 2025: - Telemedicine up 300% - AI diagnostics improving - Patient engagement focus" \
+  --length=medium \
+  --style=informative \
+  --profile-id=9203684
+
+# From file (supports .md, .txt, .docx, .pdf)
+./bin/iris tools article \
+  --source-type=research-notes \
+  --file=/path/to/research-notes.md \
+  --length=long \
+  --profile-id=9203684
+
+# Using alias 'notes'
+./bin/iris tools article \
+  --source-type=notes \
+  --content="Healthcare AI findings: ..." \
+  --profile-id=9203684
+```
+
+**Source Type Aliases:** `research-notes` (canonical), `research`, `notes`
+
+#### From Draft (NEW)
+
+Polish an existing article draft to publication quality. This mode applies **light editing** - preserving your voice while improving grammar, clarity, and flow. Optionally provide specific editing instructions.
+
+```bash
+# Basic draft polishing
+./bin/iris tools article \
+  --source-type=draft \
+  --content="# My Draft Article\n\nThis is my rough article..." \
+  --profile-id=9203684
+
+# With editing instructions
+./bin/iris tools article \
+  --source-type=draft \
+  --file=/path/to/draft.md \
+  --edits="Make more casual and conversational, add practical examples" \
+  --profile-id=9203684
+
+# Save as draft (don't publish)
+./bin/iris tools article \
+  --source-type=draft \
+  --file=/path/to/rough-draft.docx \
+  --edits="Strengthen the introduction" \
+  --draft \
+  --profile-id=9203684
+```
+
 **Options:**
 
 | Option | Description | Default |
 |--------|-------------|---------|
 | `--url`, `-u` | YouTube URL, webpage URL, or RSS feed URL | - |
 | `--topic`, `-t` | Topic for research-based article generation | - |
-| `--source-type`, `-s` | Source type: `video`, `topic`, `webpage`, `rss` | `video` |
+| `--content` | Inline content for research-notes or draft modes | - |
+| `--file`, `-f` | File path (.md, .txt, .docx, .pdf) for research-notes or draft | - |
+| `--edits` | Editing instructions for draft mode | - |
+| `--source-type`, `-s` | Source type: `video`, `topic`, `webpage`, `rss`, `research-notes`, `draft` | `video` |
 | `--length` | Article length: `short`, `medium`, `long` | `medium` |
 | `--style` | Writing style: `informative`, `editorial`, `newsletter`, `analysis` | `informative` |
 | `--profile-id` | Profile ID for publishing the article | - |
-| `--publish` | Publish to Freelabel platform | - |
+| `--publish` | Publish to Freelabel platform | true |
+| `--draft` | Save as draft (unpublished) | false |
 | `--no-publish` | Don't publish (dry run mode) | - |
 | `--json` | Output as JSON for scripting | - |
 
@@ -538,11 +615,12 @@ Note: Article generation takes 1-3 minutes. Check your dashboard for the result.
 2. **For topics**: Performs AI-powered research using web search
 3. **For webpages**: Extracts and summarizes content
 4. **For RSS feeds**: Synthesizes content from feed items
-5. NeuronAI RAG processes content through 4-phase pipeline:
-   - **Indexer**: Structures and indexes source content
-   - **Editor**: Plans article structure and key points
-   - **Reporter**: Writes the full article draft
-   - **Publisher**: Polishes and formats for publication
+5. **For research-notes**: Extracts themes and structures raw content into coherent narrative
+6. **For draft**: Applies light editing while preserving author voice, with optional guided instructions
+7. NeuronAI processes content through specialized pipelines:
+   - **Research-notes**: Heavy structuring → theme extraction → narrative building → article
+   - **Draft**: Grammar/clarity polish → optional guided edits → publication-ready article
+   - **Others**: 4-phase pipeline (Indexer → Editor → Reporter → Publisher)
 
 **PHP SDK Usage:**
 
@@ -558,6 +636,25 @@ $result = $iris->articles->generateFromVideo([
 $result = $iris->articles->generateFromTopic(
     'The impact of AI on modern education',
     ['article_length' => 'long', 'article_style' => 'analysis']
+);
+
+// Generate from research notes (NEW)
+$result = $iris->articles->generateFromResearchNotes(
+    "AI trends 2025: - Telemedicine up 300% - AI diagnostics improving...",
+    [
+        'article_length' => 'medium',
+        'article_style' => 'informative',
+        'profile_id' => 9203684,
+    ]
+);
+
+// Polish a draft with editing instructions (NEW)
+$result = $iris->articles->generateFromDraft(
+    "# My Draft Article\n\nThis is my rough article that needs polishing...",
+    [
+        'editing_instructions' => 'Make more casual, add practical examples',
+        'profile_id' => 9203684,
+    ]
 );
 
 // Generate from any source
@@ -3597,7 +3694,7 @@ php test-agent-cli-eval.php 387 comparison
 | `$iris->integrations` | `available`, `connected`, `getOAuthUrl`, `test`, `execute`, `functions` |
 | `$iris->rag` | `query`, `index`, `indexFile`, `searchSimilar`, `delete` |
 | `$iris->tools` | `list`, `invoke`, `recruitment`, `scoreCandidates`, `enrichLead`, `newsletterResearch`, `newsletterWrite` |
-| `$iris->articles` | `generate`, `generateFromVideo`, `generateFromTopic`, `generateFromWebpage`, `generateFromRss`, `create` |
+| `$iris->articles` | `generate`, `generateFromVideo`, `generateFromTopic`, `generateFromWebpage`, `generateFromRss`, `generateFromResearchNotes`, `generateFromDraft`, `create` |
 
 ## Troubleshooting
 

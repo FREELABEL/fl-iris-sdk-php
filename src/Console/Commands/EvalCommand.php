@@ -318,6 +318,12 @@ HELP
             default => '⚪'
         };
 
+        // Calculate total duration from results
+        $totalDurationMs = array_sum(array_map(
+            fn($r) => $r['evaluation']['response_time_ms'] ?? 0,
+            $results
+        ));
+
         // Build evaluation metadata
         $evaluationData = [
             'last_evaluated_at' => date('Y-m-d H:i:s'),
@@ -332,7 +338,34 @@ HELP
         ];
 
         try {
-            // Update agent settings
+            // 1. Store evaluation results in backend database
+            $io->text('  → Storing evaluation in database...');
+            try {
+                $storeResult = $iris->agents->monitor($agentId)->storeEvaluation([
+                    'test_type' => $testType,
+                    'average_score' => $avgScore,
+                    'tests_passed' => $passed,
+                    'tests_total' => $totalTests,
+                    'pass_rate' => $passRate,
+                    'certification_badge' => $badge,
+                    'evaluation_status' => $status,
+                    'test_results' => $results,
+                    'test_names' => array_keys($results),
+                    'total_duration_ms' => $totalDurationMs,
+                    'avg_duration_ms' => $totalTests > 0 ? round($totalDurationMs / $totalTests, 2) : 0,
+                    'sdk_version' => IRIS::VERSION ?? '1.0.0',
+                    'metadata' => [
+                        'php_version' => PHP_VERSION,
+                        'timestamp' => date('c'),
+                    ],
+                ]);
+                $io->text("  ✓ Evaluation stored (ID: {$storeResult['evaluation_id']})");
+            } catch (\Exception $e) {
+                $io->warning("  ⚠ Could not store to database: " . $e->getMessage());
+            }
+
+            // 2. Update agent settings with evaluation summary
+            $io->text('  → Updating agent settings...');
             $agent = $iris->agents->get($agentId);
             $currentSettings = $agent->settings ?? [];
             $currentSettings['evaluation'] = $evaluationData;

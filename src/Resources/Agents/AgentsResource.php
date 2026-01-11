@@ -1337,4 +1337,36 @@ class AgentsResource
         return $response['data'] ?? $response;
     }
 
+    /**
+     * Get the monitoring resource for an agent.
+     *
+     * Access performance metrics, logs, and evaluation data for an agent.
+     *
+     * @param int|string $agentId Agent ID
+     * @return AgentMonitorResource
+     *
+     * @example
+     * ```php
+     * // Get performance metrics
+     * $metrics = $iris->agents->monitor(387)->getMetrics('7d');
+     * echo "Success rate: {$metrics['success_rate']}%\n";
+     * echo "Avg response time: {$metrics['avg_response_time_ms']}ms\n";
+     *
+     * // Get latest evaluation
+     * $evaluation = $iris->agents->monitor(387)->getLatestEvaluation();
+     * if ($evaluation) {
+     *     echo "Badge: {$evaluation['certification_badge']}\n";
+     *     echo "Score: {$evaluation['average_score']}%\n";
+     * }
+     *
+     * // Check agent health
+     * $health = $iris->agents->monitor(387)->health();
+     * echo "Status: {$health['status']}\n";
+     * ```
+     */
+    public function monitor(int|string $agentId): AgentMonitorResource
+    {
+        return new AgentMonitorResource($this->http, $this->config, (int) $agentId);
+    }
+
 }
