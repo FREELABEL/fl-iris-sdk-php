@@ -26,7 +26,7 @@ class ToolsCommand extends Command
     {
         $this
             ->setName('tools')
-            ->setDescription('Invoke Neuron AI tools (recruitment, candidate scoring, lead enrichment, newsletter, demand packages, YouTube audio, clip cutting)')
+            ->setDescription('Invoke Neuron AI tools (recruitment, candidate scoring, lead enrichment, newsletter, demand packages, YouTube audio, clip cutting, beatbox showcase, beatbox submission)')
             ->setHelp(<<<'HELP'
 Usage:
   tools                                              List available tools
@@ -38,6 +38,8 @@ Usage:
   tools demand-package [options]                     Generate legal demand packages
   tools youtube-audio [options]                      Download YouTube audio as MP3
   tools clip-cut [options]                           Cut video clip from YouTube video
+  tools beatbox-publish [options]                    Publish beat to Beatbox showcase
+  tools beatbox-submit [options]                     Submit producer beat to Beatbox
 
 Examples:
   ./bin/iris tools
@@ -50,9 +52,11 @@ Examples:
   ./bin/iris tools youtube-audio --url="https://www.youtube.com/watch?v=abc123" --agent-id=11
   ./bin/iris tools clip-cut --url="https://www.youtube.com/watch?v=abc123" --start-time="0:10" --duration="90s" --agent-id=11
   ./bin/iris tools clip-cut --url="https://www.youtube.com/watch?v=abc123" --start-time="0:10" --duration="60s" --publish-social --platforms="instagram,tiktok"
+  ./bin/iris tools beatbox-publish --beatbox-url="https://www.youtube.com/watch?v=abc123" --beatbox-start="0:10" --beatbox-duration="90s"
+  ./bin/iris tools beatbox-submit --producer-name="DJ Fire" --producer-email="dj@example.com" --instagram-handle="@djfire" --beatbox-url="https://youtube.com/watch?v=xyz" --beat-title="Fire Trap Beat" --genre="Trap"
 HELP
             )
-            ->addArgument('tool', InputArgument::OPTIONAL, 'Tool name: recruitment, candidate-score, lead-enrich, newsletter-research, newsletter-write, article, demand-package, youtube-audio, clip-cut')
+            ->addArgument('tool', InputArgument::OPTIONAL, 'Tool name: recruitment, candidate-score, lead-enrich, newsletter-research, newsletter-write, article, demand-package, youtube-audio, clip-cut, beatbox-publish, beatbox-submit')
             // Common options
             ->addOption('json', null, InputOption::VALUE_NONE, 'Output as JSON')
             ->addOption('api-key', null, InputOption::VALUE_REQUIRED, 'API key (overrides .env)')
@@ -108,7 +112,21 @@ HELP
             ->addOption('sender-name', null, InputOption::VALUE_REQUIRED, 'Sender name for newsletter')
             // Multi-modal ingestion options
             ->addOption('videos', null, InputOption::VALUE_REQUIRED, 'YouTube video URLs for transcript extraction (comma or newline separated)')
-            ->addOption('links', null, InputOption::VALUE_REQUIRED, 'Web URLs to scrape for content (comma or newline separated)');
+            ->addOption('links', null, InputOption::VALUE_REQUIRED, 'Web URLs to scrape for content (comma or newline separated)')
+            // Beatbox showcase options
+            ->addOption('beatbox-url', null, InputOption::VALUE_REQUIRED, 'YouTube URL for Beatbox showcase')
+            ->addOption('beatbox-start', null, InputOption::VALUE_REQUIRED, 'Start time for clip (default: 0:10)')
+            ->addOption('beatbox-duration', null, InputOption::VALUE_REQUIRED, 'Clip duration (default: 90s)')
+            ->addOption('beatbox-caption-prompt', null, InputOption::VALUE_REQUIRED, 'Custom prompt for caption AI')
+            ->addOption('beatbox-platforms', null, InputOption::VALUE_REQUIRED, 'Social platforms: instagram,tiktok,x (comma-separated, default: all)')
+            // Beatbox submission options
+            ->addOption('producer-name', null, InputOption::VALUE_REQUIRED, 'Producer/artist name for submission')
+            ->addOption('producer-email', null, InputOption::VALUE_REQUIRED, 'Producer email for submission')
+            ->addOption('instagram-handle', null, InputOption::VALUE_REQUIRED, 'Instagram handle for submission')
+            ->addOption('beat-title', null, InputOption::VALUE_REQUIRED, 'Beat title for submission')
+            ->addOption('genre', null, InputOption::VALUE_REQUIRED, 'Genre/style for submission')
+            ->addOption('bpm', null, InputOption::VALUE_REQUIRED, 'BPM for submission (optional)')
+            ->addOption('notes', null, InputOption::VALUE_REQUIRED, 'Additional notes for submission (optional)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -144,6 +162,8 @@ HELP
                 'demand-package', 'demand' => $this->runDemandPackage($iris, $input, $output, $io),
                 'youtube-audio', 'yt-audio' => $this->runYouTubeAudio($iris, $input, $output, $io),
                 'clip-cut', 'cut-clip', 'clip' => $this->runClipCut($iris, $input, $output, $io),
+                'beatbox-publish', 'beatbox' => $this->runBeatboxPublish($iris, $input, $output, $io),
+                'beatbox-submit', 'submit' => $this->runBeatboxSubmit($iris, $input, $output, $io),
                 default => $this->unknownTool($toolName, $io),
             };
         } catch (\Exception $e) {
@@ -1267,10 +1287,237 @@ HELP
         }
     }
 
+    private function runBeatboxPublish(IRIS $iris, InputInterface $input, OutputInterface $output, SymfonyStyle $io): int
+    {
+        $url = $input->getOption('beatbox-url');
+        $start = $input->getOption('beatbox-start') ?: '0:10';
+        $duration = $input->getOption('beatbox-duration') ?: '90s';
+        $captionPrompt = $input->getOption('beatbox-caption-prompt');
+        $platformsInput = $input->getOption('beatbox-platforms');
+        
+        if (!$url) {
+            $io->error('YouTube URL is required. Use --beatbox-url="https://www.youtube.com/watch?v=..."');
+            return Command::FAILURE;
+        }
+        
+        // Parse platforms
+        $platforms = null;
+        if ($platformsInput) {
+            $platforms = array_map('trim', explode(',', $platformsInput));
+            $validPlatforms = ['instagram', 'tiktok', 'x'];
+            $platforms = array_intersect($platforms, $validPlatforms);
+            if (empty($platforms)) {
+                $io->error('No valid platforms specified. Valid options: instagram, tiktok, x');
+                return Command::FAILURE;
+            }
+        }
+        
+        $io->title('🎵 Beatbox Showcase Publisher');
+        $io->text('Publishing beat to social media and FreeLabel...');
+        $io->text("URL: {$url}");
+        $io->text("Start: {$start}, Duration: {$duration}");
+        if ($platforms) {
+            $io->text("Platforms: " . implode(', ', $platforms));
+        } else {
+            $io->text("Platforms: instagram, tiktok, x (all)");
+        }
+        $io->newLine();
+        
+        try {
+            $params = [
+                'youtube_url' => $url,
+                'start' => $start,
+                'duration' => $duration,
+            ];
+            
+            if ($captionPrompt) {
+                $params['caption_prompt'] = $captionPrompt;
+            }
+            
+            if ($platforms) {
+                $params['platforms'] = $platforms;
+            }
+            
+            $io->text('🔄 Starting publication process...');
+            $result = $iris->integrations->execute('beatbox-showcase', 'beatbox_publish', $params);
+            
+            if ($input->getOption('json')) {
+                $output->writeln(json_encode($result, JSON_PRETTY_PRINT));
+                return Command::SUCCESS;
+            }
+            
+            if ($result['success'] ?? false) {
+                $io->success('Beat published successfully!');
+                
+                $operations = $result['data']['operations'] ?? [];
+                
+                // Show operation statuses
+                $io->section('Operation Results');
+                foreach ($operations as $opName => $opData) {
+                    $status = $opData['status'] ?? 'unknown';
+                    $icon = match($status) {
+                        'success' => '✅',
+                        'partial' => '⚠️',
+                        'failed' => '❌',
+                        default => '❓'
+                    };
+                    $io->text("{$icon} {$opName}: {$status}");
+                }
+                
+                $io->newLine();
+                
+                // Display key results
+                if (isset($operations['instrumental_create']['data']['instrumental_id'])) {
+                    $io->text('🎼 Instrumental ID: ' . $operations['instrumental_create']['data']['instrumental_id']);
+                }
+                
+                if (isset($operations['audio_download']['data']['gcs_url'])) {
+                    $io->text('🔊 MP3 URL: ' . $operations['audio_download']['data']['gcs_url']);
+                }
+                
+                if (isset($operations['clip_cut']['data']['social_post_urls'])) {
+                    $socialUrls = $operations['clip_cut']['data']['social_post_urls'];
+                    if (!empty($socialUrls)) {
+                        $io->newLine();
+                        $io->text('📱 Social Media Posts:');
+                        foreach ($socialUrls as $platform => $url) {
+                            $io->text("  • {$platform}: {$url}");
+                        }
+                    }
+                }
+                
+                if (isset($operations['discord_notify']) && $operations['discord_notify']['status'] === 'success') {
+                    $io->newLine();
+                    $io->text('💬 Discord notification sent');
+                }
+                
+                return Command::SUCCESS;
+            } else {
+                $io->error('Beat publication failed: ' . ($result['error'] ?? 'Unknown error'));
+                return Command::FAILURE;
+            }
+        } catch (\Exception $e) {
+            $io->error('Failed to publish beat: ' . $e->getMessage());
+            if ($output->isVerbose()) {
+                $io->text($e->getTraceAsString());
+            }
+            return Command::FAILURE;
+        }
+    }
+
+    private function runBeatboxSubmit(IRIS $iris, InputInterface $input, OutputInterface $output, SymfonyStyle $io): int
+    {
+        $producerName = $input->getOption('producer-name');
+        $email = $input->getOption('producer-email');
+        $instagramHandle = $input->getOption('instagram-handle');
+        $youtubeUrl = $input->getOption('beatbox-url');
+        $beatTitle = $input->getOption('beat-title');
+        $genre = $input->getOption('genre');
+        $bpm = $input->getOption('bpm');
+        $notes = $input->getOption('notes');
+        
+        // Validate required fields
+        $missing = [];
+        if (!$producerName) $missing[] = 'producer-name';
+        if (!$email) $missing[] = 'producer-email';
+        if (!$instagramHandle) $missing[] = 'instagram-handle';
+        if (!$youtubeUrl) $missing[] = 'beatbox-url';
+        if (!$beatTitle) $missing[] = 'beat-title';
+        if (!$genre) $missing[] = 'genre';
+        
+        if (!empty($missing)) {
+            $io->error('Missing required fields: ' . implode(', ', $missing));
+            $io->text('Usage: ./bin/iris tools beatbox-submit --producer-name="DJ Fire" --producer-email="dj@example.com" --instagram-handle="@djfire" --beatbox-url="https://youtube.com/watch?v=xyz" --beat-title="Fire Beat" --genre="Trap"');
+            return Command::FAILURE;
+        }
+        
+        $io->title('🎤 Beatbox Producer Submission');
+        $io->text('Submitting beat to Beatbox showcase...');
+        $io->newLine();
+        
+        $io->definitionList(
+            ['Producer' => $producerName],
+            ['Email' => $email],
+            ['Instagram' => $instagramHandle],
+            ['Beat Title' => $beatTitle],
+            ['Genre' => $genre],
+            ['YouTube URL' => $youtubeUrl]
+        );
+        
+        if ($bpm) {
+            $io->text("BPM: {$bpm}");
+        }
+        if ($notes) {
+            $io->text("Notes: {$notes}");
+        }
+        
+        $io->newLine();
+        
+        try {
+            $params = [
+                'producer_name' => $producerName,
+                'email' => $email,
+                'instagram_handle' => $instagramHandle,
+                'youtube_url' => $youtubeUrl,
+                'beat_title' => $beatTitle,
+                'genre' => $genre,
+            ];
+            
+            if ($bpm) {
+                $params['bpm'] = (int) $bpm;
+            }
+            
+            if ($notes) {
+                $params['notes'] = $notes;
+            }
+            
+            $io->text('🔄 Processing submission...');
+            $result = $iris->integrations->execute('beatbox-showcase', 'handle_submission', $params);
+            
+            if ($input->getOption('json')) {
+                $output->writeln(json_encode($result, JSON_PRETTY_PRINT));
+                return Command::SUCCESS;
+            }
+            
+            if ($result['success'] ?? false) {
+                $io->success('Beat submission received successfully!');
+                
+                $data = $result['data'] ?? [];
+                
+                $io->section('Submission Details');
+                if (isset($data['enrollment_id'])) {
+                    $io->text('✅ Enrollment ID: ' . $data['enrollment_id']);
+                }
+                if (isset($data['bloq_id'])) {
+                    $io->text('✅ Added to Bloq ID: ' . $data['bloq_id']);
+                }
+                if (isset($data['program_id'])) {
+                    $io->text('✅ Program ID: ' . $data['program_id']);
+                }
+                
+                $io->newLine();
+                $io->text('📧 Confirmation email sent to ' . $email);
+                $io->text('💬 Team notified via Discord');
+                $io->text('👀 Your beat will be reviewed by our team');
+                
+                return Command::SUCCESS;
+            } else {
+                $io->error('Submission failed: ' . ($result['error'] ?? 'Unknown error'));
+                return Command::FAILURE;
+            }
+        } catch (\Exception $e) {
+            $io->error('Failed to submit beat: ' . $e->getMessage());
+            if ($output->isVerbose()) {
+                $io->text($e->getTraceAsString());
+            }
+            return Command::FAILURE;
+        }
+    }
+
     private function unknownTool(string $toolName, SymfonyStyle $io): int
     {
         $io->error("Unknown tool: {$toolName}");
-        $io->text('Available tools: recruitment, candidate-score, lead-enrich, newsletter-research, newsletter-write, article, demand-package, youtube-audio, clip-cut');
+        $io->text('Available tools: recruitment, candidate-score, lead-enrich, newsletter-research, newsletter-write, article, demand-package, youtube-audio, clip-cut, beatbox-publish, beatbox-submit');
         $io->text('Run "./bin/iris tools" to see all available tools with descriptions.');
         return Command::FAILURE;
     }
