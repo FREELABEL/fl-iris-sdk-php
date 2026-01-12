@@ -119,6 +119,7 @@ HELP
             ->addOption('beatbox-duration', null, InputOption::VALUE_REQUIRED, 'Clip duration (default: 90s)')
             ->addOption('beatbox-caption-prompt', null, InputOption::VALUE_REQUIRED, 'Custom prompt for caption AI')
             ->addOption('beatbox-platforms', null, InputOption::VALUE_REQUIRED, 'Social platforms: instagram,tiktok,x (comma-separated, default: all)')
+            ->addOption('beatbox-dry-run', null, InputOption::VALUE_NONE, 'Test mode: skip social media posting (for debugging)')
             // Beatbox submission options
             ->addOption('producer-name', null, InputOption::VALUE_REQUIRED, 'Producer/artist name for submission')
             ->addOption('producer-email', null, InputOption::VALUE_REQUIRED, 'Producer email for submission')
@@ -1294,6 +1295,7 @@ HELP
         $duration = $input->getOption('beatbox-duration') ?: '90s';
         $captionPrompt = $input->getOption('beatbox-caption-prompt');
         $platformsInput = $input->getOption('beatbox-platforms');
+        $dryRun = $input->getOption('beatbox-dry-run');
         
         if (!$url) {
             $io->error('YouTube URL is required. Use --beatbox-url="https://www.youtube.com/watch?v=..."');
@@ -1312,14 +1314,14 @@ HELP
             }
         }
         
-        $io->title('🎵 Beatbox Showcase Publisher');
-        $io->text('Publishing beat to social media and FreeLabel...');
+        $io->title('🎵 Beatbox Showcase Publisher' . ($dryRun ? ' (DRY RUN - Testing Mode)' : ''));
+        $io->text($dryRun ? '⚠️  DRY RUN MODE: Social media posting will be SKIPPED' : 'Publishing beat to social media and FreeLabel...');
         $io->text("URL: {$url}");
         $io->text("Start: {$start}, Duration: {$duration}");
         if ($platforms) {
-            $io->text("Platforms: " . implode(', ', $platforms));
+            $io->text("Platforms: " . implode(', ', $platforms) . ($dryRun ? ' (will be skipped)' : ''));
         } else {
-            $io->text("Platforms: instagram, tiktok, x (all)");
+            $io->text("Platforms: instagram, tiktok, x (all)" . ($dryRun ? ' (will be skipped)' : ''));
         }
         $io->newLine();
         
@@ -1336,6 +1338,10 @@ HELP
             
             if ($platforms) {
                 $params['platforms'] = $platforms;
+            }
+            
+            if ($dryRun) {
+                $params['dry_run'] = true;
             }
             
             $io->text('🔄 Starting publication process...');
