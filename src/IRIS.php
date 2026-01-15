@@ -29,6 +29,8 @@ use IRIS\SDK\Resources\Audio\AudioResource;
 use IRIS\SDK\Resources\Social\SocialMediaResource;
 use IRIS\SDK\Resources\Voice\VoiceResource;
 use IRIS\SDK\Resources\Phone\PhoneResource;
+use IRIS\SDK\Resources\Automations\AutomationsResource;
+use IRIS\SDK\Resources\Users\UsersResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -207,6 +209,16 @@ class IRIS
     public PhoneResource $phone;
 
     /**
+     * Automations resource for V6 goal-driven automations.
+     */
+    public AutomationsResource $automations;
+
+    /**
+     * Users resource for managing user accounts in FL-API.
+     */
+    public UsersResource $users;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -254,6 +266,8 @@ class IRIS
         $this->social = new SocialMediaResource($this->http, $this->config);
         $this->voice = new VoiceResource($this->http, $this->config);
         $this->phone = new PhoneResource($this->http, $this->config);
+        $this->automations = new AutomationsResource($this->http, $this->config);
+        $this->users = new UsersResource($this->http, $this->config);
     }
 
     /**

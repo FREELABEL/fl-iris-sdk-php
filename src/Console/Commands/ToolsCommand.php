@@ -119,7 +119,8 @@ HELP
             ->addOption('beatbox-duration', null, InputOption::VALUE_REQUIRED, 'Clip duration (default: 90s)')
             ->addOption('beatbox-caption-prompt', null, InputOption::VALUE_REQUIRED, 'Custom prompt for caption AI')
             ->addOption('beatbox-platforms', null, InputOption::VALUE_REQUIRED, 'Social platforms: instagram,tiktok,x (comma-separated, default: all)')
-            ->addOption('beatbox-dry-run', null, InputOption::VALUE_NONE, 'Test mode: skip social media posting (for debugging)')
+            ->addOption('beatbox-dry-run', null, InputOption::VALUE_NONE, 'Test mode: only generate caption (for debugging)')
+            ->addOption('beatbox-dry-run-download', null, InputOption::VALUE_NONE, 'Dry run + download audio (requires --beatbox-dry-run)')
             // Beatbox submission options
             ->addOption('producer-name', null, InputOption::VALUE_REQUIRED, 'Producer/artist name for submission')
             ->addOption('producer-email', null, InputOption::VALUE_REQUIRED, 'Producer email for submission')
@@ -1296,9 +1297,16 @@ HELP
         $captionPrompt = $input->getOption('beatbox-caption-prompt');
         $platformsInput = $input->getOption('beatbox-platforms');
         $dryRun = $input->getOption('beatbox-dry-run');
+        $dryRunDownload = $input->getOption('beatbox-dry-run-download');
         
         if (!$url) {
             $io->error('YouTube URL is required. Use --beatbox-url="https://www.youtube.com/watch?v=..."');
+            return Command::FAILURE;
+        }
+        
+        // Validate dry-run-download requires dry-run
+        if ($dryRunDownload && !$dryRun) {
+            $io->error('--beatbox-dry-run-download requires --beatbox-dry-run to be set');
             return Command::FAILURE;
         }
         
@@ -1315,7 +1323,14 @@ HELP
         }
         
         $io->title('🎵 Beatbox Showcase Publisher' . ($dryRun ? ' (DRY RUN - Testing Mode)' : ''));
-        $io->text($dryRun ? '⚠️  DRY RUN MODE: Social media posting will be SKIPPED' : 'Publishing beat to social media and FreeLabel...');
+        
+        if ($dryRun) {
+            $io->text('🧪 DRY RUN MODE: Testing caption generation only');
+            $io->text($dryRunDownload ? '🎵 ALSO downloading audio (--beatbox-dry-run-download)' : '⏭️  Skipping: audio download, database writes, Discord, social posts');
+        } else {
+            $io->text('Publishing beat to social media and FreeLabel...');
+        }
+        
         $io->text("URL: {$url}");
         $io->text("Start: {$start}, Duration: {$duration}");
         if ($platforms) {
@@ -1344,6 +1359,10 @@ HELP
                 $params['dry_run'] = true;
             }
             
+            if ($dryRunDownload) {
+                $params['dry_run_download'] = true;
+            }
+            
             $io->text('🔄 Starting publication process...');
             $result = $iris->integrations->execute('beatbox-showcase', 'beatbox_publish', $params);
             
@@ -1353,9 +1372,135 @@ HELP
             }
             
             if ($result['success'] ?? false) {
-                $io->success('Beat published successfully!');
+                // Operations are at root level in dry-run, nested under 'data' in normal mode
+                $operations = $result['operations'] ?? $result['data']['operations'] ?? [];
                 
-                $operations = $result['data']['operations'] ?? [];
+                // DRY RUN MODE: Beautiful caption display
+                if ($dryRun) {
+                    $clipData = $operations['clip_cut']['data'] ?? [];
+                    
+                    $io->success('🧪 Dry Run Completed - Caption Generated!');
+                    
+                    // Display YouTube metadata
+                    if (isset($clipData['metadata'])) {
+                        $metadata = $clipData['metadata'];
+                        $io->section('🎬 YouTube Video Information');
+                        
+                        // Parse duration from ISO 8601 format (PT3M8S)
+                        $duration = 'N/A';
+                        if (isset($metadata['duration'])) {
+                            $durationStr = $metadata['duration'];
+                            // Check if it's ISO 8601 format (PT3M8S) or numeric
+                            if (is_string($durationStr) && strpos($durationStr, 'PT') === 0) {
+                                // Parse ISO 8601 duration (PT3M8S)
+                                preg_match('/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/', $durationStr, $matches);
+                                $hours = isset($matches[1]) ? (int)$matches[1] : 0;
+                                $minutes = isset($matches[2]) ? (int)$matches[2] : 0;
+                                $seconds = isset($matches[3]) ? (int)$matches[3] : 0;
+                                $duration = ($hours > 0 ? $hours . ':' : '') . sprintf('%02d:%02d', $minutes, $seconds);
+                            } elseif (is_numeric($durationStr)) {
+                                $duration = gmdate("i:s", (int)$durationStr);
+                            }
+                        }
+                        
+                        $metadataTable = [
+                            ['Field', 'Value'],
+                            ['Title', $metadata['title'] ?? 'N/A'],
+                            ['Channel', $metadata['channelTitle'] ?? $metadata['channel_name'] ?? $metadata['author'] ?? 'N/A'],
+                            ['Duration', $duration],
+                            ['Views', isset($metadata['viewCount']) ? number_format($metadata['viewCount']) : (isset($metadata['view_count']) ? number_format($metadata['view_count']) : 'N/A')],
+                            ['Published', $metadata['publishedAt'] ?? ($metadata['upload_date'] ?? ($metadata['published_at'] ?? 'N/A'))],
+                        ];
+                        
+                        $io->table($metadataTable[0], array_slice($metadataTable, 1));
+                        
+                        // Show thumbnail URL if available
+                        $thumbnailUrl = null;
+                        if (isset($metadata['thumbnails']['maxres']['url'])) {
+                            $thumbnailUrl = $metadata['thumbnails']['maxres']['url'];
+                        } elseif (isset($metadata['thumbnails']['high']['url'])) {
+                            $thumbnailUrl = $metadata['thumbnails']['high']['url'];
+                        } elseif (isset($metadata['thumbnail'])) {
+                            $thumbnailUrl = $metadata['thumbnail'];
+                        }
+                        
+                        if ($thumbnailUrl) {
+                            $io->newLine();
+                            $io->text('🖼️  Thumbnail: ' . $thumbnailUrl);
+                        }
+                        
+                        // Show description preview if available
+                        if (!empty($metadata['description'])) {
+                            $io->newLine();
+                            $io->text('📄 Description Preview:');
+                            $descPreview = substr($metadata['description'], 0, 300);
+                            if (strlen($metadata['description']) > 300) {
+                                $descPreview .= '...';
+                            }
+                            $io->block(wordwrap($descPreview, 80), null, 'fg=gray', ' ', true);
+                        }
+                    }
+                    
+                    // Display caption
+                    if (isset($clipData['caption'])) {
+                        $io->newLine();
+                        $io->section('📝 AI Generated Caption (Ready to Publish)');
+                        $caption = $clipData['caption'];
+                        
+                        // Display caption in a colored box
+                        $wrappedCaption = wordwrap($caption, 80, "\n");
+                        $lines = explode("\n", $wrappedCaption);
+                        $io->block($lines, null, 'fg=green;options=bold', ' ', true);
+                        
+                        $io->newLine();
+                        $io->text([
+                            '📊 Caption Stats:',
+                            '  • Length: ' . strlen($caption) . ' characters',
+                            '  • Lines: ' . (substr_count($caption, "\n") + 1),
+                            '  • Words: ' . str_word_count($caption),
+                            '  • Hashtags: ' . substr_count($caption, '#'),
+                            '  • Mentions: ' . substr_count($caption, '@'),
+                            '  • Emojis: ' . preg_match_all('/[\x{1F300}-\x{1F9FF}]/u', $caption),
+                        ]);
+                    } else {
+                        $io->error('Caption generation failed: ' . ($operations['clip_cut']['error'] ?? 'Unknown error'));
+                    }
+                    
+                    // Show audio download status if attempted
+                    if ($dryRunDownload) {
+                        $io->newLine();
+                        $io->section('🎵 Audio Download Test');
+                        if ($operations['audio_download']['status'] === 'success') {
+                            $audioData = $operations['audio_download']['data'];
+                            $io->text([
+                                '✅ Audio downloaded successfully',
+                                '  • GCS URL: ' . ($audioData['gcs_url'] ?? 'N/A'),
+                                '  • File Size: ' . ($audioData['file_size_mb'] ?? 'N/A') . ' MB',
+                                '  • Duration: ' . ($audioData['duration'] ?? 'N/A') . ' seconds',
+                            ]);
+                        } else {
+                            $io->error('❌ Audio download failed: ' . ($operations['audio_download']['error'] ?? 'Unknown error'));
+                        }
+                    }
+                    
+                    // Show what was skipped
+                    $io->newLine();
+                    $io->section('⏭️  Skipped Operations (Dry Run Mode)');
+                    $skippedOps = [
+                        '• Social media posting (Instagram, TikTok, X)',
+                        '• Database instrumental record creation',
+                        '• Discord notifications',
+                    ];
+                    if (!$dryRunDownload) {
+                        $skippedOps[] = '• Audio download (use --beatbox-dry-run-download to test)';
+                    }
+                    $io->listing($skippedOps);
+                    
+                    return Command::SUCCESS;
+                }
+                
+                // NORMAL MODE: Standard output
+                $io->success('Beat published successfully!');
                 
                 // Show operation statuses
                 $io->section('Operation Results');
@@ -1365,6 +1510,7 @@ HELP
                         'success' => '✅',
                         'partial' => '⚠️',
                         'failed' => '❌',
+                        'skipped' => '⏭️',
                         default => '❓'
                     };
                     $io->text("{$icon} {$opName}: {$status}");

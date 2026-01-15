@@ -29,6 +29,10 @@ use IRIS\SDK\Console\Commands\BloqCancelIngestionCommand;
 use IRIS\SDK\Console\Commands\VoiceCommand;
 use IRIS\SDK\Console\Commands\PhoneCommand;
 use IRIS\SDK\Console\Commands\AgentCommand;
+use IRIS\SDK\Console\Commands\AutomationCommand;
+use IRIS\SDK\Console\Commands\AutomationTestCommand;
+use IRIS\SDK\Console\Commands\TokenCommand;
+use IRIS\SDK\Console\Commands\UsersCommand;
 
 class Application extends BaseApplication
 {
@@ -63,6 +67,10 @@ class Application extends BaseApplication
             new VoiceCommand(),
             new PhoneCommand(),
             new AgentCommand(),
+            new AutomationCommand(),
+            new AutomationTestCommand(),
+            new TokenCommand(),
+            new UsersCommand(),
         ]);
     }
 }
