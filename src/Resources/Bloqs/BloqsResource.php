@@ -589,10 +589,11 @@ class BloqsResource
      */
     public function share(int $bloqId, int $targetUserId, string $permission = 'viewer'): array
     {
-        $userId = $this->config->requireUserId();
+        $sharingUserId = $this->config->requireUserId();
         return $this->http->post("/api/v1/user/bloqs/{$bloqId}/share", [
             'user_id' => $targetUserId,
             'permission' => $permission,
+            'sharing_user_id' => $sharingUserId, // Who is doing the sharing
         ]);
     }
 
