@@ -180,9 +180,12 @@ class LeadsResource
      * Create a new lead.
      *
      * NOTE: price_bid is in DOLLARS (650 = $650.00), NOT cents like invoice price.
+     * IMPORTANT: bloq_id is REQUIRED - leads must be associated with a bloq.
      *
      * @param array{
      *     name: string,
+     *     bloq_id: int,
+     *     bloqId?: int,
      *     email?: string,
      *     phone?: string,
      *     company?: string,
@@ -198,6 +201,11 @@ class LeadsResource
      */
     public function create(array $data): Lead
     {
+        // Ensure bloq_id is present (required for all leads)
+        if (empty($data['bloq_id']) && empty($data['bloqId'])) {
+            throw new \InvalidArgumentException('bloq_id or bloqId is required when creating a lead. Leads must be associated with a bloq.');
+        }
+        
         $response = $this->http->post("/api/v1/leads", $data);
 
         return new Lead($response);
