@@ -245,8 +245,25 @@ EOT
             // Start from the position after positional params
             $startIndex = count($positionalParams);
 
-            // Map named parameters to method signature
-            for ($i = $startIndex; $i < count($methodParams); $i++) {
+            // Check if method expects a single array parameter (like register(array $data))
+            // If so, pass all named params as that array
+            $singleArrayParamHandled = false;
+            if (!empty($namedParams) && count($methodParams) === 1 + $startIndex) {
+                $firstUnfilledParam = $methodParams[$startIndex] ?? null;
+                if ($firstUnfilledParam) {
+                    $paramType = $firstUnfilledParam->getType();
+                    if ($paramType instanceof \ReflectionNamedType && $paramType->getName() === 'array') {
+                        // Method expects single array param - pass all named params as that array
+                        $args[] = $namedParams;
+                        $namedParams = []; // Clear named params since we used them all
+                        $singleArrayParamHandled = true;
+                    }
+                }
+            }
+
+            // Map named parameters to method signature (skip if we already handled single array param)
+            if (!$singleArrayParamHandled) {
+                for ($i = $startIndex; $i < count($methodParams); $i++) {
                 $param = $methodParams[$i];
                 $paramName = $param->getName();
 
@@ -286,10 +303,11 @@ EOT
                         }
                     }
                 }
+                }
             }
             
             // If there are leftover named params and the last method param accepts an array, merge them
-            if (!empty($namedParams) && !empty($methodParams)) {
+            if (!$singleArrayParamHandled && !empty($namedParams) && !empty($methodParams)) {
                 $lastParam = $methodParams[count($methodParams) - 1];
                 $lastParamType = $lastParam->getType();
 

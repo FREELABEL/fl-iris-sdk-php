@@ -572,19 +572,22 @@ class BloqsResource
      *
      * @param int $bloqId Bloq ID
      * @param int $targetUserId User ID to share with
-     * @param string $permission Permission level: 'read', 'write', 'admin'
+     * @param string $permission Permission level: 'viewer', 'editor', 'owner'
      * @return array Share result
      *
      * @example
      * ```php
-     * // Share bloq with read access
-     * $iris->bloqs->share(40, 456, 'read');
+     * // Share bloq with viewer access
+     * $iris->bloqs->share(40, 456, 'viewer');
      *
-     * // Share with write access
-     * $iris->bloqs->share(40, 456, 'write');
+     * // Share with editor access
+     * $iris->bloqs->share(40, 456, 'editor');
+     *
+     * // Share with owner access
+     * $iris->bloqs->share(40, 456, 'owner');
      * ```
      */
-    public function share(int $bloqId, int $targetUserId, string $permission = 'read'): array
+    public function share(int $bloqId, int $targetUserId, string $permission = 'viewer'): array
     {
         $userId = $this->config->requireUserId();
         return $this->http->post("/api/v1/user/bloqs/{$bloqId}/share", [
@@ -609,7 +612,7 @@ class BloqsResource
      *
      * @param int $bloqId Bloq ID
      * @param int $targetUserId User ID to update
-     * @param string $permission New permission level
+     * @param string $permission New permission level: 'viewer', 'editor', 'owner'
      * @return array Updated share info
      */
     public function updateSharePermission(int $bloqId, int $targetUserId, string $permission): array
