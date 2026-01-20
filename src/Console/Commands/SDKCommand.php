@@ -269,10 +269,19 @@ EOT
 
                     if (!$found) {
                         if (!$param->isOptional()) {
-                            // Required param not provided
-                            break;
+                            // Required param not provided - throw clear error
+                            $providedParams = array_keys($namedParams);
+                            $providedParamsStr = empty($providedParams) ? 'none' : implode(', ', $providedParams);
+                            throw new \InvalidArgumentException(
+                                "Missing required parameter '{$paramName}' for method '{$method}'. " .
+                                "Provided parameters: {$providedParamsStr}. " .
+                                "Use the exact parameter name or check method signature."
+                            );
                         } else {
                             // Optional param not provided - use default value
+                            if ($param->isDefaultValueAvailable()) {
+                                $args[] = $param->getDefaultValue();
+                            }
                             break;
                         }
                     }
