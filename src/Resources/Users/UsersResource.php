@@ -155,4 +155,89 @@ class UsersResource
 
         return $response['data'] ?? $response;
     }
+
+    /**
+     * Register a new user account.
+     *
+     * Auto-generates secure password and phone number if not provided.
+     *
+     * @param array{
+     *     email: string,
+     *     phone?: string,
+     *     password?: string,
+     *     password_confirmation?: string,
+     *     full_name?: string
+     * } $data Registration data
+     * @return array User data with credentials
+     */
+    public function register(array $data): array
+    {
+        // Validate email is provided
+        if (empty($data['email'])) {
+            throw new \InvalidArgumentException('Email is required');
+        }
+
+        // Auto-generate phone number if not provided
+        // Format: (555) 555-5555
+        if (empty($data['phone'])) {
+            $data['phone'] = sprintf(
+                '(%03d) %03d-%04d',
+                rand(200, 999),
+                rand(200, 999),
+                rand(1000, 9999)
+            );
+        }
+
+        // Auto-generate secure password if not provided
+        if (empty($data['password'])) {
+            // Generate 16-character password with letters, numbers, and symbols
+            $data['password'] = $this->generateSecurePassword();
+        }
+
+        // Auto-add password_confirmation if not provided
+        if (empty($data['password_confirmation'])) {
+            $data['password_confirmation'] = $data['password'];
+        }
+
+        $response = $this->http->post('/api/v1/web/user/register', $data);
+
+        $result = $response['data'] ?? $response;
+
+        // Add generated credentials to response for user reference
+        $result['_credentials'] = [
+            'password' => $data['password'],
+            'phone' => $data['phone'],
+        ];
+
+        return $result;
+    }
+
+    /**
+     * Generate a secure random password.
+     *
+     * @return string 16-character password with letters, numbers, and symbols
+     */
+    private function generateSecurePassword(): string
+    {
+        $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        $numbers = '0123456789';
+        $symbols = '!@#$%^&*';
+
+        // Ensure at least one of each type
+        $password = '';
+        $password .= $uppercase[random_int(0, strlen($uppercase) - 1)];
+        $password .= $lowercase[random_int(0, strlen($lowercase) - 1)];
+        $password .= $numbers[random_int(0, strlen($numbers) - 1)];
+        $password .= $symbols[random_int(0, strlen($symbols) - 1)];
+
+        // Fill remaining characters randomly
+        $allChars = $uppercase . $lowercase . $numbers . $symbols;
+        for ($i = 4; $i < 16; $i++) {
+            $password .= $allChars[random_int(0, strlen($allChars) - 1)];
+        }
+
+        // Shuffle the password
+        return str_shuffle($password);
+    }
 }

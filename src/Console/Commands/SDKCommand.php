@@ -217,6 +217,12 @@ EOT
         if (empty($params)) {
             return $target->{$method}();
         }
+
+        // Special handling for search methods: convert string argument to search filter
+        // This allows: `leads.search "Tha Juan"` instead of `leads.search search="Tha Juan"`
+        if ($method === 'search' && count($params) === 1 && isset($params[0]) && is_string($params[0])) {
+            return $target->{$method}(['search' => $params[0]]);
+        }
         
         // Separate positional and named parameters
         $positionalParams = [];

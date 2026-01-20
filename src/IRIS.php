@@ -31,6 +31,7 @@ use IRIS\SDK\Resources\Voice\VoiceResource;
 use IRIS\SDK\Resources\Phone\PhoneResource;
 use IRIS\SDK\Resources\Automations\AutomationsResource;
 use IRIS\SDK\Resources\Users\UsersResource;
+use IRIS\SDK\Resources\Pages\PagesResource;
 use IRIS\SDK\Events\WebhookHandler;
 
 /**
@@ -219,6 +220,11 @@ class IRIS
     public UsersResource $users;
 
     /**
+     * Pages resource for managing composable landing pages.
+     */
+    public PagesResource $pages;
+
+    /**
      * Create a new IRIS client instance.
      *
      * @param array{
@@ -268,6 +274,7 @@ class IRIS
         $this->phone = new PhoneResource($this->http, $this->config);
         $this->automations = new AutomationsResource($this->http, $this->config);
         $this->users = new UsersResource($this->http, $this->config);
+        $this->pages = new PagesResource($this->http, $this->config);
     }
 
     /**

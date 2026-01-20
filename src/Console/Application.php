@@ -33,6 +33,8 @@ use IRIS\SDK\Console\Commands\AutomationCommand;
 use IRIS\SDK\Console\Commands\AutomationTestCommand;
 use IRIS\SDK\Console\Commands\TokenCommand;
 use IRIS\SDK\Console\Commands\UsersCommand;
+use IRIS\SDK\Console\Commands\RemindRCommand;
+use IRIS\SDK\Console\Commands\PagesCommand;
 
 class Application extends BaseApplication
 {
@@ -71,6 +73,8 @@ class Application extends BaseApplication
             new AutomationTestCommand(),
             new TokenCommand(),
             new UsersCommand(),
+            new RemindRCommand(),
+            new PagesCommand(),
         ]);
     }
 }

@@ -153,8 +153,17 @@ class AuthManager
 
         // Check if public
         foreach (self::PUBLIC_PATTERNS as $pattern) {
-            if (str_contains($endpoint, $pattern)) {
-                return 'public';
+            // For patterns ending with '/', do prefix matching
+            if (str_ends_with($pattern, '/')) {
+                if (str_starts_with($endpoint, $pattern)) {
+                    return 'public';
+                }
+            } else {
+                // For exact patterns, check if endpoint exactly matches OR starts with pattern followed by ? (query params)
+                // This prevents /api/v1/leads from matching /api/v1/leads/aggregation
+                if ($endpoint === $pattern || str_starts_with($endpoint, $pattern . '?')) {
+                    return 'public';
+                }
             }
         }
 

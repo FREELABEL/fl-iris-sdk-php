@@ -5,6 +5,10 @@ Official PHP SDK for the **IRIS AI Platform** - Build intelligent agents, execut
 ## 🚀 Quick Examples
 
 ```bash
+# 👤 Create user accounts (auto-generates secure password & phone)
+./bin/iris sdk:call users.register email="user@example.com" full_name="John Doe"
+./bin/iris sdk:call users.register email="user@example.com" phone="(555) 123-4567" password="CustomPass123!"
+
 # 💬 Chat with AI agents (real-time progress display!)
 ./bin/iris chat 11 "Hello, what can you do?"
 ./bin/iris chat 337 "Analyze my leads" --bloq=40
@@ -1114,6 +1118,118 @@ $response = $iris->agents->chat('agent_123', [
 
 echo $response->content;
 ```
+
+## 👤 User Account Creation
+
+Create new user accounts programmatically via the SDK/CLI. Automatically generates secure passwords and phone numbers if not provided.
+
+### CLI Usage
+
+```bash
+# Auto-generate password and phone number
+./bin/iris sdk:call users.register \
+  email="jayala@aec-hq.com" \
+  full_name="Dr. John F. Ayala"
+
+# Provide custom credentials
+./bin/iris sdk:call users.register \
+  email="user@example.com" \
+  phone="(555) 123-4567" \
+  password="SecurePass123!" \
+  full_name="John Doe"
+
+# JSON output for automation
+./bin/iris sdk:call users.register \
+  email="user@example.com" \
+  --json
+```
+
+**Example Output:**
+```
+Key                Value                                                    
+id                 5134                                                     
+email              jayala@aec-hq.com                                        
+phone              (384) 545-7846                                           
+user_name          jayala                                                   
+full_name          Dr. John F. Ayala                                        
+_credentials       {"password":"j7wQ6FOaK@MduhH1","phone":"(384) 545-7846"}
+```
+
+### PHP SDK Usage
+
+```php
+// Auto-generate password and phone
+$user = $iris->users->register([
+    'email' => 'jayala@aec-hq.com',
+    'full_name' => 'Dr. John F. Ayala',
+]);
+
+echo "✅ User created: {$user['email']}\n";
+echo "   User ID: {$user['id']}\n";
+echo "   Username: {$user['user_name']}\n";
+echo "   Password: {$user['_credentials']['password']}\n";
+echo "   Phone: {$user['_credentials']['phone']}\n";
+
+// Provide custom credentials
+$user = $iris->users->register([
+    'email' => 'user@example.com',
+    'phone' => '(555) 123-4567',
+    'password' => 'SecurePass123!',
+    'full_name' => 'John Doe',
+]);
+```
+
+### Bulk User Creation
+
+```bash
+#!/bin/bash
+# create-team-accounts.sh
+
+USERS=(
+  "jayala@aec-hq.com:Dr. John F. Ayala"
+  "team@example.com:Team Member"
+)
+
+for user in "${USERS[@]}"; do
+  IFS=':' read -r email name <<< "$user"
+  ./bin/iris sdk:call users.register \
+    email="$email" \
+    full_name="$name" \
+    --json >> users-created.json
+done
+```
+
+### Required Fields
+
+- `email` - Must be unique (validated against existing users)
+
+### Optional Fields
+
+- `phone` - Phone number in format `(555) 123-4567` (auto-generated if not provided)
+- `password` - Minimum 8 characters (auto-generated secure password if not provided)
+- `full_name` - User's full name
+
+### Auto-Generated Values
+
+- **Password**: 16-character secure password with uppercase, lowercase, numbers, and symbols
+- **Phone**: Random US format phone `(XXX) XXX-XXXX`
+- **Username**: Automatically derived from email (e.g., `jayala@aec-hq.com` → `jayala`)
+
+### Response Fields
+
+- `id` - User ID
+- `email` - User email
+- `phone` - Phone number
+- `user_name` - Auto-generated username
+- `_credentials` - Object containing generated `password` and `phone`
+  - **Important**: Save these credentials! They're only returned once.
+
+### Next Steps
+
+After creating a user account:
+1. Login at: https://app.heyiris.io/login
+2. User may need to activate account via email
+3. Complete platform onboarding flow
 
 ## Features
 

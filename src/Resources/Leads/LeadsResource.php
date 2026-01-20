@@ -151,6 +151,11 @@ class LeadsResource
      */
     public function search(array $filters = []): array
     {
+        // Ensure user_id is set for the aggregation endpoint
+        if (!isset($filters['user_id'])) {
+            $filters['user_id'] = $this->config->requireUserId();
+        }
+
         // Use the Lead Aggregation API for powerful search and filtering
         $response = $this->http->get("/api/v1/leads/aggregation", $filters);
 
@@ -254,7 +259,8 @@ class LeadsResource
      */
     public function updateNote(int $leadId, int $noteId, string $content, array $metadata = []): array
     {
-        return $this->http->patch("/api/v1/leads/{$leadId}/notes/{$noteId}", array_merge(
+        // API uses PUT, not PATCH for note updates
+        return $this->http->put("/api/v1/leads/{$leadId}/notes/{$noteId}", array_merge(
             ['message' => $content],
             $metadata
         ));
@@ -679,6 +685,34 @@ class LeadsResource
     public function outreach(int $leadId): OutreachResource
     {
         return new OutreachResource($this->http, $this->config, $leadId);
+    }
+
+    /**
+     * Access notes sub-resource for a lead.
+     *
+     * Manage notes for a lead.
+     *
+     * @param int $leadId Lead ID
+     * @return NotesResource
+     *
+     * @example
+     * ```php
+     * // List all notes
+     * $notes = $iris->leads->notes(412)->all();
+     *
+     * // Create a note
+     * $note = $iris->leads->notes(412)->create('Follow-up scheduled');
+     *
+     * // Update a note
+     * $iris->leads->notes(412)->update(123, 'Updated content');
+     *
+     * // Delete a note
+     * $iris->leads->notes(412)->delete(123);
+     * ```
+     */
+    public function notes(int $leadId): NotesResource
+    {
+        return new NotesResource($this->http, $this->config, $leadId);
     }
 
     /**
