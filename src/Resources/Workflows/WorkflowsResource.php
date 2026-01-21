@@ -264,17 +264,48 @@ class WorkflowsResource
      * List user's workflows.
      *
      * @param array $options List options
-     * @return WorkflowCollection
+     * @return array
      */
-    public function list(array $options = []): WorkflowCollection
+    public function list(array $options = []): array
     {
         $userId = $this->config->requireUserId();
         $response = $this->http->get("/api/v1/users/{$userId}/bloqs/workflows", $options);
 
-        return new WorkflowCollection(
-            array_map(fn($data) => new Workflow($data), $response['data'] ?? $response),
-            $response['meta'] ?? []
-        );
+        return $response;
+    }
+
+    /**
+     * Update a workflow.
+     *
+     * @param int $workflowId Workflow ID
+     * @param array{
+     *     name?: string,
+     *     description?: string,
+     *     bloq_id?: int,
+     *     steps?: array,
+     *     settings?: array,
+     *     agent_id?: int
+     * } $data Update data
+     * @return array
+     *
+     * @example
+     * ```php
+     * // Move workflow to a different bloq
+     * $workflow = $iris->workflows->update(8, ['bloq_id' => 203]);
+     *
+     * // Update workflow name and steps
+     * $workflow = $iris->workflows->update(8, [
+     *     'name' => 'New Workflow Name',
+     *     'steps' => [...],
+     * ]);
+     * ```
+     */
+    public function update(int $workflowId, array $data): array
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->put("/api/v1/users/{$userId}/bloqs/workflows/{$workflowId}", $data);
+
+        return $response;
     }
 
     /**
