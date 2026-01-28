@@ -685,19 +685,29 @@ HELP
             return Command::FAILURE;
         }
 
-        $response = $iris->pages->getBySlug($slug, false);
+        $response = $iris->pages->getBySlug($slug, true);  // Include JSON
         $page = $response['data'] ?? $response;
 
         // Get props update from option or interactive
         $propsJson = $input->getOption('props');
         if ($propsJson) {
-            $updates = ['props' => json_decode($propsJson, true)];
+            $decoded = json_decode($propsJson, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $io->error('Invalid JSON: ' . json_last_error_msg());
+                return Command::FAILURE;
+            }
+            $updates = ['props' => $decoded];
         } else {
             // Interactive mode
             $io->section('Update Component Props');
             $io->note('Enter JSON object for props (e.g., {"title": "New Title"})');
             $propsJson = $io->ask('Props JSON', '{}');
-            $updates = ['props' => json_decode($propsJson, true)];
+            $decoded = json_decode($propsJson, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $io->error('Invalid JSON: ' . json_last_error_msg());
+                return Command::FAILURE;
+            }
+            $updates = ['props' => $decoded];
         }
 
         $result = $iris->pages->updateComponentById($page['id'], $componentId, $updates);

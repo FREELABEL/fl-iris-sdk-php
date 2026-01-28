@@ -84,12 +84,14 @@ class PagesResource
      *
      * @param string $slug Page slug
      * @param bool $includeJson Include JSON content (default: true)
+     * @param bool $includeDrafts Include draft pages (default: true for SDK/CLI usage)
      * @return array Page data
      */
-    public function getBySlug(string $slug, bool $includeJson = true): array
+    public function getBySlug(string $slug, bool $includeJson = true, bool $includeDrafts = true): array
     {
         return $this->http->get("/api/v1/pages/by-slug/{$slug}", [
             'include_json' => $includeJson ? 1 : 0,
+            'include_drafts' => $includeDrafts ? 1 : 0,
         ]);
     }
 
@@ -112,23 +114,31 @@ class PagesResource
      */
     public function create(array $data): array
     {
+        // Set defaults for owner if not provided
+        if (!isset($data['owner_type'])) {
+            $data['owner_type'] = 'user';
+        }
+        if (!isset($data['owner_id']) && $this->config->userId) {
+            $data['owner_id'] = $this->config->userId;
+        }
+
         // Build JSON content from theme and components
         $jsonContent = [];
-        
+
         if (isset($data['theme'])) {
             $jsonContent['theme'] = $data['theme'];
             unset($data['theme']);
         }
-        
+
         if (isset($data['components'])) {
             $jsonContent['components'] = $data['components'];
             unset($data['components']);
         }
-        
+
         if (!empty($jsonContent)) {
             $data['json_content'] = $jsonContent;
         }
-        
+
         return $this->http->post('/api/v1/pages', $data);
     }
 
@@ -352,7 +362,7 @@ class PagesResource
     public function addComponent(int $id, array $component, ?int $position = null): array
     {
         $page = $this->get($id, true);
-        $jsonContent = $page['data']['json_content'] ?? [];
+        $jsonContent = $page['json_content'] ?? [];
         
         if (!isset($jsonContent['components'])) {
             $jsonContent['components'] = [];
@@ -385,7 +395,7 @@ class PagesResource
     public function updateComponentById(int $id, string $componentId, array $updates): array
     {
         $page = $this->get($id, true);
-        $jsonContent = $page['data']['json_content'] ?? [];
+        $jsonContent = $page['json_content'] ?? [];
         
         if (!isset($jsonContent['components'])) {
             throw new \RuntimeException("Page has no components");
@@ -420,7 +430,7 @@ class PagesResource
     public function updateComponentByIndex(int $id, int $index, array $updates): array
     {
         $page = $this->get($id, true);
-        $jsonContent = $page['data']['json_content'] ?? [];
+        $jsonContent = $page['json_content'] ?? [];
         
         if (!isset($jsonContent['components'][$index])) {
             throw new \RuntimeException("Component at index {$index} not found");
@@ -446,7 +456,7 @@ class PagesResource
     public function removeComponentById(int $id, string $componentId): array
     {
         $page = $this->get($id, true);
-        $jsonContent = $page['data']['json_content'] ?? [];
+        $jsonContent = $page['json_content'] ?? [];
         
         if (!isset($jsonContent['components'])) {
             throw new \RuntimeException("Page has no components");
@@ -478,7 +488,7 @@ class PagesResource
     public function removeComponentByIndex(int $id, int $index): array
     {
         $page = $this->get($id, true);
-        $jsonContent = $page['data']['json_content'] ?? [];
+        $jsonContent = $page['json_content'] ?? [];
         
         if (!isset($jsonContent['components'][$index])) {
             throw new \RuntimeException("Component at index {$index} not found");
@@ -501,7 +511,7 @@ class PagesResource
     public function updateTheme(int $id, array $themeUpdates): array
     {
         $page = $this->get($id, true);
-        $jsonContent = $page['data']['json_content'] ?? [];
+        $jsonContent = $page['json_content'] ?? [];
         
         if (!isset($jsonContent['theme'])) {
             $jsonContent['theme'] = [];
@@ -525,7 +535,7 @@ class PagesResource
     public function updatePath(int $id, string $path, $value): array
     {
         $page = $this->get($id, true);
-        $jsonContent = $page['data']['json_content'] ?? [];
+        $jsonContent = $page['json_content'] ?? [];
         
         $this->setNestedValue($jsonContent, $path, $value);
         
@@ -543,7 +553,7 @@ class PagesResource
     public function getComponents(int $id): array
     {
         $page = $this->get($id, true);
-        return $page['data']['json_content']['components'] ?? [];
+        return $page['json_content']['components'] ?? [];
     }
 
     /**
@@ -569,20 +579,30 @@ class PagesResource
     /**
      * Merge updates into a nested array using dot notation.
      *
+     * Supports:
+     * - Dot notation keys: ['props.title' => 'New'] sets nested value
+     * - Nested arrays: ['props' => ['title' => 'New']] deep merges into existing props
+     * - Simple values: ['type' => 'Hero'] replaces the value
+     *
      * @param array $target Target array
-     * @param array $updates Updates with dot notation keys
+     * @param array $updates Updates with dot notation keys or nested arrays
      * @return array Merged array
      */
     private function mergeUpdates(array $target, array $updates): array
     {
         foreach ($updates as $key => $value) {
             if (strpos($key, '.') !== false) {
+                // Dot notation: set nested value directly
                 $this->setNestedValue($target, $key, $value);
+            } elseif (is_array($value) && isset($target[$key]) && is_array($target[$key])) {
+                // Both are arrays: deep merge (preserves existing keys)
+                $target[$key] = array_merge($target[$key], $value);
             } else {
+                // Simple value or target doesn't have the key: replace
                 $target[$key] = $value;
             }
         }
-        
+
         return $target;
     }
 
