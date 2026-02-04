@@ -35,6 +35,8 @@ use IRIS\SDK\Console\Commands\TokenCommand;
 use IRIS\SDK\Console\Commands\UsersCommand;
 use IRIS\SDK\Console\Commands\RemindRCommand;
 use IRIS\SDK\Console\Commands\PagesCommand;
+use IRIS\SDK\Console\Commands\ConsolidateLeadsCommand;
+use IRIS\SDK\Console\Commands\DemoShowcaseCommand;
 
 class Application extends BaseApplication
 {
@@ -75,6 +77,8 @@ class Application extends BaseApplication
             new UsersCommand(),
             new RemindRCommand(),
             new PagesCommand(),
+            new ConsolidateLeadsCommand(),
+            new DemoShowcaseCommand(),
         ]);
     }
 }

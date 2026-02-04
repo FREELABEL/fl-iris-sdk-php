@@ -4,42 +4,61 @@ declare(strict_types=1);
 
 namespace IRIS\SDK\Resources\Services;
 
+use IteratorAggregate;
+use Countable;
+use ArrayIterator;
+
 /**
  * Service Collection
  *
  * A collection of Service models.
  */
-class ServiceCollection
+class ServiceCollection implements IteratorAggregate, Countable
 {
     /** @var Service[] */
-    public array $items;
-    public array $meta;
+    private array $services;
+    private array $meta;
 
     /**
-     * @param Service[] $items
+     * @param Service[] $services
      * @param array $meta
      */
-    public function __construct(array $items, array $meta = [])
+    public function __construct(array $services, array $meta = [])
     {
-        $this->items = $items;
+        $this->services = $services;
         $this->meta = $meta;
     }
 
-    public function toArray(): array
+    public function getIterator(): ArrayIterator
     {
-        return [
-            'items' => array_map(fn($item) => $item->toArray(), $this->items),
-            'meta' => $this->meta,
-        ];
+        return new ArrayIterator($this->services);
     }
 
     public function count(): int
     {
-        return count($this->items);
+        return count($this->services);
+    }
+
+    /**
+     * @return Service[]
+     */
+    public function all(): array
+    {
+        return $this->services;
     }
 
     public function first(): ?Service
     {
-        return $this->items[0] ?? null;
+        return $this->services[0] ?? null;
+    }
+
+    public function getMeta(): array
+    {
+        return $this->meta;
+    }
+
+    public function toArray(): array
+    {
+        return array_map(fn($service) => $service->toArray(), $this->services);
     }
 }

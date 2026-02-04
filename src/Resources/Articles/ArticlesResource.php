@@ -239,7 +239,7 @@ class ArticlesResource
     }
 
     /**
-     * Create an article directly.
+     * Create a new article.
      *
      * @param array{
      *     profile_id: int,
@@ -249,10 +249,76 @@ class ArticlesResource
      *     is_bulletin?: bool,
      *     status?: int
      * } $data Article data
-     * @return array Created article
+     * @return Article
      */
-    public function create(array $data): array
+    public function create(array $data): Article
     {
-        return $this->http->post('/api/v1/articles', $data, 'fl-api');
+        $response = $this->http->post('/api/v1/articles', $data, 'fl-api');
+
+        return new Article($response['data'] ?? $response);
+    }
+
+    /**
+     * List articles with filters.
+     *
+     * @param array{
+     *     profile_id?: int,
+     *     status?: int,
+     *     search?: string,
+     *     page?: int,
+     *     per_page?: int
+     * } $filters Filter options
+     * @return ArticleCollection
+     */
+    public function list(array $filters = []): ArticleCollection
+    {
+        $response = $this->http->get('/api/v1/articles', $filters, 'fl-api');
+
+        $articles = array_map(
+            fn($data) => new Article($data),
+            $response['data'] ?? []
+        );
+
+        return new ArticleCollection($articles, $response['meta'] ?? []);
+    }
+
+    /**
+     * Get a single article by ID.
+     *
+     * @param int $articleId Article ID
+     * @return Article
+     */
+    public function get(int $articleId): Article
+    {
+        $response = $this->http->get("/api/v1/articles/{$articleId}", [], 'fl-api');
+
+        return new Article($response['data'] ?? $response);
+    }
+
+    /**
+     * Update an existing article.
+     *
+     * @param int $articleId Article ID
+     * @param array $data Updated article data
+     * @return Article
+     */
+    public function update(int $articleId, array $data): Article
+    {
+        $response = $this->http->put("/api/v1/articles/{$articleId}", $data, 'fl-api');
+
+        return new Article($response['data'] ?? $response);
+    }
+
+    /**
+     * Delete an article.
+     *
+     * @param int $articleId Article ID
+     * @return bool
+     */
+    public function delete(int $articleId): bool
+    {
+        $this->http->delete("/api/v1/articles/{$articleId}", [], 'fl-api');
+
+        return true;
     }
 }

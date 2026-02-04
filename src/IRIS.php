@@ -28,6 +28,7 @@ use IRIS\SDK\Resources\Courses\CoursesResource;
 use IRIS\SDK\Resources\Audio\AudioResource;
 use IRIS\SDK\Resources\Social\SocialMediaResource;
 use IRIS\SDK\Resources\Voice\VoiceResource;
+use IRIS\SDK\Resources\Videos\VideosResource;
 use IRIS\SDK\Resources\Phone\PhoneResource;
 use IRIS\SDK\Resources\Automations\AutomationsResource;
 use IRIS\SDK\Resources\Users\UsersResource;
@@ -205,6 +206,11 @@ class IRIS
     public VoiceResource $voice;
 
     /**
+     * Videos resource for managing video content and uploads.
+     */
+    public VideosResource $videos;
+
+    /**
      * Phone resource for managing agent phone numbers across providers.
      */
     public PhoneResource $phone;
@@ -271,6 +277,7 @@ class IRIS
         $this->audio = new AudioResource($this->http, $this->config);
         $this->social = new SocialMediaResource($this->http, $this->config);
         $this->voice = new VoiceResource($this->http, $this->config);
+        $this->videos = new VideosResource($this->http, $this->config);
         $this->phone = new PhoneResource($this->http, $this->config);
         $this->automations = new AutomationsResource($this->http, $this->config);
         $this->users = new UsersResource($this->http, $this->config);

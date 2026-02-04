@@ -257,4 +257,121 @@ class ProfilesResource
 
         return true;
     }
+
+    /**
+     * Get playlists for a profile.
+     *
+     * @param int|null $profileId Profile ID (optional, uses current user's if not provided)
+     * @return PlaylistCollection
+     */
+    public function getPlaylists(int $profileId = null): PlaylistCollection
+    {
+        $userId = $this->config->requireUserId();
+        $response = $this->http->get("/api/v1/users/{$userId}/collections", [
+            'profile_id' => $profileId,
+        ], 'fl-api');
+
+        $playlists = array_map(
+            fn($data) => new Playlist($data),
+            $response['data'] ?? []
+        );
+
+        return new PlaylistCollection($playlists, $response['meta'] ?? []);
+    }
+
+    /**
+     * Create a new playlist.
+     *
+     * @param array{
+     *     title: string,
+     *     description?: string,
+     *     profile_id?: int
+     * } $data Playlist data
+     * @return Playlist
+     */
+    public function createPlaylist(array $data): Playlist
+    {
+        $userId = $this->config->requireUserId();
+        $payload = array_merge($data, ['user_id' => $userId]);
+
+        $response = $this->http->post('/api/v1/user/collections', $payload, 'fl-api');
+
+        return new Playlist($response['data'] ?? $response);
+    }
+
+    /**
+     * Get a single playlist by ID.
+     *
+     * @param int|string $playlistId Playlist ID or unique_id
+     * @return Playlist
+     */
+    public function getPlaylist(int|string $playlistId): Playlist
+    {
+        $response = $this->http->get("/api/v1/user/collections/{$playlistId}", [], 'fl-api');
+
+        return new Playlist($response['data'] ?? $response);
+    }
+
+    /**
+     * Update a playlist.
+     *
+     * @param int|string $playlistId Playlist ID or unique_id
+     * @param array $data Updated playlist data
+     * @return Playlist
+     */
+    public function updatePlaylist(int|string $playlistId, array $data): Playlist
+    {
+        $response = $this->http->put("/api/v1/user/collections/{$playlistId}", $data, 'fl-api');
+
+        return new Playlist($response['data'] ?? $response);
+    }
+
+    /**
+     * Delete a playlist.
+     *
+     * @param int|string $playlistId Playlist ID or unique_id
+     * @return bool
+     */
+    public function deletePlaylist(int|string $playlistId): bool
+    {
+        $this->http->delete("/api/v1/user/collections/{$playlistId}", [], 'fl-api');
+
+        return true;
+    }
+
+    /**
+     * Add an item to a playlist.
+     *
+     * @param int|string $playlistId Playlist ID or unique_id
+     * @param int $postId Post/media ID
+     * @param string $mediaType Media type (article, video, etc.)
+     * @return array
+     */
+    public function addToPlaylist(int|string $playlistId, int $postId, string $mediaType): array
+    {
+        $userId = $this->config->requireUserId();
+        $payload = [
+            'unique_id' => $playlistId,
+            'post_id' => $postId,
+            'media_type' => $mediaType,
+            'user_id' => $userId,
+        ];
+
+        return $this->http->post("/api/v1/user/collections/{$playlistId}/attach", $payload, 'fl-api');
+    }
+
+    /**
+     * Remove an item from a playlist.
+     *
+     * @param int|string $playlistId Playlist ID or unique_id
+     * @param string $mediaType Media type
+     * @param int $mediaId Media ID
+     * @return bool
+     */
+    public function removeFromPlaylist(int|string $playlistId, string $mediaType, int $mediaId): bool
+    {
+        $this->http->delete("/api/v1/user/collections/{$playlistId}/{$mediaType}/{$mediaId}", [], 'fl-api');
+
+        return true;
+    }
 }

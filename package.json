@@ -11,7 +11,11 @@
     "memory:add": "php bin/iris memory:add",
     "memory:compose": "php bin/iris memory:compose",
     "config:show": "php bin/iris config:show",
-    "test": "php bin/iris memory:list"
+    "test": "composer test",
+    "test:unit": "composer test:unit",
+    "test:integration": "composer test:integration",
+    "analyse": "composer analyse",
+    "cs-fix": "composer cs-fix"
   },
   "keywords": [
     "iris",

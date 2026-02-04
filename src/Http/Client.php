@@ -157,6 +157,8 @@ class Client
             || str_contains($endpoint, '/user-programs')
             || str_contains($endpoint, '/courses')
             || str_contains($endpoint, '/pages')
+            || str_contains($endpoint, '/videos')
+            || str_contains($endpoint, '/collections')
         ) {
             return $this->config->flApiUrl . '/' . ltrim($endpoint, '/');
         }
