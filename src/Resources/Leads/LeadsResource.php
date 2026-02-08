@@ -283,7 +283,7 @@ class LeadsResource
      */
     public function deleteNote(int $leadId, int $noteId): bool
     {
-        $this->http->delete("/api/v1/webhooks/leads/{$leadId}/notes/{$noteId}");
+        $this->http->delete("/api/v1/leads/{$leadId}/notes/{$noteId}");
         
         return true;
     }
