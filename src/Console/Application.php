@@ -37,6 +37,7 @@ use IRIS\SDK\Console\Commands\RemindRCommand;
 use IRIS\SDK\Console\Commands\PagesCommand;
 use IRIS\SDK\Console\Commands\ConsolidateLeadsCommand;
 use IRIS\SDK\Console\Commands\DemoShowcaseCommand;
+use IRIS\SDK\Console\Commands\ProfileCommand;
 
 class Application extends BaseApplication
 {
@@ -79,6 +80,7 @@ class Application extends BaseApplication
             new PagesCommand(),
             new ConsolidateLeadsCommand(),
             new DemoShowcaseCommand(),
+            new ProfileCommand(),
         ]);
     }
 }
