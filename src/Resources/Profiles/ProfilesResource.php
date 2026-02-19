@@ -264,7 +264,7 @@ class ProfilesResource
      * @param int|null $profileId Profile ID (optional, uses current user's if not provided)
      * @return PlaylistCollection
      */
-    public function getPlaylists(int $profileId = null): PlaylistCollection
+    public function getPlaylists(?int $profileId = null): PlaylistCollection
     {
         $userId = $this->config->requireUserId();
         $response = $this->http->get("/api/v1/users/{$userId}/collections", [

@@ -14,9 +14,10 @@ class ProfileCommand extends Command
 {
     protected static $defaultName = 'profile';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
+            ->setName('profile')
             ->setDescription('Manage profiles')
             ->setHelp('Update profile fields easily from the CLI')
             ->addArgument('action', InputArgument::REQUIRED, 'Action: update, show')
