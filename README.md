@@ -1,1341 +1,303 @@
-# IRIS AI Platform
+# IRIS SDK
 
-
-
-```
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                                                                               ║
-║     ██╗██████╗ ██╗███████╗     █████╗ ██╗                                     ║
-║     ██║██╔══██╗██║██╔════╝    ██╔══██╗██║                                     ║
-║     ██║██████╔╝██║███████╗    ███████║██║                                     ║
-║     ██║██╔══██╗██║╚════██║    ██╔══██║██║                                     ║
-║     ██║██║  ██║██║███████║    ██║  ██║██║                                     ║
-║     ╚═╝╚═╝  ╚═╝╚═╝╚══════╝    ╚═╝  ╚═╝╚═╝                                     ║
-║                                                                               ║
-║              Create AI assistants that actually know your business            ║
-║                                                                               ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
-```
-
-**Create AI assistants that actually know your business.**
-
----
-
-## What is IRIS?
-
-IRIS lets you build **AI agents** - intelligent assistants that can answer questions, perform tasks, and connect to your tools. Think of it like creating your own custom ChatGPT that knows your products, your processes, and your data.
-
-**No coding required.** Everything can be done through our visual interface at [app.heyiris.io](https://app.heyiris.io). This SDK and CLI are optional power tools for developers who want programmatic control.
-
----
-
-## Who is This For?
-
-- **Business owners** who want AI assistants for customer support, sales, or internal operations
-- **Agencies** building AI solutions for clients
-- **Developers** integrating AI capabilities into applications
-- **Teams** that need intelligent automation without hiring ML engineers
-
-
-
-
-
----
-
-## What is IRIS?
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                                                                             │
-│   YOUR BUSINESS                          YOUR AI AGENT                      │
-│   ─────────────                          ────────────                       │
-│                                                                             │
-│   📄 Documents                              🤖                              │
-│   📊 Data            ──────────────▶      "Hi! I can help                  │
-│   📋 Processes                             you with..."                     │
-│   💬 FAQs                                                                   │
-│                                                                             │
-│   ┌─────────────────────────────────────────────────────────────────────┐   │
-│   │  Think of it like your own ChatGPT that knows YOUR products,        │   │
-│   │  YOUR processes, and YOUR data. Available 24/7. Never forgets.      │   │
-│   └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Platform Features Explained
-
-### 🤖 AI Agents — Your Custom AI Assistants
-
-**What it is:** An AI agent is like having a smart employee that's available 24/7. You tell it what you want it to do, give it knowledge about your business, and it handles conversations and tasks for you.
-
-**Real examples:**
-- A **customer support agent** that answers product questions using your documentation
-- A **sales assistant** that qualifies leads and schedules meetings
-- A **recruiting agent** that screens resumes and answers candidate questions
-- An **internal helper** that answers HR policy questions for employees
-
-**How it works:**
-1. Give your agent a name and personality ("friendly and professional")
-2. Write instructions for what it should do ("Help customers with product questions")
-3. Upload files so it knows your business (product guides, FAQs, policies)
-4. Share the link - your agent is live!
-
-**Why this matters:** You don't need to train an AI model or write complex code. Just describe what you want in plain English, upload your files, and your agent is ready to use.
-
----
-
-### 📚 Knowledge Base — Your Agent's Memory
-
-**What it is:** The knowledge base is where your agent stores everything it needs to know. When someone asks a question, your agent searches this memory to find relevant information and give accurate answers.
-
-**Real examples:**
-- Upload your **product catalog** → Agent can answer "What's the price of X?" or "Do you have Y in stock?"
-- Upload your **employee handbook** → Agent answers "How many vacation days do I have?" or "What's the expense policy?"
-- Upload **training materials** → Agent helps onboard new team members
-- Upload **sales playbooks** → Agent coaches reps on handling objections
-
-**How it works:**
-1. Create a knowledge base (just give it a name)
-2. Upload files - PDFs, Word docs, spreadsheets, text files
-3. IRIS automatically reads and indexes everything
-4. Your agent can now search and reference this information
-
-**Why this matters:** Traditional chatbots give generic answers. Your IRIS agent gives answers based on YOUR actual documents and data. When your information changes, just upload the new files - no retraining required.
-
----
-
-### 🔗 Integrations — Connect Your Tools
-
-**What it is:** Integrations let your agent connect to the software you already use. Instead of just chatting, your agent can actually DO things - search your Google Drive, read your emails, send Slack messages, or update your CRM.
-
-**Available integrations:**
-| Category | Services |
-|----------|----------|
-| **Google Workspace** | Drive (search files), Gmail (read/send), Calendar (check/create events) |
-| **Communication** | Slack (send messages), Discord (post updates) |
-| **Email Marketing** | Mailjet, Mailchimp (manage campaigns) |
-| **Business Tools** | Stripe (payments), Buffer (social media) |
-| **AI Models** | OpenAI, Anthropic Claude, Google Gemini |
-
-**Real examples:**
-- "Find the Q3 sales report in my Google Drive" → Agent searches and retrieves it
-- "Send a Slack message to #marketing about the campaign launch" → Agent sends it
-- "What meetings do I have tomorrow?" → Agent checks your Google Calendar
-- "Draft a follow-up email to John" → Agent writes it and optionally sends via Gmail
-
-**Why this matters:** Your agent becomes a true assistant that takes action, not just a chatbot that gives advice. One agent can work across all your tools.
-
----
-
-### 📊 Lead Management — Complete CRM System
-
-**What it is:** A full-featured CRM built right into IRIS. Track contacts, manage deals, assign tasks, send invoices, and automate follow-ups. Your AI agents can access and update this data, creating a seamless workflow between human and AI.
-
-**Lead Tracking:**
-- **Contact information** - Name, email, phone, company, and any custom fields you need
-- **Pipeline stages** - New → Contacted → Negotiation → Won/Lost (customizable)
-- **Lead scoring** - Automatically prioritize based on engagement and fit
-- **Source tracking** - Know where each lead came from
-
-**Tasks & Follow-ups:**
-- **Task management** - Create to-dos with due dates for each lead
-- **Automated reminders** - Never miss a follow-up
-- **Task templates** - Standard checklists for your sales process
-- **Assignment** - Delegate tasks to team members or AI agents
-
-**Notes & Activity History:**
-- **Conversation notes** - Log every interaction
-- **Activity timeline** - See the complete history of each lead
-- **AI-generated summaries** - Your agent can summarize long email threads
-- **Searchable history** - Find any conversation instantly
-
-**Invoicing & Payments:**
-- **Create invoices** - Generate professional invoices for leads
-- **Stripe integration** - Accept payments directly
-- **Invoice tracking** - See paid, pending, and overdue invoices
-- **Itemized billing** - Add line items, quantities, and descriptions
-
-**Deliverables:**
-- **Track what you've delivered** - Files, links, access credentials
-- **Proof of delivery** - Document what was provided and when
-- **Client portal** - Leads can view their deliverables
-- **Version history** - Track updates to deliverables
-
-**Automation Capabilities:**
-- **Auto-assign leads** - Route new leads to the right person or agent
-- **Trigger workflows** - When lead status changes, kick off automations
-- **AI follow-up** - Let your agent draft and send follow-up emails
-- **Lead enrichment** - Automatically research companies and contacts
-
-**RAG-Enhanced Outreach:**
-- **Semantic note search** - Lead notes are indexed using OpenAI embeddings (text-embedding-3-small) and stored in Pinecone for semantic search
-- **Context-aware emails** - AI-generated emails automatically reference relevant notes from your interaction history
-- **Smart retrieval** - The system uses dynamic scoring to find the most relevant context, not just recent notes
-- **Personalized at scale** - Each email is unique, referencing actual projects, discussions, and details from your notes
-
-**Real examples:**
-- Sales team tracks prospects from first contact to closed deal, with AI drafting follow-up emails
-- Recruiting agency manages candidates, with agents scheduling interviews
-- Agency tracks client projects, invoices for work completed, and delivers assets
-- Service business manages customer requests, dispatches work, and collects payment
-
-**Why this matters:** You don't need a separate CRM like Salesforce or HubSpot. Everything is built-in, and your AI agents can work with your leads directly - researching, following up, and even closing deals.
-
----
-
-### 🎙️ Voice AI Agents — Talk to Your AI
-
-**What it is:** Create AI agents that can talk on the phone. Real voice conversations, not just text chat. Your agent can answer calls, make outbound calls, and have natural conversations.
-
-**How it works:**
-1. Create an agent with voice enabled
-2. Connect a phone number (via VAPI integration)
-3. Your agent answers calls 24/7
-4. Conversations are transcribed and logged
-
-**Real examples:**
-- **Appointment scheduling** - "Hi, I'd like to book an appointment for Thursday" → Agent checks calendar, confirms availability, books it
-- **Customer support** - Customers call, agent answers questions using your knowledge base
-- **Lead qualification** - Agent calls new leads, asks qualifying questions, updates your CRM
-- **After-hours support** - Agent handles calls when your team is unavailable
-
-**Voice capabilities:**
-- Natural-sounding speech synthesis
-- Real-time conversation (not pre-recorded menus)
-- Multiple voice options and personalities
-- Call recording and transcription
-- Handoff to human when needed
-
-**Why this matters:** Phone support is expensive. A voice AI agent can handle routine calls 24/7 at a fraction of the cost, while complex issues get routed to your team.
-
----
-
-### 🔄 Agentic Workflows — AI That Takes Action
-
-**What it is:** Unlike traditional automation (if this, then that), agentic workflows let your AI decide what to do based on the situation. You describe the goal, and the agent figures out the steps.
-
-**Traditional automation vs IRIS:**
-
-| Traditional (N8N, Zapier) | IRIS Agentic Workflow |
-|---------------------------|----------------------|
-| "IF email contains 'urgent' THEN send to channel A" | "Triage incoming emails by urgency and route appropriately" |
-| Must define every possible path | AI handles edge cases intelligently |
-| Breaks when unexpected situations arise | Adapts to new situations |
-| Requires technical setup for each rule | Just describe what you want in English |
-
-**Real examples:**
-- "Process support tickets - categorize by issue type, draft responses for simple questions, escalate complex issues to the team"
-- "When a new lead comes in, research their company, find relevant case studies in our files, and draft a personalized outreach email"
-- "Review these resumes against the job requirements and rank the top 5 candidates"
-
-**Why this matters:** You describe the outcome you want, not every step to get there. The AI figures out how to accomplish your goal, just like a smart employee would.
-
----
-
-### 📚 Courses — Learning Management System
-
-**What it is:** Create, manage, and deliver online courses with structured learning paths, progress tracking, and enrollment management. Turn your expertise into structured learning experiences.
-
-**Course Structure:**
-- **Courses** - The main learning container with metadata (difficulty, duration, learning objectives)
-- **Chapters** - Sequential organization (e.g., "Introduction", "Advanced Topics")
-- **Content** - Videos and articles organized within chapters
-- **Progress Tracking** - Per-item tracking with completion status and percentage
-
-**Key Features:**
-- **Marketplace** - Publish courses for discovery, filter by difficulty level
-- **Enrollment Management** - Free or paid courses (integrated with billing system)
-- **Progress Tracking** - Track completion per content item (videos, articles)
-- **Flexible Content** - Mix videos and articles in any order
-- **Certificates** - Optional course completion certificates
-- **Multi-instructor** - Assign instructors to courses
-
-**Real examples:**
-- **Training programs** - Onboard new employees with structured courses on company processes
-- **Product education** - Teach customers how to use your product effectively
-- **Coaching business** - Deliver structured programs to coaching clients
-- **Online academy** - Sell educational content with progress tracking and certificates
-- **Internal knowledge** - Create internal training libraries for teams
-
-**SDK Example:**
-```php
-// List marketplace courses
-$courses = $iris->courses->list(['difficulty' => 'beginner']);
-
-// Get course details with chapters
-$course = $iris->courses->get(123);
-
-// Enroll a user
-$iris->courses->enroll(123, $userId);
-
-// Track progress when user completes a video
-$iris->courses->updateProgress(123, $userId, [
-    'chapter_id' => 1,
-    'content_id' => 789,
-    'content_type' => 'video',
-    'status' => 'completed',
-    'progress_percentage' => 100
-]);
-```
-
-**CLI Example:**
-```bash
-# Browse courses
-bin/iris call courses.list difficulty=beginner
-
-# Get course details
-bin/iris call courses.get 123
-
-# Enroll user
-bin/iris call courses.enroll 123 456
-
-# Update progress
-bin/iris call courses.updateProgress 123 456 '{
-  "chapter_id": 1,
-  "content_id": 789,
-  "status": "completed"
-}'
-```
-
-**Why this matters:** Create structured learning experiences without building your own LMS. Courses integrate with your existing content (videos, articles) and billing system (Programs), so you can monetize your expertise immediately.
-
-**Full Documentation:** See [COURSES_API.md](COURSES_API.md) for complete guide with examples.
-
----
-
-### 🤖 AI Model Access — Use Any AI
-
-**What it is:** IRIS connects to all major AI providers. Use GPT-4, Claude, Gemini, or even run local models with Ollama. Switch models anytime without changing your agents.
-
-**Available models:**
-| Provider | Models |
-|----------|--------|
-| **OpenAI** | GPT-4o, GPT-4o-mini |
-| **Anthropic** | Claude 3.5 Sonnet, Claude 3 Haiku |
-| **Google** | Gemini Pro, Gemini Flash 1.5 |
-| **Open Source** | DeepSeek, Llama 3.1 (via Ollama) |
-
-**Why multiple models?**
-- **Cost optimization** - Use cheaper models for simple tasks, premium models for complex ones
-- **Capability matching** - Some models are better at certain tasks
-- **Redundancy** - If one provider has issues, switch to another
-- **Privacy** - Run local models for sensitive data
-
----
-
-### 📈 Analytics & Reporting
-
-**What it is:** See how your agents are performing. Track conversations, measure response quality, and understand what your users are asking about.
-
-**What you can track:**
-- **Conversation metrics** - Total chats, average length, response times
-- **Usage patterns** - Peak hours, popular topics, common questions
-- **Agent performance** - Which agents are most used, satisfaction indicators
-- **Cost tracking** - Token usage, model costs, budget monitoring
-
-**Why this matters:** Data helps you improve. See which agents need better training, identify gaps in your knowledge base, and prove ROI to stakeholders.
-
----
-
-### 🏢 Team & Collaboration
-
-**What it is:** Work together on agents and knowledge bases. Control who can see, edit, and manage your AI resources.
-
-**Team features:**
-- **User roles** - Admin, editor, viewer permissions
-- **Shared agents** - Whole team uses the same AI assistants
-- **Shared knowledge** - Central knowledge base everyone contributes to
-- **Activity logs** - See who changed what and when
-
----
-
-### 🎨 White Label & Custom Branding (Enterprise)
-
-**What it is:** Make IRIS look like your own product. Custom domains, your logo, your colors - your clients never see the IRIS brand.
-
-**Customization options:**
-- **Custom domain** - agents.yourcompany.com
-- **Logo and colors** - Match your brand identity
-- **Remove IRIS branding** - Completely white-labeled
-- **Custom email templates** - Notifications come from your domain
-
-**Why this matters:** Agencies and enterprises can offer AI agents as their own product or seamlessly integrate into existing platforms.
-
----
-
-## Three Ways to Use IRIS
-
-### 1. Web Interface (No Code)
-Go to [app.heyiris.io](https://app.heyiris.io) and do everything visually:
-- Click to create agents
-- Drag and drop to upload files
-- Point and click to configure integrations
-- Visual pipeline for managing leads
-
-**Best for:** Everyone, especially non-technical users
-
-### 2. Command Line (CLI)
-Run commands in your terminal for quick actions:
-```bash
-./bin/iris chat 11 "What can you help me with?"
-./bin/iris sdk:call leads.search search=acme status=Won
-```
-
-**Best for:** Developers, automation scripts, quick testing
-
-### 3. PHP SDK (Code)
-Full programmatic control for building applications:
-```php
-// Quick start with templates
-$agent = $iris->agents->createFromTemplate('customer-support', [
-    'name' => 'Support Bot'
-]);
-
-// Or full custom configuration
-$agent = $iris->agents->create(new AgentConfig(
-    name: 'Support Bot',
-    prompt: 'Help customers with product questions',
-));
-```
-
-**Best for:** Developers integrating IRIS into applications
-
-**NEW:** 4 pre-built agent templates reduce setup from 500+ lines to ~50 lines. See [SETUP_EXAMPLES.md](SETUP_EXAMPLES.md).
-
-### 4. Laravel Integration
-Native Laravel support with Service Provider and Facade:
+PHP SDK and CLI for the IRIS AI platform. Build agents, run workflows, manage leads, and ship automations — from your terminal or your codebase.
 
 ```bash
-# Install via Composer
+composer require iris-ai/sdk
+```
+
+---
+
+## Two interfaces, one platform
+
+**The CLI** is built for coding agents. Claude Code, Cursor, Windsurf — any AI assistant that can run shell commands can now create agents, search leads, trigger workflows, and query knowledge bases through IRIS. Your coding agent becomes an orchestrator.
+
+**The PHP SDK** is built for developers. Create multi-step workflows in code, embed agents into Laravel apps, build custom integrations. Full programmatic control over 31 resource modules and 200+ methods.
+
+Both hit the same API. Build in the CLI, ship in PHP. Or the other way around.
+
+---
+
+## Install
+
+```bash
+# Via Composer
 composer require iris-ai/sdk
 
-# Publish the config file
-php artisan vendor:publish --tag=iris-config
+# Or one-line installer (includes CLI setup + auth)
+curl -fsSL https://heyiris.io/install-iris.sh | bash
 ```
 
-```php
-// config/iris.php is auto-published
-return [
-    'api_key' => env('IRIS_API_KEY'),
-    'user_id' => env('IRIS_USER_ID'),
-    'base_url' => env('IRIS_API_URL', 'https://apiv2.heyiris.io'),
-];
-```
+**Requirements:** PHP 8.1+, Composer
 
-```php
-// Use anywhere in your Laravel app
-use IRIS\SDK\Laravel\Facades\IRIS;
-
-// In controllers
-$agents = IRIS::agents()->list();
-
-// Via dependency injection
-public function show(IRIS $iris)
-{
-    $response = $iris->agents->chat(11, [
-        ['role' => 'user', 'content' => 'Hello!']
-    ]);
-}
-
-// Auto-detects authenticated user
-// No need to pass user_id if Auth::check() is true
-```
-
-**Best for:** Laravel applications needing seamless AI integration
-
----
-
-## Everything Stays in Sync
-
-Create an agent in the **web interface**, update it from the **CLI**, access it via the **SDK** - everything works together. Your whole team can collaborate:
-
-- Marketing creates an agent in the UI
-- Developer connects it to the company app via SDK
-- Operations updates the knowledge base by uploading new files
-- Everyone chats with the same agent
-
----
-
-## Getting Started
-
-### Option 1: Just Use the Web Interface
-1. Go to [app.heyiris.io](https://app.heyiris.io)
-2. Create an account
-3. Click "New Agent" and follow the prompts
-4. Upload your files to the knowledge base
-5. Share your agent's link
-
-**No installation, no code, no technical setup.**
-
-### Option 2: Use the SDK/CLI (Developers)
-
-#### Step 1: Get Your SDK Key
-
-1. Log in to [app.heyiris.io](https://app.heyiris.io)
-2. Open any project
-3. Click **Actions** → **Developer Portal**
-4. Click **New Key** and give it a name
-5. **Copy and save your key** - it's only shown once!
-
-#### Step 2: Install & Configure
+## Configure
 
 ```bash
-# Install the SDK
-composer require iris-ai/sdk
-
-# Copy the example .env file and configure your credentials
-cp .env.example .env
-```
-
-Edit `.env` with your credentials from the Developer Portal:
-
-```bash
-# .env - IRIS SDK Configuration
-IRIS_API_KEY=your_sdk_key_from_developer_portal
+# .env
+IRIS_API_KEY=your_api_key
 IRIS_USER_ID=your_user_id
-
-# Environment: 'production' or 'local'
-IRIS_ENV=production
-
-# API URLs (defaults work for most users)
 IRIS_API_URL=https://apiv2.heyiris.io
-FL_API_URL=https://apiv2.heyiris.io
 ```
-
-#### Step 3: Start Building
-
-```bash
-# Chat with your agent via CLI
-./bin/iris chat 11 "Hello!"
-
-# Or use in PHP code
-$iris = new IRIS([
-    'api_key' => 'your_sdk_key',
-    'user_id' => 193,
-]);
-$response = $iris->agents->chat(11, [
-    ['role' => 'user', 'content' => 'Hello!']
-]);
-```
-
-### Quick Start with Agent Templates
-
-**NEW:** Create fully configured agents in seconds using pre-built templates.
 
 ```php
-<?php
-use IRIS\SDK\IRIS;
-
-$iris = new IRIS([
+$iris = new IRIS\SDK\IRIS([
     'api_key' => $_ENV['IRIS_API_KEY'],
-    'user_id' => $_ENV['IRIS_USER_ID'],
+    'user_id' => (int) $_ENV['IRIS_USER_ID'],
 ]);
-
-// Create an agent from a template - just 1 line!
-$agent = $iris->agents->createFromTemplate('elderly-care', [
-    'name' => 'Grandma Helper',
-    'settings' => [
-        'schedule' => [
-            'timezone' => 'America/Chicago',
-            'recurring_tasks' => [
-                ['name' => 'Morning Medication', 'time' => '08:00'],
-                ['name' => 'Evening Check-in', 'time' => '21:00']
-            ]
-        ]
-    ]
-]);
-
-echo "Agent created: {$agent->name} (ID: {$agent->id})\n";
 ```
-
-**Available templates:**
-- `elderly-care` - Daily reminders, safety monitoring, medication tracking
-- `customer-support` - Professional support with knowledge base integration
-- `sales-assistant` - Lead qualification, meeting scheduling, CRM updates
-- `research-agent` - Deep research with GPT-4 optimization
-
-Each template includes:
-- ✅ Optimized prompts and settings
-- ✅ Pre-configured schedules and recurring tasks
-- ✅ Recommended integrations (Gmail, Calendar, Slack)
-- ✅ Enabled functions (leads, research, etc.)
-
-**See [SETUP_EXAMPLES.md](SETUP_EXAMPLES.md) for complete documentation and all templates.**
 
 ---
 
-### Building an Integration
+## CLI
 
-Here's a complete example: let users upload files to your agent and chat with it.
+The CLI mirrors the full SDK. Every resource, every method — accessible from your terminal.
+
+```bash
+# Chat with an agent
+./bin/iris chat 11 "Analyze our Q4 pipeline"
+
+# Create an agent
+./bin/iris sdk:call agents.create name="Support Bot" prompt="Handle customer questions"
+
+# Search leads
+./bin/iris sdk:call leads.search search=acme status=Won
+
+# Trigger a workflow
+./bin/iris sdk:call workflows.execute agent_id=11 query="Research competitors"
+
+# Upload files to an agent's knowledge base
+./bin/iris sdk:call agents.uploadAndAttachFiles 123 /docs/playbook.pdf bloq_id=40
+
+# Evaluate agent performance (7 built-in test scenarios)
+./bin/iris eval 387 --json
+```
+
+This is where it gets interesting: **any AI coding agent that can execute shell commands can now operate your entire IRIS platform.** Tell Claude Code to "create a support agent, upload the FAQ docs, and test it" — it can do all of that through the CLI.
+
+---
+
+## SDK
+
+### Agents
+
+Create, configure, chat, schedule, and monitor AI agents. 6 built-in templates, 50+ integrations, full lifecycle management.
 
 ```php
-<?php
-use IRIS\SDK\IRIS;
-
-// Initialize the SDK
-$iris = new IRIS([
-    'api_key' => $_ENV['IRIS_API_KEY'],
-    'user_id' => $_ENV['IRIS_USER_ID'],
+// Create from template
+$agent = $iris->agents->createFromTemplate('customer-support', [
+    'name' => 'Support Bot',
 ]);
 
-// 1. Upload user files to agent's knowledge base
-$agentId = 335;
-$bloqId = 40;  // Your project ID
-
-$iris->agents->uploadAndAttachFiles($agentId, [
-    '/uploads/user_document.pdf',
-    '/uploads/product_data.csv',
-], $bloqId);
-
-// 2. Chat with the agent (it now knows about the uploaded files)
-$response = $iris->agents->chat($agentId, [
-    ['role' => 'user', 'content' => 'Summarize the document I just uploaded']
-]);
+// Chat
+$response = $iris->agents->chat($agent->id, [
+    ['role' => 'user', 'content' => 'How do I reset my password?']
+], ['bloq_id' => 40]);
 
 echo $response->content;
 
-// 3. For complex queries, use multi-step workflows
-$workflow = $iris->agents->multiStep($agentId,
-    'Research the uploaded companies and create a comparison report'
+// Multi-step workflow execution
+$workflow = $iris->agents->multiStep($agent->id,
+    'Research all open support tickets and draft response templates'
 );
 
-// Track progress
-foreach ($workflow->steps() as $step) {
-    echo "[{$step->progress}%] {$step->description}\n";
-}
-```
-
----
-
-## Agentic Workflows vs Node-Based Automation
-
-**IRIS takes a fundamentally different approach to automation.**
-
-Traditional tools like N8N, Zapier, and Make use **node-based workflows** - you drag boxes, connect lines, and configure each step manually. Every decision path must be pre-defined. Every edge case handled explicitly.
-
-IRIS uses **agentic workflows** - you describe *what* you want, and AI figures out *how* to do it.
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    NODE-BASED (Traditional)                              │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│   [Trigger] → [Parse Email] → [If Contains X] → [Route A]               │
-│                                    ↓                                     │
-│                              [If Contains Y] → [Route B]                │
-│                                    ↓                                     │
-│                              [Else] → [Route C] → [Format] → [Send]     │
-│                                                                          │
-│   ❌ Must pre-define every path                                          │
-│   ❌ Breaks when edge cases appear                                       │
-│   ❌ Complex logic = spaghetti connections                               │
-│   ❌ Changing requirements = rebuild the flow                            │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    AGENTIC (IRIS)                                        │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│   [Agent with Capabilities] ← "Process incoming emails, categorize      │
-│         ↓                      by urgency, draft responses for          │
-│   Gmail | Slack | CRM          routine inquiries, escalate complex      │
-│         ↓                      issues to the team via Slack"            │
-│   [AI Decides & Acts]                                                    │
-│                                                                          │
-│   ✅ Handles edge cases intelligently                                    │
-│   ✅ Adapts to new situations                                            │
-│   ✅ Natural language = anyone can modify                                │
-│   ✅ Changing requirements = update the prompt                           │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### How It Works
-
-1. **Give agents capabilities** (integrations they can use)
-2. **Write a prompt** (goals, intentions, guidelines)
-3. **Let AI decide** (routes, actions, responses)
-
-```php
-// Create an agent with capabilities
-$agent = $iris->agents->create(new AgentConfig(
-    name: 'Email Processor',
-    prompt: <<<PROMPT
-        You are an email processing assistant.
-
-        GOALS:
-        - Categorize incoming emails by urgency (high/medium/low)
-        - Draft responses for routine inquiries
-        - Escalate complex issues to Slack #support channel
-        - Log all customer interactions to our CRM
-
-        GUIDELINES:
-        - Be professional but friendly
-        - If unsure, ask for clarification rather than guessing
-        - Always CC the account manager on high-value client emails
-    PROMPT,
-    integrations: ['gmail', 'slack', 'google-drive'],
-));
-
-// That's it! The agent figures out the rest.
-$response = $iris->agents->chat($agent->id, [
-    ['role' => 'user', 'content' => 'Process the last 10 unread emails']
-]);
-```
-
-### Prompts Guide Everything
-
-With IRIS, **prompts are your workflow logic**:
-
-| Traditional Node | IRIS Prompt Equivalent |
-|-----------------|------------------------|
-| If/Then branch | "If the customer mentions pricing, focus on value..." |
-| Loop node | "For each lead in the list, research their company..." |
-| Filter node | "Only process emails from @enterprise.com domains..." |
-| Transform node | "Summarize the document into 3 bullet points..." |
-| API call node | "Search Google Drive for relevant contracts..." |
-
-### Why This Matters
-
-- **Non-technical users** can modify workflows by editing prompts
-- **Edge cases** are handled intelligently, not with more nodes
-- **Complex logic** becomes simple English instructions
-- **Maintenance** is updating a prompt, not rewiring a flowchart
-
-📖 [See Multi-Step Workflows in Action](WORKFLOWS.md)
-
----
-
-## Train Your AI Coding Assistant
-
-**Give [TECHNICAL.md](TECHNICAL.md) to your AI coding assistant and it becomes an IRIS expert.**
-
-The technical documentation is specifically structured for LLM consumption. Your AI assistant can learn the entire SDK and CLI, then help you build agents, manage leads, and automate workflows.
-
-### Supported Platforms
-
-| Platform | How to Use |
-|----------|------------|
-| **Claude Code** | Add `TECHNICAL.md` to your project or reference it in prompts |
-| **GitHub Copilot** | Include in your workspace for context-aware suggestions |
-| **Cursor** | Add to your project's docs folder for AI indexing |
-| **Windsurf** | Reference in your codebase for intelligent completions |
-| **Lovable** | Upload as project documentation |
-| **Codex / ChatGPT** | Paste or upload for code generation assistance |
-| **Google AI Studio** | Upload as context for Gemini-powered development |
-
-### Example: Teaching Claude Code
-
-```bash
-# In your project, tell Claude:
-"Read TECHNICAL.md and help me build an agent that processes
-customer support emails and escalates urgent issues to Slack"
-```
-
-Claude will understand:
-- All available SDK methods (`$iris->agents->create()`, etc.)
-- CLI commands (`./bin/iris chat`, `./bin/iris sdk:call`)
-- Integration options (Gmail, Slack, Google Drive, etc.)
-- Best practices for prompts and agent configuration
-
-### Example: Automated Development Pipeline
-
-```bash
-# Your AI assistant can now run IRIS commands directly
-./bin/iris sdk:call agents.create name="Support Bot" prompt="..."
-./bin/iris sdk:call agents.uploadAndAttachFiles 123 /docs/knowledge.pdf bloq_id=40
-./bin/iris chat 123 "Test: How do I reset my password?"
-```
-
-### What Your AI Assistant Learns
-
-From [TECHNICAL.md](TECHNICAL.md), your AI coding assistant understands:
-
-- **40+ SDK methods** across agents, leads, bloqs, workflows, and integrations
-- **CLI syntax** for rapid prototyping and testing
-- **Authentication patterns** (API keys, OAuth, credential management)
-- **Code examples** for every feature with copy-paste snippets
-- **Best practices** for agent prompts, RAG setup, and workflow design
-
-**The result?** Ask your AI assistant to "create a lead qualification agent with Google Calendar integration" and it knows exactly how to do it.
-
----
-
-## Core Features
-
-### 🤖 AI Agents
-Create intelligent assistants that live in the cloud at **app.heyiris.io**.
-
-```php
-// Create an agent
-$agent = $iris->agents->create(new AgentConfig(
-    name: 'Marketing Assistant',
-    prompt: 'You specialize in email marketing campaigns.',
-    model: 'gpt-4o-mini',
-    integrations: ['gmail', 'google-drive'],
-));
-
-// Get shareable URL
-$url = $agent->getSimpleUrl();
-// → https://app.heyiris.io/agent/simple/42?bloq=40
-
-// Chat with your agent
-$response = $iris->agents->chat($agent->id, [
-    ['role' => 'user', 'content' => 'Draft a product launch email']
-]);
-```
-
-**Quick Start with Templates:**
-
-```php
-// Create a fully-configured agent in seconds using built-in templates
-$agent = $iris->agents->createFromTemplate('elderly-care', [
-    'name' => 'Care Assistant for Mom',
-    'medication_times' => ['08:00', '12:00', '18:00', '22:00'],
+// Schedule recurring tasks
+$iris->agents->setSchedule($agent->id, [
     'timezone' => 'America/New_York',
-]);
-
-// Templates automatically configure:
-// ✓ Personality & communication style
-// ✓ Integrations (gmail, calendar, etc.)
-// ✓ Recurring schedules (medication reminders, check-ins)
-// ✓ Voice settings (optimized speaking rate)
-// ✓ Memory persistence & context window
-
-// Available templates: elderly-care, customer-support, sales-assistant,
-//                      research-agent, educational-tutor, leadership-coach
-
-// Or create with full custom configuration:
-$agent = $iris->agents->createFromConfig([
-    'name' => 'Custom Assistant',
-    'prompt' => 'Your custom instructions...',
-    'settings' => [
-        'agentIntegrations' => ['gmail' => true, 'slack' => true],
-        'enabledFunctions' => ['manageLeads' => true, 'deepResearch' => true],
-        'schedule' => [
-            'enabled' => true,
-            'timezone' => 'UTC',
-            'recurring_tasks' => [
-                [
-                    'time' => '09:00',
-                    'frequency' => 'daily',
-                    'message' => 'Daily briefing',
-                    'channels' => ['sms', 'email'],
-                ],
-            ],
-        ],
-        'voiceSettings' => ['language' => 'en-US', 'speaking_rate' => 1.0],
+    'recurring_tasks' => [
+        ['name' => 'Daily digest', 'time' => '09:00', 'frequency' => 'daily'],
     ],
 ]);
 ```
 
-📖 [Full Agent Documentation](TECHNICAL.md#-ai-agents) | [Agent Configuration Guide](AGENT_CONFIGURATION_GUIDE.md)
+### Workflows
 
----
-
-### 📚 Persistent Memory (Knowledge Base)
-Your agents remember everything with automatic RAG (Retrieval-Augmented Generation).
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Your Knowledge Base                       │
-├─────────────────────────────────────────────────────────────┤
-│  📁 Lists (Categories)    │  🤖 Agents (AI Assistants)      │
-│  ├── 📋 Sales Docs        │  ├── Sales Assistant            │
-│  ├── 📋 Product Info      │  └── Support Bot                │
-│  └── 📋 Training Data     │                                 │
-├─────────────────────────────────────────────────────────────┤
-│  📄 Items (Documents)     →  🔢 Auto-Vectorized (OpenAI)    │
-│  Uploaded files are automatically indexed for semantic       │
-│  search and intelligent retrieval by your agents.            │
-└─────────────────────────────────────────────────────────────┘
-```
+Multi-step executions with real-time progress and human-in-the-loop approval.
 
 ```php
-// Create a knowledge base
-$kb = $iris->bloqs->create('Sales Knowledge Base');
-
-// Upload training documents (auto-vectorized!)
-$iris->agents->uploadAndAttachFiles($agent->id, [
-    '/path/to/product-guide.pdf',
-    '/path/to/sales-playbook.docx',
-], $kb->id);
-
-// Now your agent knows your products!
-$response = $iris->agents->chat($agent->id, [
-    ['role' => 'user', 'content' => 'What are our pricing tiers?']
-]);
-// Agent answers using your uploaded documents
-```
-
-#### Advanced RAG Example: Secret Keeper Agent
-
-This example demonstrates RAG functionality by creating an agent that can only answer questions using information stored in its knowledge base.
-
-```php
-<?php
-use IRIS\SDK\IRIS;
-
-$iris = new IRIS([
-    'api_key' => $_ENV['IRIS_API_KEY'],
-    'user_id' => $_ENV['IRIS_USER_ID'],
-]);
-
-// 1. Create a specialized agent
-$agent = $iris->agents->createFromArray([
-    'name' => 'Secret Keeper',
-    'type' => 'chat',
-    'bloq_id' => 40,
-    'config' => ['model' => 'gpt-4o-mini'],
-    'initial_prompt' => <<<PROMPT
-You are a Secret Keeper - a guardian of classified information.
-
-When users ask about secret codes or classified information:
-1. Search your knowledge base for the relevant information
-2. Provide the information if found
-3. Do not make up information - only use what's in your knowledge base
-
-Always search your knowledge base before responding.
-PROMPT
-]);
-
-// 2. Store secret information in RAG
-$secretCode = 'ALPHA-' . strtoupper(bin2hex(random_bytes(4))) . '-OMEGA';
-
-$classifiedDoc = <<<DOC
-CLASSIFIED INFORMATION - TOP SECRET
-====================================
-
-Project Codename: NIGHTINGALE
-Master Access Code: $secretCode
-
-This code grants full system access to authorized personnel only.
-Valid until: 2026-12-31
-DOC;
-
-$iris->rag->index($classifiedDoc, [
-    'agent_id' => $agent->id,
-    'bloq_id' => 40,
-    'title' => 'Project Nightingale - Access Code',
-    'metadata' => [
-        'classification' => 'TOP_SECRET',
-        'code' => $secretCode,
-    ]
-]);
-
-// 3. Wait for indexing (vector DB propagation)
-sleep(5);
-
-// 4. Query the agent - it retrieves from RAG
-$response = $iris->agents->chat($agent->id, [
-    ['role' => 'user', 'content' => 'What is the master access code for Project Nightingale?']
-], [
-    'bloq_id' => 40,
-    'use_rag' => true,  // Enable RAG retrieval
-]);
-
-echo $response->content;
-// Output: "The master access code for Project Nightingale is: ALPHA-[HEX]-OMEGA..."
-
-// The agent retrieved the code from RAG - it never "knew" this information!
-// This proves RAG is working correctly.
-```
-
-**Why this example is powerful:**
-- The secret code is randomly generated - the AI never saw it in training
-- The agent can ONLY answer by searching its knowledge base
-- Proves RAG retrieval, vector embeddings, and semantic search all work
-- Demonstrates real-world use case: knowledge-based assistants
-
-📖 [Full RAG Test Script](../../../test-secret-code-rag.php) | [Test Results](../../../SECRET_CODE_RAG_TEST_RESULTS.md)
-
-📖 [Full Memory & RAG Documentation](TECHNICAL.md#-persistent-memory--knowledge-base-bloqs)
-
----
-
-### 🔗 17+ Built-in Integrations
-Connect your agents to the tools your team already uses.
-
-| Category | Integrations |
-|----------|--------------|
-| **Google Suite** | Drive, Gmail, Calendar |
-| **Communication** | Slack, Discord |
-| **Email Marketing** | Mailjet, Mailchimp |
-| **AI Providers** | OpenAI, Anthropic, DeepSeek, OpenRouter |
-| **Business Tools** | Stripe, Buffer, Reddit, YouTube |
-| **Custom** | Webhooks, MCP Protocol |
-
-```php
-// Enable integrations on an agent
-$agent = $iris->agents->patch($agentId, [
-    'integrations' => ['gmail', 'google-drive', 'slack'],
-]);
-
-// Agent can now search emails, read files, send Slack messages
-$response = $iris->agents->chat($agent->id, [
-    ['role' => 'user', 'content' => 'Find the Q4 sales report in my Drive']
-]);
-```
-
-📖 [Full Integrations Documentation](TECHNICAL.md#-integrations-17-services)
-
----
-
-### 📊 Lead Management CRM
-Complete CRM functionality built-in - manage your sales pipeline directly from the SDK.
-
-```php
-// Search leads
-$leads = $iris->leads->search([
-    'search' => 'acme',
-    'status' => 'Won',
-    'bloq_id' => 40,
-]);
-
-// Update and track
-$iris->leads->update(412, ['status' => 'Won']);
-$iris->leads->tasks(412)->create(['title' => 'Send contract']);
-$iris->leads->deliverables(412)->create([
-    'type' => 'link',
-    'title' => 'Trained AI Agent',
-    'external_url' => $agent->getSimpleUrl(),
-]);
-
-// Analytics
-$stats = $iris->leads->aggregation->statistics();
-```
-
-📖 [Full Lead Management Documentation](TECHNICAL.md#-lead-management)
-
----
-
-### 🔄 Multi-Step Workflows
-Execute complex workflows with real-time progress tracking and human-in-the-loop approval.
-
-```php
-// Execute a multi-step workflow
 $workflow = $iris->workflows->execute([
-    'agent_id' => 'research_agent',
+    'agent_id' => 11,
     'query' => 'Research competitors and create a comparison report',
 ]);
 
-// Track progress in real-time
-foreach ($workflow->steps() as $step) {
-    echo "[{$step->progress}%] {$step->description}\n";
+// Poll progress
+$status = $iris->workflows->getStatus($workflow->id);
+
+// Handle human approval points
+if ($status->needsHumanInput()) {
+    $iris->workflows->completeTask($status->taskId, [
+        'decision' => 'approved',
+        'feedback' => 'Looks good, proceed.',
+    ]);
 }
-
-// Handle approval points
-if ($workflow->needsHumanInput()) {
-    $workflow->approve('Proceed with the analysis.');
-}
-
-// Get results
-echo $workflow->result()->content;
 ```
 
-📖 [Full Workflow Documentation](TECHNICAL.md#-v5-multi-step-workflows)
+### Leads (CRM)
 
----
-
-## CLI: Power at Your Fingertips
-
-The SDK includes a powerful CLI that mirrors all SDK functionality:
-
-```bash
-# AI Chat (with beautiful real-time progress!)
-./bin/iris chat 11 "Analyze my leads"
-./bin/iris chat 337 "Draft marketing email" --bloq=40
-
-# Lead Management
-./bin/iris sdk:call leads.search search=acme status=Won
-./bin/iris sdk:call leads.update 412 status=Won
-./bin/iris sdk:call leads.tasks.create 412 title="Follow up"
-
-# Agent Operations
-./bin/iris sdk:call agents.list
-./bin/iris sdk:call agents.create name="Support Bot" prompt="..."
-./bin/iris sdk:call agents.getUrl 11  # Get shareable URL
-
-# Knowledge Base
-./bin/iris sdk:call bloqs.list
-./bin/iris sdk:call bloqs.uploadFile 40 /path/to/document.pdf
-```
-
-📖 [Full CLI Documentation](TECHNICAL.md#cli-tool)
-
----
-
-## 🧪 Agent Evaluation Harness
-
-Test and validate your agents with the built-in evaluation framework. Run comprehensive tests to ensure your agents perform as expected before deploying to production.
-
-### Quick Start
-
-```bash
-# List available core tests
-./bin/iris eval --list
-
-# Run all 7 core tests against an agent
-./bin/iris eval 387
-
-# Run custom tests
-./bin/iris eval 387 --type=custom
-
-# Compare agent performance with/without web search
-./bin/iris eval 387 --type=comparison
-
-# Save results to JSON
-./bin/iris eval 387 --save
-
-# Output as JSON (for CI/CD)
-./bin/iris eval 387 --json
-```
-
-### Core Tests (7 Built-in Scenarios)
-
-| Test | Description |
-|------|-------------|
-| `basic_conversation` | Tests introduction and capabilities description |
-| `web_search_capability` | Tests web search functionality |
-| `market_research` | Tests market research and analysis |
-| `personalization` | Tests personalization and memory |
-| `complex_reasoning` | Tests complex planning abilities |
-| `tool_integration` | Tests external API/tool usage |
-| `error_handling` | Tests graceful failure handling |
-
-### PHP API Usage
+Full pipeline: contacts, tasks, notes, activities, invoices, deliverables, outreach.
 
 ```php
-use IRIS\SDK\IRIS;
-use IRIS\SDK\Evaluation\AgentEvaluator;
-use IRIS\SDK\Evaluation\EvaluationTest;
-
-$iris = new IRIS([
-    'api_key' => $_ENV['IRIS_API_KEY'],
-    'user_id' => $_ENV['IRIS_USER_ID'],
+$leads = $iris->leads->search([
+    'query' => 'enterprise',
+    'status' => 'Negotiation',
+    'tags' => ['high-value'],
 ]);
 
-$evaluator = new AgentEvaluator($iris);
-
-// Run all core tests
-$results = $evaluator->runCoreTests(387);
-
-// Generate human-readable report
-echo $evaluator->generateReport($results);
-
-// Create custom tests
-$customTest = new EvaluationTest(
-    'product_knowledge',
-    'What are the main features of our enterprise plan?',
-    [
-        'keywords' => ['enterprise', 'features', 'support'],
-        'min_response_length' => 100,
-        'max_response_time_ms' => 15000,
-    ]
-);
-
-$result = $evaluator->runTest(387, $customTest);
+$iris->leads->tasks(412)->create(['title' => 'Send proposal', 'due_date' => '2026-03-01']);
+$iris->leads->notes(412)->create(['content' => 'Discussed pricing on call']);
+$iris->leads->deliverables(412)->create([
+    'type' => 'link',
+    'title' => 'Custom Agent',
+    'external_url' => 'https://app.heyiris.io/agent/simple/42',
+]);
 ```
 
-### Sample Output
+### Knowledge Base (RAG)
 
-```
-============================================================
-📊 AGENT EVALUATION REPORT
-============================================================
+Vector-indexed knowledge. Upload files, index content, semantic search. OpenAI embeddings + Pinecone.
 
-✅ basic_conversation
-   Score: 100% (3/3 checks passed)
-   Response Time: 5674ms
-   Response Length: 361 chars
+```php
+// Upload docs to an agent's knowledge base
+$iris->agents->uploadAndAttachFiles($agentId, [
+    '/docs/product-guide.pdf',
+    '/docs/pricing.csv',
+], $bloqId);
 
-❌ web_search_capability
-   Score: 33% (1/3 checks passed)
-   Response Time: 6388ms
-   Failed checks:
-     - min_response_length: expected >= 100, got 0
+// Direct RAG operations
+$iris->rag->index('Company policy document content...', [
+    'bloq_id' => 40,
+    'title' => 'HR Policy 2026',
+]);
 
-✅ complex_reasoning
-   Score: 100% (4/4 checks passed)
-   Response Time: 9911ms
-   Response Length: 2157 chars
-
-------------------------------------------------------------
-📈 SUMMARY
-------------------------------------------------------------
-Tests Run: 7
-Tests Passed: 4/7 (57%)
-Average Score: 70%
-Status: 🟡 GOOD
-============================================================
+$results = $iris->rag->query('What is our vacation policy?', ['bloq_id' => 40]);
 ```
 
-📖 [Full Evaluation Documentation](TECHNICAL.md#-agent-evaluation-harness)
+### Integrations
+
+50+ services. Google Drive, Gmail, Calendar, Slack, Discord, Mailjet, Stripe, and more. OAuth flows built in.
+
+```php
+$iris->agents->enableIntegration($agentId, 'gmail');
+$iris->agents->enableIntegration($agentId, 'google-drive');
+$iris->agents->enableIntegration($agentId, 'slack');
+
+// Execute integration functions directly
+$iris->integrations->execute('google-drive', 'search_files', [
+    'query' => 'Q4 report',
+]);
+```
 
 ---
 
-## N8N & Workflow Tool Compatibility
+## All resources
 
-**Already using N8N?** IRIS works seamlessly alongside your existing workflows:
-
-- **Trigger IRIS agents** from N8N HTTP nodes
-- **Receive webhooks** from IRIS workflows
-- **Access all SDK features** via REST API
-- **Keep your automation** - add AI capabilities
-
-Your agents live at **app.heyiris.io** and can be accessed from any workflow tool.
-
-📖 [N8N Integration Guide](TECHNICAL.md#n8n-workflow-compatibility)
-
----
-
-## Complete Documentation
-
-| Section | Description |
-|---------|-------------|
-| [Technical Reference](TECHNICAL.md) | Full API documentation with all methods |
-| [Agentic Workflows](WORKFLOWS.md) | How workflows differ from N8N/Zapier + real examples |
-| [CLI Guide](TECHNICAL.md#cli-tool) | Complete CLI usage and commands |
-| [AI Agents](TECHNICAL.md#-ai-agents) | Create, configure, and deploy agents |
-| [Knowledge Base](TECHNICAL.md#-persistent-memory--knowledge-base-bloqs) | Persistent memory and RAG |
-| [Lead Management](TECHNICAL.md#-lead-management) | CRM functionality |
-| [Integrations](TECHNICAL.md#-integrations-17-services) | 17+ service connections |
-| [Workflows](TECHNICAL.md#-v5-multi-step-workflows) | Multi-step automation |
-| [Testing](TECHNICAL.md#testing) | Mocking and test utilities |
-| [Agent Evaluation](TECHNICAL.md#-agent-evaluation-harness) | Test and validate agent performance |
-
-### 🚀 Getting Started Guides
-
-| Guide | Description |
-|-------|-------------|
-| [📖 Agent Creation Methods](../../../AGENT_CREATION_METHODS.md) | Compare 3 ways to create agents (PHP, Bash, CLI) |
-| [💬 Agent Chat Methods](../../../AGENT_CHAT_METHODS.md) | Compare 3 ways to chat with agents (CLI, PHP, Bash) |
-| [🎉 Complete System Overview](../../../SESSION_SUMMARY_RAG_AND_CLI.md) | Full system summary with RAG examples |
-
----
-
-## API Reference (Quick)
-
-| Resource | Key Methods |
+| Resource | What it does |
 |----------|-------------|
-| `$iris->agents` | `create`, `chat`, `get`, `patch`, `getUrl`, `uploadAndAttachFiles` |
-| `$iris->bloqs` | `create`, `uploadFile`, `share`, `lists`, `items` |
-| `$iris->leads` | `search`, `create`, `update`, `tasks`, `deliverables`, `aggregation` |
-| `$iris->workflows` | `execute`, `getStatus`, `approve`, `templates` |
-| `$iris->chat` | `start`, `execute`, `resume`, `history` |
-| `$iris->integrations` | `list`, `get`, `enable`, `execute` |
-| `AgentEvaluator` | `runCoreTests`, `runTest`, `generateReport`, `addCoreTest` |
-
-📖 [Full API Reference](TECHNICAL.md#api-reference)
+| `$iris->agents` | Create, chat, schedule, monitor AI agents |
+| `$iris->workflows` | Multi-step execution with human-in-the-loop |
+| `$iris->leads` | CRM — contacts, tasks, notes, invoices, outreach |
+| `$iris->bloqs` | Knowledge bases — lists, items, documents |
+| `$iris->chat` | Real-time conversations with progress tracking |
+| `$iris->rag` | Vector search, semantic retrieval, file indexing |
+| `$iris->integrations` | 50+ service connections, OAuth, function execution |
+| `$iris->courses` | LMS — courses, chapters, progress, enrollment |
+| `$iris->voice` | Voice AI configuration (ElevenLabs, Google TTS) |
+| `$iris->phone` | Phone numbers for voice agents (VAPI, Twilio) |
+| `$iris->tools` | Recruitment, data enrichment, newsletter research |
+| `$iris->articles` | Generate articles from videos, topics, transcripts |
+| `$iris->audio` | Merge, crossfade, convert audio (FFMPEG) |
+| `$iris->social` | Publish to Instagram, TikTok, X, LinkedIn |
+| `$iris->payments` | Agent wallets, transactions, billing |
+| `$iris->products` | E-commerce catalog, variants, inventory |
+| `$iris->pages` | Composable landing pages |
+| `$iris->programs` | Membership programs, funnels, enrollment |
+| `$iris->marketplace` | Browse and install reusable agent skills |
+| `$iris->automations` | V6 goal-driven agentic automations |
+| `$iris->users` | Account management |
+| `$iris->profiles` | User profiles, media library |
+| `$iris->services` | Service offerings and pricing |
+| `$iris->usage` | Token usage, cost tracking, rate limits |
+| `$iris->models` | Available AI models and capabilities |
 
 ---
 
-## Get Started Today
+## Laravel
+
+Native service provider with auto-discovery.
 
 ```bash
-# 1. Install
 composer require iris-ai/sdk
-
-# 2. Configure
-./bin/iris config setup
-
-# 3. Build!
-./bin/iris chat 11 "Hello, I'm ready to build AI agents!"
 ```
 
-**Questions?** Open an issue or contact us at [support@heyiris.io](mailto:support@heyiris.io)
+```php
+// .env
+IRIS_API_KEY=your_key
+IRIS_USER_ID=your_id
+
+// Use the facade anywhere
+use IRIS\SDK\Laravel\Facades\IRIS;
+
+$agents = IRIS::agents()->list();
+$response = IRIS::agents()->chat(11, [
+    ['role' => 'user', 'content' => 'Hello']
+]);
+
+// Or inject via DI
+public function handle(IRIS\SDK\IRIS $iris)
+{
+    $leads = $iris->leads->search(['status' => 'Won']);
+}
+```
 
 ---
 
-## Pricing & Plans
+## Agent evaluation
 
-IRIS offers flexible pricing from free to enterprise. Start free and scale as you grow.
+Built-in test harness. 7 core scenarios. Custom tests. JSON output for CI/CD.
 
-### Plan Overview
+```bash
+./bin/iris eval 387              # Run all tests
+./bin/iris eval 387 --json       # Machine-readable output
+./bin/iris eval 387 --save       # Save results
+```
 
-| Feature | Free | Starter | Growth | Professional | Enterprise |
-|---------|------|---------|--------|--------------|------------|
-| **AI Agents** | 50 | 50 | 500 | 1,000 | Unlimited |
-| **Workflows** | 3 | 10 | 25 | 100 | Unlimited |
-| **Contacts (CRM)** | 100 | 100 | 10,000 | 250,000 | Unlimited |
-| **Knowledge Items** | 50 | 100 | 2,000 | 10,000 | Unlimited |
-| **AI Credits/month** | 100 | 1,000 | 5,000 | 20,000 | Unlimited |
-| **Voice AI** | ❌ | ❌ | ❌ | ✅ | ✅ |
-| **White Label** | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **API Access** | Limited | ✅ | ✅ | ✅ | ✅ |
+```php
+$evaluator = new AgentEvaluator($iris);
+$results = $evaluator->runCoreTests(387);
+echo $evaluator->generateReport($results);
+```
 
-### What's Included in Every Plan
+Tests: `basic_conversation`, `web_search_capability`, `market_research`, `personalization`, `complex_reasoning`, `tool_integration`, `error_handling`.
 
-- ✅ All AI models (GPT-4o, Claude, Gemini, etc.)
-- ✅ Knowledge base with automatic RAG
-- ✅ 17+ integrations (Google, Slack, etc.)
-- ✅ Lead management CRM
-- ✅ Web UI, CLI, and SDK access
+---
 
-### Usage-Based Pricing
+## AI models
 
-AI credits are consumed when your agents respond. Different models cost different amounts:
-- **Budget models** (GPT-4o-mini, Haiku) - ~1 credit per response
-- **Standard models** (GPT-4o, Sonnet) - ~5 credits per response
-- **Premium models** (Claude Opus) - ~15 credits per response
+Provider-agnostic. Switch models without changing agents.
 
-Most users find the included credits more than enough. If you need more, credits are available as add-ons.
+| Provider | Models |
+|----------|--------|
+| OpenAI | GPT-4o, GPT-4o-mini, GPT-4.1-nano, GPT-5-nano |
+| Anthropic | Claude 3.5 Sonnet, Claude 3 Haiku |
+| Google | Gemini Pro, Gemini Flash |
+| Local | DeepSeek, Llama, Qwen (via Ollama) |
 
-### Free Trial
+---
 
-Every new account gets **7 days of Enterprise access** - all features, unlimited usage. After the trial, you're automatically moved to the Free plan unless you upgrade.
+## Documentation
+
+| Doc | Description |
+|-----|-------------|
+| [TECHNICAL.md](TECHNICAL.md) | Full API reference — every method, every parameter |
+| [WORKFLOWS.md](WORKFLOWS.md) | Agentic workflows vs traditional automation |
+| [SETUP_EXAMPLES.md](SETUP_EXAMPLES.md) | Agent templates and configuration examples |
+| [COURSES_API.md](COURSES_API.md) | Learning management system API |
+
+Feed `TECHNICAL.md` to your AI coding assistant and it becomes an IRIS expert.
 
 ---
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT — see [LICENSE](LICENSE).
 
----
-
-## 🛠 Laravel Integration
-
-The SDK comes with a built-in Service Provider and Facade for seamless Laravel integration.
-
-### 1. Installation
-
-If you're using Laravel's auto-discovery, the Service Provider will be registered automatically.
-
-### 2. Configuration
-
-Publish the configuration file (optional if you stick to `.env`):
-
-```bash
-php artisan vendor:publish --provider="IRIS\SDK\Laravel\IRISServiceProvider"
-```
-
-Add your credentials to your `.env` file:
-
-```env
-IRIS_API_KEY=your_api_key
-IRIS_USER_ID=your_user_id
-```
-
-### 3. Usage
-
-You can use the `IRIS` facade anywhere in your application:
-
-```php
-use IRIS;
-
-// Create an Agent
-$agent = IRIS::agents()->create([
-    'name' => 'Support Bot',
-    'prompt' => 'You are a helpful assistant...',
-    'model' => 'gpt-4o'
-]);
-
-// Search Leads
-$leads = IRIS::leads()->search(['status' => 'New']);
-```
-
----
+**Docs:** [heyiris.io](https://heyiris.io) | **Support:** support@heyiris.io
