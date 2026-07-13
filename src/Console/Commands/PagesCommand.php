@@ -91,7 +91,12 @@ HELP
             ->addOption('component-id', null, InputOption::VALUE_REQUIRED, 'Component ID for update/remove')
             ->addOption('type', null, InputOption::VALUE_REQUIRED, 'Component type: Hero, TextBlock, ButtonCTA')
             ->addOption('position', null, InputOption::VALUE_REQUIRED, 'Position to insert component (0-based index)')
-            ->addOption('props', null, InputOption::VALUE_REQUIRED, 'Component props as JSON string');
+            ->addOption('props', null, InputOption::VALUE_REQUIRED, 'Component props as JSON string')
+            // Share links (/s/{token})
+            ->addOption('expires-in-days', null, InputOption::VALUE_REQUIRED, 'Share link: expire after N days')
+            ->addOption('max-views', null, InputOption::VALUE_REQUIRED, 'Share link: max views (1 = one-time)')
+            ->addOption('label', null, InputOption::VALUE_REQUIRED, 'Share link: label/note')
+            ->addOption('token', null, InputOption::VALUE_REQUIRED, 'Share link token (for unshare)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -161,6 +166,15 @@ HELP
                 
                 case 'duplicate':
                     return $this->duplicatePage($iris, $io, $input, $slug);
+
+                case 'share':
+                    return $this->shareLink($iris, $io, $input, $slug);
+
+                case 'shares':
+                    return $this->listShareLinksCmd($iris, $io, $slug);
+
+                case 'unshare':
+                    return $this->unshareLink($iris, $io, $input, $slug);
                 
                 case 'versions':
                     return $this->viewVersions($iris, $io, $slug);
@@ -504,6 +518,122 @@ HELP
         $io->success("Page duplicated!");
         $io->note("View at: http://localhost:7200/p/{$newSlug}");
 
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Mint a disposable share link for a page: pages share <slug> [--expires-in-days N] [--max-views N] [--label "..."]
+     */
+    private function shareLink(IRIS $iris, SymfonyStyle $io, InputInterface $input, ?string $slug): int
+    {
+        if (!$slug) {
+            $io->error('Slug is required');
+            return Command::FAILURE;
+        }
+
+        $response = $iris->pages->getBySlug($slug, false);
+        $page = $response['data'] ?? $response;
+        if (empty($page['id'])) {
+            $io->error("Page not found: {$slug}");
+            return Command::FAILURE;
+        }
+
+        $data = [];
+        if ($input->getOption('label')) {
+            $data['label'] = $input->getOption('label');
+        }
+        if ($input->getOption('expires-in-days')) {
+            $data['expires_in_days'] = (int) $input->getOption('expires-in-days');
+        }
+        if ($input->getOption('max-views')) {
+            $data['max_views'] = (int) $input->getOption('max-views');
+        }
+
+        $result = $iris->pages->createShareLink($page['id'], $data);
+
+        if ($input->getOption('json')) {
+            $io->writeln(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            return Command::SUCCESS;
+        }
+
+        // The SDK Client unwraps the `data` envelope, so the link fields are at the top level.
+        $link = $result['data'] ?? $result;
+        $token = $link['token'] ?? null;
+        $url = $result['share_url'] ?? ($token ? "https://freelabel.net/s/{$token}" : '');
+
+        $io->success('Share link created');
+        $io->writeln('  <info>' . $url . '</info>');
+        $bits = [];
+        if (!empty($link['expires_at'])) {
+            $bits[] = "expires {$link['expires_at']}";
+        }
+        if (!empty($link['max_views'])) {
+            $bits[] = "max {$link['max_views']} view(s)";
+        }
+        if ($bits) {
+            $io->writeln('  ' . implode(' · ', $bits));
+        }
+        $io->note("Revoke with: pages unshare {$slug} --token=" . ($link['token'] ?? '<token>'));
+        return Command::SUCCESS;
+    }
+
+    /**
+     * List a page's share links: pages shares <slug>
+     */
+    private function listShareLinksCmd(IRIS $iris, SymfonyStyle $io, ?string $slug): int
+    {
+        if (!$slug) {
+            $io->error('Slug is required');
+            return Command::FAILURE;
+        }
+
+        $response = $iris->pages->getBySlug($slug, false);
+        $page = $response['data'] ?? $response;
+        if (empty($page['id'])) {
+            $io->error("Page not found: {$slug}");
+            return Command::FAILURE;
+        }
+
+        $result = $iris->pages->listShareLinks($page['id']);
+        // Client unwraps `data`; when it does, $result is already the array of links.
+        $links = (isset($result['data']) && is_array($result['data'])) ? $result['data'] : $result;
+        if (!is_array($links) || (isset($links['token']))) {
+            $links = $links ? [$links] : [];
+        }
+
+        $io->title("Share links: {$slug}");
+        if (empty($links)) {
+            $io->info('No share links');
+            return Command::SUCCESS;
+        }
+
+        $rows = [];
+        foreach ($links as $l) {
+            $rows[] = [
+                substr($l['token'] ?? '', 0, 12) . '…',
+                ($l['active'] ?? false) ? 'active' : 'inactive',
+                $l['label'] ?? '',
+                $l['expires_at'] ?? '—',
+                ($l['view_count'] ?? 0) . '/' . ($l['max_views'] ?? '∞'),
+            ];
+        }
+        $io->table(['Token', 'Status', 'Label', 'Expires', 'Views'], $rows);
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Revoke a share link: pages unshare <slug> --token=<token>
+     */
+    private function unshareLink(IRIS $iris, SymfonyStyle $io, InputInterface $input, ?string $slug): int
+    {
+        $token = $input->getOption('token');
+        if (!$token) {
+            $io->error('--token is required (see: pages shares <slug>)');
+            return Command::FAILURE;
+        }
+
+        $iris->pages->revokeShareLink($token);
+        $io->success('Share link revoked');
         return Command::SUCCESS;
     }
 

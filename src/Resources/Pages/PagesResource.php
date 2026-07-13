@@ -96,6 +96,34 @@ class PagesResource
     }
 
     /**
+     * Mint a disposable share link (/s/{token}) for a page.
+     *
+     * @param int $id Page id
+     * @param array{label?: string, expires_in_days?: int, expires_at?: string, max_views?: int} $data
+     * @return array { success, data: {token, ...}, share_url }
+     */
+    public function createShareLink(int $id, array $data = []): array
+    {
+        return $this->http->post("/api/v1/pages/{$id}/share-links", $data);
+    }
+
+    /**
+     * List a page's share links.
+     */
+    public function listShareLinks(int $id): array
+    {
+        return $this->http->get("/api/v1/pages/{$id}/share-links");
+    }
+
+    /**
+     * Revoke a share link by its token.
+     */
+    public function revokeShareLink(string $token): array
+    {
+        return $this->http->delete("/api/v1/pages/share-links/{$token}");
+    }
+
+    /**
      * Create a new page.
      *
      * @param array{
